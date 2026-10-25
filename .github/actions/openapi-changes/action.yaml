@@ -22,8 +22,8 @@ runs:
       shell: bash
       run: |
         git fetch origin ${{ inputs.base-ref }}
-        PIPELINE_CHANGED=$(git diff --name-only origin/${{ inputs.base-ref }} | grep "^${{ inputs.service-src-dir }}/" || true)
-        SPEC_CHANGED=$(git diff --name-only origin/${{ inputs.base-ref }} -- apis/openapi-spec/ || true)
+        PIPELINE_CHANGED=$(git diff --name-only origin/${{ inputs.base-ref }}...HEAD | grep "^${{ inputs.service-src-dir }}/" || true)
+        SPEC_CHANGED=$(git diff --name-only origin/${{ inputs.base-ref }}...HEAD -- apis/openapi-spec/*.yaml || true)
 
         if [[ -z "$PIPELINE_CHANGED" && -n "$SPEC_CHANGED" ]]; then
           echo "Manual edit of OpenAPI spec detected without a corresponding service change in ${{ inputs.service-src-dir }}."
