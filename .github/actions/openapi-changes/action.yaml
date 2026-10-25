@@ -16,7 +16,7 @@ runs:
       shell: bash
       env:
         WORKSPACE_DIR: ${{ github.workspace }}
-      run: bazel build //pipeline:generate-openapi
+      run: bazel build --config=openapi //pipeline:generate-openapi
 
     - name: Check for contract violation
       shell: bash
