@@ -13,6 +13,6 @@ sh_test(
     name = "test",
     srcs = ["run_tests.sh"],
     data = _SRCS,
-    tags = ["manual", "local"],
+    tags = [],
 )
 
