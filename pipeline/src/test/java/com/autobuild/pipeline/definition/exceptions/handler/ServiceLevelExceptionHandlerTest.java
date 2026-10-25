@@ -19,6 +19,7 @@ import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.exceptions.handler.ServiceLevelExceptionHandler;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolationException;
 
 public class ServiceLevelExceptionHandlerTest {
@@ -76,6 +77,27 @@ public class ServiceLevelExceptionHandlerTest {
         ErrorResponse errorResponse = globalHandler.handleIOException(exception);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, errorResponse.getStatusCode());
+        assertNotNull(errorResponse.getBody().getDetail());
+    }
+
+    @Test
+    public void testHandleInvalidFormatException() {
+        InvalidFormatException exception = mock(InvalidFormatException.class);
+        doReturn("bad format: value").when(exception).getMessage();
+
+        ErrorResponse errorResponse = globalHandler.handleInvalidFormatException(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+        assertNotNull(errorResponse.getBody().getDetail());
+    }
+
+    @Test
+    public void testHandleIllegalStateException() {
+        IllegalStateException exception = new IllegalStateException("illegal state");
+
+        ErrorResponse errorResponse = globalHandler.illegalStateException(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
         assertNotNull(errorResponse.getBody().getDetail());
     }
 }

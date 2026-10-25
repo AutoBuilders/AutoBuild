@@ -1,5 +1,6 @@
 package com.autobuild.pipeline.integrationtest.security;
 
+import com.autobuild.pipeline.configuration.FeatureFlagService;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ class SecurityConfigTest {
 
     @MockitoBean
     private PipelineRepository pipelineRepository;
+
+    @MockitoBean
+    private FeatureFlagService featureFlagService;
 
     @BeforeEach
     void setUp() {

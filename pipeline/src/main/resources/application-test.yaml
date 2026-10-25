@@ -22,3 +22,7 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
       - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+feature-flags:
+  provider:
+    uri: ${FEATURE_PROVIDER_URI:}
