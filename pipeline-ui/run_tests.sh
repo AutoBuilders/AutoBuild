@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
-export HOME=$(echo ~)
-cd "${WORKSPACE_DIR:?WORKSPACE_DIR must be set}/pipeline-ui"
+cd pipeline-ui
+
+echo "debug logs"
+ls
+echo "ended debug logs"
 
 npm ci
 npm run lint

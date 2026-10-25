@@ -1,0 +1,7 @@
+filegroup(
+	name = "openapi-specs",
+	srcs = [
+		"pipeline-service.yaml"
+	],
+	visibility = ["//visibility:public"],
+)
