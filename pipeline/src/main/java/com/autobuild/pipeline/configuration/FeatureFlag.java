@@ -1,4 +1,4 @@
-package com.autobuild.pipeline.definiton;
+package com.autobuild.pipeline.configuration;
 
 /** Enum of all feature flag keys used in this application. */
 public enum FeatureFlag {

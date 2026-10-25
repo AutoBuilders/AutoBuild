@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.autobuild.pipeline.configuration.FeatureFlag;
 import com.autobuild.pipeline.configuration.FeatureFlagService;
-import com.autobuild.pipeline.definiton.FeatureFlag;
 import com.autobuild.pipeline.definiton.dto.PipelineDTO;
 import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
