@@ -1,3 +1,5 @@
 test --test_env=WORKSPACE_DIR
 test --test_env=PATH
 test --test_env=JAVA_HOME
+build --action_env=PATH
+build --action_env=JAVA_HOME

@@ -16,3 +16,18 @@ sh_test(
     tags = [],
 )
 
+# Generates the OpenAPI spec by starting the app and hitting /v3/api-docs.yaml.
+# Output is written to //apis/openapi-spec:pipeline-service.yaml.
+# Run with: bazel run //pipeline:generate-openapi
+genrule(
+    name = "generate-openapi",
+    srcs = _SRCS + ["run_generate_openapi.sh"],
+    outs = ["pipeline-service.yaml"],
+    cmd = """
+        $(location run_generate_openapi.sh)
+        cp apis/openapi-spec/pipeline-service.yaml $@
+    """,
+    local = True,
+    tags = ["manual"],
+)
+
