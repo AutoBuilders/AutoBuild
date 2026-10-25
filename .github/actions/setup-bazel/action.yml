@@ -5,7 +5,7 @@ inputs:
   cache-save:
     description: Whether to save the cache after the run
     required: false
-    default: "true"
+    default: true
 
 runs:
   using: composite
