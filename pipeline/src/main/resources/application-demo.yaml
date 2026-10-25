@@ -29,6 +29,10 @@ spring:
     exclude:
     - org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration
 
+feature-flags:
+  provider:
+    uri: ${FEATURE_PROVIDER_URI:}
+
 logging:
   level:
     org.springframework.jdbc.datasource: DEBUG

@@ -64,21 +64,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter-test</artifactId>
-    		<scope>test</scope>
-		</dependency>
-
-		<dependency>
     		<groupId>org.springframework.security</groupId>
     		<artifactId>spring-security-test</artifactId>
     		<scope>test</scope>
 		</dependency>
-		<dependency>
-        	<groupId>org.springframework.security</groupId>
-        	<artifactId>spring-security-test</artifactId>
-        	<scope>test</scope>
-    	</dependency>
 		<!-- <dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
@@ -148,6 +137,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>dev.openfeature</groupId>
+			<artifactId>sdk</artifactId>
+			<version>1.21.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dev.openfeature.contrib.providers</groupId>
+			<artifactId>ofrep</artifactId>
+			<version>0.0.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
