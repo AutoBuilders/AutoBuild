@@ -52,4 +52,4 @@ jobs:
       - name: Pipeline UI Validation
         env:
           WORKSPACE_DIR: ${{ github.workspace }}
-        run: bazel test //pipeline-ui:test --test_output=all
+        run: bazel test //pipeline-ui:unit_test --test_output=all
