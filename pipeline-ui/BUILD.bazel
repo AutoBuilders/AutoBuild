@@ -12,7 +12,8 @@ _SRCS = glob(
 sh_test(
     name = "unit_test",
     srcs = ["run_tests.sh"],
-	data = _SRCS + ["//apis/openapi-spec:openapi-specs"],
+    data = _SRCS + ["//apis/openapi-spec:openapi-specs"],
     tags = [],
 )
+
 
