@@ -18,6 +18,8 @@ jobs:
 
       - name: Setup Bazel
         uses: ./.github/actions/setup-bazel
+        with:
+          cache-save: "false"
 
       - name: Pipeline Service Validation
         env:
@@ -48,6 +50,8 @@ jobs:
 
       - name: Setup Bazel
         uses: ./.github/actions/setup-bazel
+        with:
+          cache-save: "false"
 
       - name: Pipeline UI Validation
         env:
