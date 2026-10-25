@@ -1,2 +1,3 @@
 test --test_env=WORKSPACE_DIR
 test --test_env=PATH
+test --test_env=JAVA_HOME

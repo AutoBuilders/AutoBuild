@@ -3,7 +3,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 # Inputs Bazel tracks for cache invalidation — if none of these change,
 # both targets below are skipped entirely (cache hit).
 _SRCS = glob(
-    ["src/**", "pom.xml"],
+    ["src/**", "pom.xml", "checkstyle.xml"],
     exclude = ["target/**"],
 )
 

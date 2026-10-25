@@ -4,10 +4,6 @@ set -euo pipefail
 
 cd pipeline-ui
 
-echo "debug logs"
-ls
-echo "ended debug logs"
-
 npm ci
 
 # Bazel runfiles are symlinks into the source tree. Vite and ESLint resolve
