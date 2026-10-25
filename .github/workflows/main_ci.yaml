@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Java
         uses: ./.github/actions/setup-java
@@ -26,17 +28,11 @@ jobs:
           WORKSPACE_DIR: ${{ github.workspace }}
         run: bazel test //pipeline:test --test_output=all
 
-  openapi-contract-check:
-    runs-on: ubuntu-latest
-    needs: pipeline-service-validation
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Check for OpenAPI contract violation
+      - name: OpenAPI Contract Check
         uses: ./.github/actions/openapi-changes
         with:
           base-ref: ${{ github.base_ref }}
-          has-pipeline-validations-executed: "true"
+          service-src-dir: pipeline/src
 
   pipeline-ui-validation:
     runs-on: ubuntu-latest
