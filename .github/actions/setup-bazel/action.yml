@@ -1,0 +1,19 @@
+name: Setup Bazel
+description: Sets up Bazel with caching
+
+inputs:
+  cache-save:
+    description: Whether to save the cache after the run
+    required: false
+    default: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Bazel
+      uses: bazel-contrib/setup-bazel@0.19.1
+      with:
+        bazelisk-cache: true
+        disk-cache: ${{ github.workflow }}
+        repository-cache: true
+        cache-save: ${{ inputs.cache-save }}

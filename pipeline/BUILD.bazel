@@ -1,0 +1,33 @@
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+# Inputs Bazel tracks for cache invalidation — if none of these change,
+# both targets below are skipped entirely (cache hit).
+_SRCS = glob(
+    ["src/**", "pom.xml", "checkstyle.xml"],
+    exclude = ["target/**"],
+)
+
+# Runs the full Maven test suite.
+# Run with: bazel test //pipeline:test
+sh_test(
+    name = "test",
+    srcs = ["run_tests.sh"],
+    data = _SRCS,
+    tags = [],
+)
+
+# Generates the OpenAPI spec by starting the app and hitting /v3/api-docs.yaml.
+# Output is written to //apis/openapi-spec:pipeline-service.yaml.
+# Run with: bazel run //pipeline:generate-openapi
+genrule(
+    name = "generate-openapi",
+    srcs = _SRCS + ["run_generate_openapi.sh"],
+    outs = ["pipeline-service.yaml"],
+    cmd = """
+        $(location run_generate_openapi.sh)
+        cp apis/openapi-spec/pipeline-service.yaml $@
+    """,
+    local = True,
+    tags = ["manual"],
+)
+

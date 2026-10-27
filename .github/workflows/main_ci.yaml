@@ -6,27 +6,50 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  central-validation:
+  pipeline-service-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: ./.github/actions/setup-java
+        with:
+          java-version: "17"
+
+      - name: Setup Bazel
+        uses: ./.github/actions/setup-bazel
+        with:
+          cache-save: false
+
+      - name: Pipeline Service Validation
+        env:
+          WORKSPACE_DIR: ${{ github.workspace }}
+        run: bazel test //pipeline:test --test_output=all
+
+      - name: OpenAPI Contract Check
+        uses: ./.github/actions/openapi-changes
+        with:
+          base-ref: ${{ github.base_ref }}
+          service-src-dir: pipeline/src
+
+  pipeline-ui-validation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Pipeline Service Validation
-        id: pipeline-service-validation
-        uses: ./.github/actions/pipeline-service
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
         with:
-          base-ref: ${{github.base_ref}}
+          node-version: "22"
 
-      - name: Check for OpenAPI contract violation
-        id: is_openapi_contract_violated
-        uses: ./.github/actions/openapi-changes
+      - name: Setup Bazel
+        uses: ./.github/actions/setup-bazel
         with:
-          base-ref: ${{github.base_ref}}
-          has-pipeline-validations-executed: ${{steps.pipeline-service-validation.outputs.has_executed}}
-      
+          cache-save: false
+
       - name: Pipeline UI Validation
-        id: pipeline-ui-validation
-        uses: ./.github/actions/pipeline-ui
-        with:
-          base-ref: ${{github.base_ref}}
-          has-openapi-contract-changed: ${{steps.is_openapi_contract_violated.outputs.has_contract_changed}}
+        env:
+          WORKSPACE_DIR: ${{ github.workspace }}
+        run: bazel test //pipeline-ui:unit_test --test_output=all

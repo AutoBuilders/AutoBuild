@@ -1,0 +1,17 @@
+name: Setup Java
+description: Sets up JDK for building Java services
+
+inputs:
+  java-version:
+    required: true
+    description: Version of Java to set up
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: "temurin"
+        cache: maven
