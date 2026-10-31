@@ -9,7 +9,7 @@ function LandingPage() {
   return (
     <>
       <NavBar></NavBar>
-      <div className="flex flex-col p-10 max-w-screen min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="flex flex-col p-10 max-w-screen min-h-screen bg-[#F5F5F5] from-gray-50 to-white">
         <h1 className="text-3xl font-semibold mb-2">Hello</h1>
         <p className="text-xl text-gray-600 mb-10">Welcome!</p>
 
