@@ -32,8 +32,9 @@ describe("LandingPage", () => {
       </MemoryRouter>,
     );
 
-    const pipelineLink = screen.getByText("Pipelines");
-    await pipelineLink.click();
+    const pipelineLinks = screen.getAllByText("Pipelines");
+    const pipelineTile = pipelineLinks[pipelineLinks.length - 1];
+    await pipelineTile.click();
 
     // Assert navigate was called with the expected path
     expect(mockNavigate).toHaveBeenCalledWith("/pipelines");
@@ -46,10 +47,10 @@ describe("LandingPage", () => {
       </MemoryRouter>,
     );
 
-    const buildsLink = screen.getByText("Builds");
-    await buildsLink.click();
+    const buildsLinks = screen.getAllByText("Builds");
+    const buildsTile = buildsLinks[buildsLinks.length - 1];
+    await buildsTile.click();
 
-    // Since Builds uses window.location.href, we check that instead
-    expect(mockNavigate).toHaveBeenCalledWith("/pipelines");
+    expect(mockNavigate).toHaveBeenCalledWith("/builds");
   });
 });
