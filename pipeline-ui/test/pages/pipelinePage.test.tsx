@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
-import PipelinePage from "../../src/pages/PipelinePage/PipelinesListPage";
+import PipelinePage from "../../src/pages/PipelineListPage/PipelinesListPage";
 import { pipelineApiInstance } from "../../src/services/pipelines.api";
 
 //mocks for use Effect
