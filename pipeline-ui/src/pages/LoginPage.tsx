@@ -18,7 +18,8 @@ export default function LoginPage() {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     try {
       const { token } = await loginApi(username, password);
-      login(token);
+      void token;
+      login();
       navigate("/");
     } catch (err: any) {
       console.error(err);

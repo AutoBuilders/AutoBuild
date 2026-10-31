@@ -11,14 +11,12 @@ import type { UserInfo } from "../../types/user.types";
 
 
 export default function NavBar() {
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [user, setUser] = useState<UserInfo>();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 600);
     async function fetchUser() {
       try{
         const data = await idp.getUserInfo();
@@ -29,7 +27,6 @@ export default function NavBar() {
       }
     }
     fetchUser();
-    return () => clearTimeout(t);
   }, []);
 
   // Close popover when clicking outside
