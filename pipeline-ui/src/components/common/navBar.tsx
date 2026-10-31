@@ -62,6 +62,7 @@ export default function NavBar() {
     border-b border-[#E4E4E7]
     px-8
     grid grid-cols-3 items-center
+    shadow-sm
   "
     >
       {/* LEFT — Logo */}
