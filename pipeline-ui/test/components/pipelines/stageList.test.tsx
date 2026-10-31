@@ -118,8 +118,8 @@ describe("StageList", () => {
       expect(onStagesChange).toHaveBeenCalledTimes(1);
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(mockStages.length + 1);
-      // New stage is appended at the end with correct order
-      expect(updated[updated.length - 1].order).toBe(mockStages.length + 1);
+      // New stage is appended at the end
+      expect(updated[updated.length - 1].scriptType).toBe("SHELL");
     });
 
     it("clicking FloatingAddBox in empty state appends a stage", () => {
@@ -200,8 +200,7 @@ describe("StageList", () => {
       expect(onStagesChange).toHaveBeenCalledTimes(1);
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(mockStages.length + 1);
-      // New stage is at position 0 with order 1
-      expect(updated[0].order).toBe(1);
+      // New stage inserted before all existing stages
       expect(updated[0].scriptType).toBe("SHELL");
     });
 

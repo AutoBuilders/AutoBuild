@@ -1,40 +1,40 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import BuildStageList from "../../../src/components/builds/buildsStageList";
-import type { StageBuilds } from "../../../src/types/pipeline.types";
+import type { StageBuild } from "../../../src/gen/api";
 
 describe("BuildStageList", () => {
   const mockOnSelect = vi.fn();
 
-  const mockStages: StageBuilds[] = [
+  const mockStages: StageBuild[] = [
     {
-      id: 1,
+      id: "1",
       stageName: "Build Stage",
-      stageId: 101,
+      stageId: "101",
       currentState: "SUCCESS",
     },
     {
-      id: 2,
+      id: "2",
       stageName: "Test Stage",
-      stageId: 102,
+      stageId: "102",
       currentState: "FAILED",
     },
     {
-      id: 3,
+      id: "3",
       stageName: "Deploy Stage",
-      stageId: 103,
+      stageId: "103",
       currentState: "RUNNING",
     },
     {
-      id: 4,
+      id: "4",
       stageName: "Verify Stage",
-      stageId: 104,
+      stageId: "104",
       currentState: "STOPPED",
     },
     {
-      id: 5,
+      id: "5",
       stageName: "Cleanup Stage",
-      stageId: 105,
+      stageId: "105",
       currentState: "WAITING",
     },
   ];
@@ -48,7 +48,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -60,7 +60,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -74,7 +74,7 @@ describe("BuildStageList", () => {
 
     it("renders empty list when no stages provided", () => {
       render(
-        <BuildStageList stages={[]} selectedId={1} onSelect={mockOnSelect} />,
+        <BuildStageList stages={[]} selectedId="1" onSelect={mockOnSelect} />,
       );
 
       expect(screen.getByText("Stages")).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -100,7 +100,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={2}
+          selectedId="2"
           onSelect={mockOnSelect}
         />,
       );
@@ -113,7 +113,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={2}
+          selectedId="2"
           onSelect={mockOnSelect}
         />,
       );
@@ -129,7 +129,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -138,14 +138,14 @@ describe("BuildStageList", () => {
       fireEvent.click(testStageButton);
 
       expect(mockOnSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnSelect).toHaveBeenCalledWith(2);
+      expect(mockOnSelect).toHaveBeenCalledWith("2");
     });
 
     it("calls onSelect with different stage ids on multiple clicks", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -155,9 +155,9 @@ describe("BuildStageList", () => {
       fireEvent.click(screen.getByText("Cleanup Stage"));
 
       expect(mockOnSelect).toHaveBeenCalledTimes(3);
-      expect(mockOnSelect).toHaveBeenNthCalledWith(1, 1);
-      expect(mockOnSelect).toHaveBeenNthCalledWith(2, 3);
-      expect(mockOnSelect).toHaveBeenNthCalledWith(3, 5);
+      expect(mockOnSelect).toHaveBeenNthCalledWith(1, "1");
+      expect(mockOnSelect).toHaveBeenNthCalledWith(2, "3");
+      expect(mockOnSelect).toHaveBeenNthCalledWith(3, "5");
     });
   });
 
@@ -166,7 +166,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -184,7 +184,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={2}
+          selectedId="2"
           onSelect={mockOnSelect}
         />,
       );
@@ -200,7 +200,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={3}
+          selectedId="3"
           onSelect={mockOnSelect}
         />,
       );
@@ -218,7 +218,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={4}
+          selectedId="4"
           onSelect={mockOnSelect}
         />,
       );
@@ -236,7 +236,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={5}
+          selectedId="5"
           onSelect={mockOnSelect}
         />,
       );
@@ -251,16 +251,16 @@ describe("BuildStageList", () => {
     });
 
     it("renders correct icon based on currentState", () => {
-      const stagesWithDifferentStates: StageBuilds[] = [
-        { id: 1, stageName: "Stage 1", stageId: 1, currentState: "SUCCESS" },
-        { id: 2, stageName: "Stage 2", stageId: 2, currentState: "FAILED" },
-        { id: 3, stageName: "Stage 3", stageId: 3, currentState: "STOPPED" },
+      const stagesWithDifferentStates: StageBuild[] = [
+        { id: "1", stageName: "Stage 1", stageId: "1", currentState: "SUCCESS" },
+        { id: "2", stageName: "Stage 2", stageId: "2", currentState: "FAILED" },
+        { id: "3", stageName: "Stage 3", stageId: "3", currentState: "STOPPED" },
       ];
 
       render(
         <BuildStageList
           stages={stagesWithDifferentStates}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -277,11 +277,11 @@ describe("BuildStageList", () => {
 
   describe("Edge Cases", () => {
     it("handles single stage", () => {
-      const singleStage: StageBuilds[] = [
+      const singleStage: StageBuild[] = [
         {
-          id: 1,
+          id: "1",
           stageName: "Only Stage",
-          stageId: 101,
+          stageId: "101",
           currentState: "SUCCESS",
         },
       ];
@@ -289,7 +289,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={singleStage}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -299,12 +299,12 @@ describe("BuildStageList", () => {
     });
 
     it("handles very long stage names", () => {
-      const longNameStage: StageBuilds[] = [
+      const longNameStage: StageBuild[] = [
         {
-          id: 1,
+          id: "1",
           stageName:
             "This is a very long stage name that might overflow the container and cause layout issues",
-          stageId: 101,
+          stageId: "101",
           currentState: "SUCCESS",
         },
       ];
@@ -312,7 +312,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={longNameStage}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );
@@ -324,11 +324,11 @@ describe("BuildStageList", () => {
       ).toBeInTheDocument();
     });
 
-    it("handles negative selectedId (no selection)", () => {
+    it("handles unknown selectedId (no selection highlighted)", () => {
       render(
         <BuildStageList
           stages={mockStages}
-          selectedId={-1}
+          selectedId="999"
           onSelect={mockOnSelect}
         />,
       );
@@ -341,17 +341,17 @@ describe("BuildStageList", () => {
     });
 
     it("handles stages with special characters in names", () => {
-      const specialCharStages: StageBuilds[] = [
+      const specialCharStages: StageBuild[] = [
         {
-          id: 1,
+          id: "1",
           stageName: "Build & Test",
-          stageId: 101,
+          stageId: "101",
           currentState: "SUCCESS",
         },
         {
-          id: 2,
+          id: "2",
           stageName: "Deploy (Production)",
-          stageId: 102,
+          stageId: "102",
           currentState: "RUNNING",
         },
       ];
@@ -359,7 +359,7 @@ describe("BuildStageList", () => {
       render(
         <BuildStageList
           stages={specialCharStages}
-          selectedId={1}
+          selectedId="1"
           onSelect={mockOnSelect}
         />,
       );

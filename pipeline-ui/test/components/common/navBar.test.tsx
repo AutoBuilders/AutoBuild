@@ -128,7 +128,6 @@ describe("NavBar", () => {
 
   describe("User Profile - Fetching User Data", () => {
     it("fetches user data when token exists", async () => {
-      const token = "test-token-123";
       vi.mocked(idp.getUserInfo).mockResolvedValue(mockUser);
 
       renderNavBar();
