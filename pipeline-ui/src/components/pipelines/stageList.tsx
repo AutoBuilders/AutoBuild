@@ -1,147 +1,187 @@
-import type {
-  Stage 
-} from "../../gen/api";
-import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { useRef, useState } from "react";
+import type { Stage } from "../../gen/api";
+import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages } from "./stageListComponents";
 
 interface Props {
   stages: Stage[];
-  selectedId: string;
-  onSelect: (id: string) => void;
   canEdit: boolean;
-  onAddStage: () => void;
-  onDeleteStage: (id: string) => void;
-  onMoveStageUp: (id: string) => void;
-  onMoveStageDown: (id: string) => void;
+  onStagesChange: (stages: Stage[]) => void;
 }
 
-export default function StageList({
-  stages,
-  selectedId,
-  onSelect,
-  canEdit,
-  onAddStage,
-  onDeleteStage,
-  onMoveStageUp,
-  onMoveStageDown,
-}: Props) {
-  return (
-    <div className="w-30 border-r pr-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Stages</h2>
+export default function StageList({ stages, canEdit, onStagesChange }: Props) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
-        {/* {canEdit && (
-          <button
-            onClick={onAddStage}
-            className="h-10 w-10 rounded-full flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow"
-          >
-            <Plus size={16} />
-          </button>
-        )} */}
-      </div>
+  // drag-to-reorder
+  const dragIdx = useRef<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
-      <div className="space-y-3">
-        {stages.map((stage, index) => {
-          const isSelected = selectedId === stage.id;
+  // drag-to-add new
+  const [isDraggingNew, setIsDraggingNew] = useState(false);
+  const [newDropIdx, setNewDropIdx] = useState<number | null>(null);
 
-          if (!canEdit) {
-            return (
-              <div
-                key={stage.id}
-                onClick={() => onSelect(stage.id as string)}
-                className={`
-        w-10 h-10 rounded-full cursor-pointer text-sm font-medium
-        border transition-all duration-200 select-none
-        ${
-          isSelected
-            ? "bg-blue-600 text-white border-blue-700 shadow-md shadow-blue-200 scale-[1.02]"
-            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
-        }
-      `}
-              ></div>
-            );
-          }
+  function toggleExpand(id: string) {
+    setExpandedId((prev) => (prev === id ? null : id));
+  }
 
-          return (
-            <div
-              key={stage.id}
-              onClick={() => onSelect(stage.id as string)}
-              className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                isSelected
-                  ? "bg-blue-50 border-blue-400 shadow-sm"
-                  : "bg-white hover:bg-gray-50"
-              }`}
-            >
-              <div
-                className="flex justify-between items-center"
-                data-testid="TestStage"
-              >
-                <div>
-                  <p className="font-medium text-lg">{stage.name}</p>
-                </div>
+  function updateStage(updated: Stage) {
+    onStagesChange(stages.map((s) => (s.id === updated.id ? updated : s)));
+  }
 
-                {canEdit && (
-                  <div className="flex flex-col gap-2 ml-4">
-                    {/* Move Up */}
-                    <button
-                      data-testid="MoveUp"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onMoveStageUp(stage.id as string);
-                      }}
-                      disabled={index === 0}
-                      className="p-1 rounded hover:bg-gray-200 disabled:opacity-30"
-                    >
-                      <ArrowUp size={16} />
-                    </button>
+  function deleteStage(id: string) {
+    onStagesChange(stages.filter((s) => s.id !== id));
+    if (expandedId === id) setExpandedId(null);
+  }
 
-                    {/* Move Down */}
-                    <button
-                      data-testid="MoveDown"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onMoveStageDown(stage.id as string);
-                      }}
-                      disabled={index === stages.length - 1}
-                      className="p-1 rounded hover:bg-gray-200 disabled:opacity-30"
-                    >
-                      <ArrowDown size={16} />
-                    </button>
+  function addStageAtEnd() {
+    const newStage: Stage = {
+      id: crypto.randomUUID(),
+      name: "",
+      scriptType: "SHELL",
+      command: "",
+    };
+    onStagesChange([...stages, newStage].map((s, i) => ({ ...s, order: i + 1 })));
+    setExpandedId((newStage as any).id);
+  }
 
-                    {/* Delete */}
-                    <button
-                      data-testid="StageDelete"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteStage(stage.id as string);
-                      }}
-                      className="p-1 rounded hover:bg-red-100 text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+  // Reorder handlers
+  function handleStageDragStart(idx: number) {
+    dragIdx.current = idx;
+  }
 
+  // When dragging over a stage, we set the dragOverIdx to the index of that stage.
+  function handleStageDragOver(e: React.DragEvent, idx: number) {
+    if (isDraggingNew) return;
+    e.preventDefault();
+    setDragOverIdx(idx);
+  }
+
+  // When the drag ends, we check if the dragged stage was moved to a new position. If so, we reorder the stages and call onStagesChange with the new order.
+  function handleStageDragEnd() {
+    if (dragIdx.current !== null && dragOverIdx !== null && dragIdx.current !== dragOverIdx) {
+      const next = [...stages];
+      const [moved] = next.splice(dragIdx.current, 1);
+      next.splice(dragOverIdx, 0, moved);
+      onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+    }
+    dragIdx.current = null;
+    setDragOverIdx(null);
+  }
+
+  // New stage drag handlers
+  function handleNewDragStart() {
+    setIsDraggingNew(true);
+  }
+
+  // When the drag ends, if the newDropIdx is not null, we create a new stage and insert it at the newDropIdx position. 
+  // We then call onStagesChange with the updated stages and reset the dragging state.
+  function handleNewDragEnd() {
+    if (newDropIdx !== null) {
+      const newStage: Stage = {
+        id: crypto.randomUUID(),
+        name: "",
+        scriptType: "SHELL",
+        command: "",
+      };
+      const next = [...stages];
+      next.splice(newDropIdx, 0, newStage);
+      onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+      setExpandedId((newStage as any).id);
+    }
+    setIsDraggingNew(false);
+    setNewDropIdx(null);
+  }
+
+  // When dragging over a drop zone, we set the newDropIdx to the index of that drop zone.
+  function handleDropZoneDragOver(e: React.DragEvent, insertIdx: number) {
+    e.preventDefault();
+    if (isDraggingNew) setNewDropIdx(insertIdx);
+  }
+
+  //
+  function handleDropZoneDrop(insertIdx: number) {
+    if (!isDraggingNew) return;
+    const newStage: Stage = {
+      id: crypto.randomUUID(),
+      name: "",
+      scriptType: "SHELL",
+      command: "",
+    };
+    const next = [...stages];
+    next.splice(insertIdx, 0, newStage);
+    onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+    setExpandedId((newStage as any).id);
+    setIsDraggingNew(false);
+    setNewDropIdx(null);
+  }
+
+  // Empty state
+  if (stages.length === 0) {
+    return (
+      <>
+        <div
+          onDragOver={(e) => { e.preventDefault(); if (isDraggingNew) setNewDropIdx(0); }}
+          onDrop={() => handleDropZoneDrop(0)}
+        >
+          <EmptyStages canEdit={canEdit} dragTarget={isDraggingNew && newDropIdx === 0} />
+        </div>
         {canEdit && (
-          <div className="flex justify-center mt-6">
-            <button
-              data-testid="Plus"
-              onClick={onAddStage}
-              className="h-10 w-10 rounded-full flex items-center justify-center 
-                   bg-blue-600 text-white hover:bg-blue-700 transition-all shadow"
-            >
-              <Plus size={20} />
-            </button>
-          </div>
+          <FloatingAddBox onDragStart={handleNewDragStart} onDragEnd={handleNewDragEnd} onClick={addStageAtEnd} />
         )}
+      </>
+    );
+  }
 
-        {stages.length === 0 && (
-          <p className="text-gray-500 text-sm">No stages yet.</p>
+  return (
+    <>
+      <div className="flex items-start overflow-x-auto pb-4">
+        {canEdit ? (
+          <>
+            <DropZone
+              active={isDraggingNew && newDropIdx === 0}
+              onDragOver={(e) => handleDropZoneDragOver(e, 0)}
+              onDrop={() => handleDropZoneDrop(0)}
+            />
+            {stages.map((stage, idx) => (
+              <div key={stage.id} className="flex items-start shrink-0">
+                <EditableStageCard
+                  stage={stage}
+                  order={idx + 1}
+                  expanded={expandedId === stage.id}
+                  dragOver={dragOverIdx === idx && dragIdx.current !== null && dragIdx.current !== idx}
+                  onToggle={() => toggleExpand(stage.id as string)}
+                  onChange={updateStage}
+                  onDelete={() => deleteStage(stage.id as string)}
+                  onDragStart={() => handleStageDragStart(idx)}
+                  onDragOver={(e) => handleStageDragOver(e, idx)}
+                  onDragEnd={handleStageDragEnd}
+                />
+                <Connector faded={isDraggingNew} />
+                <DropZone
+                  active={isDraggingNew && newDropIdx === idx + 1}
+                  onDragOver={(e) => handleDropZoneDragOver(e, idx + 1)}
+                  onDrop={() => handleDropZoneDrop(idx + 1)}
+                />
+              </div>
+            ))}
+          </>
+        ) : (
+          stages.map((stage, idx) => (
+            <div key={stage.id} className="flex items-start shrink-0">
+              <StageCard
+                stage={stage}
+                order={idx + 1}
+                expanded={expandedId === stage.id}
+                onToggle={() => toggleExpand(stage.id as string)}
+              />
+              {idx < stages.length - 1 && <Connector />}
+            </div>
+          ))
         )}
       </div>
-    </div>
+
+      {canEdit && (
+        <FloatingAddBox onDragStart={handleNewDragStart} onDragEnd={handleNewDragEnd} onClick={addStageAtEnd} />
+      )}
+    </>
   );
 }
