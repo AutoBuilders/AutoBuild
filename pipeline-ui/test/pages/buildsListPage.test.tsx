@@ -101,7 +101,7 @@ describe("BuildsListPage", () => {
     expect(build2).toBeInTheDocument();
 
     // Type in the search input
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search builds...");
     fireEvent.change(searchInput, { target: { value: "Pipeline 1" } });
 
     // Wait for the filtering to take effect

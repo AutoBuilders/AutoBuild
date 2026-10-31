@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SearchBar } from "../../components/pipelines/searchBar";
+import { SearchBar } from "../../components/common/searchBar";
 import { pipelineBuildApiInstance } from "../../services/pipelines.api";
 import BuildsTable from "../../components/builds/buildsTable";
 import { useParams } from "react-router-dom";
@@ -37,7 +37,7 @@ export default function BuildsListPage() {
           <h1 className="text-2xl font-bold text-center">MY BUILDS</h1>
 
           <div className="flex justify-between items-center mt-10">
-            <SearchBar value={search} onChange={setSearch} />
+            <SearchBar page="builds" value={search} onChange={setSearch} />
           </div>
 
           <BuildsTable data={filtered} />

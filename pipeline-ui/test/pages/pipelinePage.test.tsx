@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
-import PipelinePage from "../../src/pages/PipelinePage/PipelinePage";
+import PipelinePage from "../../src/pages/PipelinePage/PipelinesListPage";
 import { pipelineApiInstance } from "../../src/services/pipelines.api";
 
 //mocks for use Effect
@@ -35,7 +35,7 @@ describe("PipelinePage", () => {
         <PipelinePage />
       </MemoryRouter>,
     );
-    expect(screen.getByText("MY PIPELINES")).toBeInTheDocument();
+    expect(screen.getByText("My Pipelines")).toBeInTheDocument();
     expect(screen.getByText("Create")).toBeInTheDocument();
   });
 
@@ -85,7 +85,7 @@ describe("PipelinePage", () => {
     await screen.findByText("Pipeline 2");
     await screen.findByText("Test Pipeline");
 
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search pipelines...");
 
     // Simulate typing "Pipeline 1" in the search input
     fireEvent.change(searchInput, { target: { value: "Pipeline 1" } });
@@ -118,7 +118,7 @@ describe("PipelinePage", () => {
     // Wait for pipelines to load
     await screen.findByText("Pipeline 1");
 
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search pipelines...");
 
     // Search for "test" (lowercase) to match "Test Pipeline"
     fireEvent.change(searchInput, { target: { value: "test" } });
@@ -150,7 +150,7 @@ describe("PipelinePage", () => {
     // Wait for pipelines to load
     await screen.findByText("Pipeline 1");
 
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search pipelines...");
 
     // Search for something that doesn't match
     fireEvent.change(searchInput, { target: { value: "NonExistent" } });
@@ -181,7 +181,7 @@ describe("PipelinePage", () => {
     // Wait for pipelines to load
     await screen.findByText("Pipeline 1");
 
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search pipelines...");
 
     // First filter to show only Pipeline 1
     fireEvent.change(searchInput, { target: { value: "Pipeline 1" } });
