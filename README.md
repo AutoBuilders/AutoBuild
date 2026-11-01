@@ -29,7 +29,7 @@ AutoBuild is platform to build your CI/CD pipelines at ease.
 - **DevOps:**
     - Github Actions
 
-![tech stack](./autobuild-docs/architecture/drawio/img/techstack.svg)
+![tech stack](./autobuild-docs/architecture/drawio/img/architecture-v2.svg)
 
 ## Design Tools:
 1. [Figma](https://www.figma.com/design/2Uv5PkfkJ2xkceuN9gf75z/Untitled?t=kS7SzIYWNZSZ6t2r-0): Figma Link
