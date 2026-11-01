@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -153,5 +154,50 @@ public class LocalPipelineFileServiceImplTest {
         String content = pipelineFileService.readStageScriptFile(stage);
         assert content.isEmpty();
         filesMockedStatic.verify(() -> Files.readAllLines(any(Path.class)), times(0));
+    }
+
+    @Test
+    public void testReadStageScriptFileNullStage() throws IOException {
+        String content = pipelineFileService.readStageScriptFile((Stage) null);
+        assert content.isEmpty();
+        filesMockedStatic.verify(() -> Files.readAllLines(any(Path.class)), times(0));
+    }
+
+    @Test
+    public void testReadStageBuildLogFileNullStageThrows() {
+        try {
+            pipelineFileService.readStageBuildLogFile(null);
+            assert false : "Expected IllegalArgumentException";
+        } catch (IllegalArgumentException | IOException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testCreateStageScriptFileWhenPipelineDirectoryExists() throws IOException {
+        // Override exists to return true so the createDirectories branch for pipeline dir is skipped
+        filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
+
+        StageDTO newStage = pipelineDTO.getStages().get(0);
+        String path = pipelineFileService.createStageScriptFile(pipeline, newStage);
+
+        // Parent directory exists – createDirectories should NOT be called
+        filesMockedStatic.verify(() -> Files.createDirectories(any(Path.class), any(FileAttribute.class)), times(0));
+        filesMockedStatic.verify(() -> Files.createFile(any(Path.class), any(FileAttribute.class)), times(1));
+        assert path != null && !path.isBlank();
+    }
+
+    @Test
+    public void testCreateLogFileWhenLogsDirectoryExists() throws IOException {
+        filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(true);
+
+        UUID pipelineBuildId = UUID.randomUUID();
+        UUID stageBuildId = UUID.randomUUID();
+        String logPath = pipelineFileService.createLogFile(pipelineBuildId, stageBuildId);
+
+        // Both parent and build-logs directory already exist – no createDirectories
+        filesMockedStatic.verify(() -> Files.createDirectories(any(Path.class), any(FileAttribute.class)), times(0));
+        filesMockedStatic.verify(() -> Files.createFile(any(Path.class), any(FileAttribute.class)), times(1));
+        assert logPath != null && !logPath.isBlank();
     }
 }
