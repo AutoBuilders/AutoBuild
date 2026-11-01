@@ -14,20 +14,8 @@ AutoBuild is platform to build your CI/CD pipelines at ease.
     1. Application must respond back an acknowledgement within 10 second after receiving a VCS event (Especially for GitHub as mentioned [here](https://docs.github.com/en/webhooks/using-webhooks/handling-webhook-deliveries#javascript-example)).
 
 ## Technology Stack:
-- **Frontend:**
-    - React
-    - HTML, CSS, JavaScript
-- **Backend:**
-    - **Business Logic:**
-        - Java, SpringBoot
-    - **Virtualization:**
-        - Docker
-    - **Message Brocker:**
-        - RabbitMQ
-- **Database:**
-    - MySQL
-- **DevOps:**
-    - Github Actions
+
+The desired architecture is depicted below,
 
 ![tech stack](./autobuild-docs/architecture/drawio/img/architecture-v2.svg)
 
