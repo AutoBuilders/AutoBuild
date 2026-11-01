@@ -68,6 +68,9 @@ services:
     networks:
       - app
   pipeline-app:
+    build:
+      context: ./pipeline
+      dockerfile: Dockerfile
     image: pipeline-app
     container_name: pipeline-app
     environment:
@@ -82,8 +85,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - pipeline_scripts:/app/pipeline_scripts
-      - pipeline_build_logs:/app/pipeline_build_logs
+      - pipeline_scripts:/pipeline_scripts
+      - pipeline_build_logs:/pipeline_build_logs
     networks:
       - app
     depends_on:
@@ -93,3 +96,27 @@ services:
         condition: service_healthy
       flagd:
         condition: service_started
+  pipeline-ui:
+    build:
+      context: .
+      dockerfile: pipeline-ui/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8080/api/v1
+        VITE_IDP: keycloak
+        VITE_KC_URL: http://localhost:8180
+        VITE_KC_REALM: SpringBootRealm
+        VITE_KC_CLIENTID: pipeline-app
+    image: pipeline-ui
+    container_name: pipeline-ui
+    ports:
+      - "3000:80"
+    networks:
+      - app
+    depends_on:
+      pipeline-app:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
