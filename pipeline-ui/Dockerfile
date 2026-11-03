@@ -9,11 +9,11 @@ RUN npm ci
 COPY pipeline-ui/ .
 COPY apis/openapi-spec/ /apis/openapi-spec/
 RUN npm run generate:client-code
-ARG VITE_API_BASE_URL=http://localhost:8080/api/v1
-ARG VITE_IDP=keycloak
-ARG VITE_KC_URL=http://localhost:8180
-ARG VITE_KC_REALM=SpringBootRealm
-ARG VITE_KC_CLIENTID=pipeline-app
+ARG VITE_API_BASE_URL
+ARG VITE_IDP
+ARG VITE_KC_URL
+ARG VITE_KC_REALM
+ARG VITE_KC_CLIENTID
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_IDP=$VITE_IDP
 ENV VITE_KC_URL=$VITE_KC_URL

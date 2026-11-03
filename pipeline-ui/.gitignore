@@ -25,5 +25,3 @@ coverage/*
 *.sw?
 
 # Generated files
-src/gen
-
