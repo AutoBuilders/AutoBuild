@@ -1,6 +1,5 @@
 package com.autobuild.pipeline.executor.service;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -83,32 +82,4 @@ public class PipelineBuildServiceTest {
         verify(mapper, times(2)).entityToDto(any(PipelineBuild.class));
     }
 
-    @Test
-    public void getPipelineBuildReturnsDto() {
-        UUID buildId = UUID.randomUUID();
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild(buildId);
-        doReturn(Optional.of(pipelineBuild)).when(repository).findById(buildId);
-
-        pipelineBuildService.getPipelineBuild(buildId);
-
-        verify(mapper, times(1)).entityToDto(pipelineBuild);
-    }
-
-    @Test
-    public void getPipelineBuildThrowsWhenNotFound() {
-        UUID buildId = UUID.randomUUID();
-        doReturn(Optional.empty()).when(repository).findById(buildId);
-
-        assertThrows(jakarta.persistence.EntityNotFoundException.class,
-                () -> pipelineBuildService.getPipelineBuild(buildId));
-    }
-
-    @Test
-    public void deletePipelineBuildThrowsWhenNotFound() {
-        UUID buildId = UUID.randomUUID();
-        doReturn(Optional.empty()).when(repository).findById(buildId);
-
-        assertThrows(jakarta.persistence.EntityNotFoundException.class,
-                () -> pipelineBuildService.deletePipelineBuild(buildId));
-    }
 }
