@@ -81,5 +81,4 @@ public class PipelineBuildServiceTest {
 
         verify(mapper, times(2)).entityToDto(any(PipelineBuild.class));
     }
-
 }
