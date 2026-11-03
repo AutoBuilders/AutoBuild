@@ -4,19 +4,14 @@
 FROM maven:3.8.3-openjdk-17 AS build
 WORKDIR /home/app
 COPY pom.xml .
-RUN mvn dependency:go-offline -Pmonitoring -q
 COPY src ./src
-RUN mvn clean package -DskipTests -Pmonitoring
+RUN mvn clean package -DskipTests
 
 #
 # Runtime stage
 #
-FROM eclipse-temurin:17-jre-jammy
-RUN groupadd --system appgroup && useradd --system --gid appgroup appuser
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-COPY --from=build /home/app/target/pipeline*.jar app.jar
-COPY --from=build /home/app/target/agents/*.jar otel-agent.jar
-RUN chown -R appuser:appgroup /app
-USER appuser
+COPY --from=build /home/app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-javaagent:otel-agent.jar", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

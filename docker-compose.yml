@@ -67,12 +67,6 @@ services:
       - "8016:8016"
     networks:
       - app
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8014/healthz || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-      start_period: 10s
   pipeline-app:
     build:
       context: ./pipeline
@@ -91,8 +85,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - pipeline_scripts:/pipeline_scripts
-      - pipeline_build_logs:/pipeline_build_logs
+      - pipeline_scripts:/app/pipeline_scripts
+      - pipeline_build_logs:/app/pipeline_build_logs
     networks:
       - app
     depends_on:
@@ -101,7 +95,7 @@ services:
       auth-service:
         condition: service_healthy
       flagd:
-        condition: service_healthy
+        condition: service_started
   pipeline-ui:
     build:
       context: ./pipeline-ui
