@@ -14,6 +14,7 @@ import (
 )
 
 func executePipeline(w http.ResponseWriter, r *http.Request) {
+	// Parse the DTO
 	var pipelineDTO dto.PipelineDTO
 
 	err := json.NewDecoder(r.Body).Decode(&pipelineDTO)
@@ -24,6 +25,8 @@ func executePipeline(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(pipelineDTO) // TODO: Remove as not required now
 
 	w.Header().Set("Content-Type", "application/json")
+
+	//setup dagger client
 	ctx := context.Background()
 	// 1. Initialize the Dagger client
 	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
@@ -32,44 +35,50 @@ func executePipeline(w http.ResponseWriter, r *http.Request) {
 	}
 	defer client.Close()
 
-
 	fmt.Println("Executing Pipeline ", pipelineDTO.Name)
 
+	// define dagger container
 	container := client.Container().From("alpine").WithWorkdir("/src")
 
+	// var pipelineBuildDTO dto.PipelineBuildDTO
+	pipelineBuildDTO := dto.PipelineBuildDTO{
+		PipelineId: pipelineDTO.Id,
+		CurrentState: dto.PipelineRunning,
+		StageBuilds: []dto.StageBuildDTO{},
+	}
+
+	fmt.Println("Pipeline Build state: ", pipelineBuildDTO.CurrentState)
+	// execute per stage in the container
 	for _ , stage := range pipelineDTO.Stages {
 		fmt.Println("Executing Stage ", stage.Name)
-		// container = container.WithExec([]string{"sh", "-c", stage.Command}) // TODO: expect a splitted command
+		stageBuildDTO := dto.StageBuildDTO {
+			StageId: stage.Id,
+			CurrentState: dto.StageRunning,
+		}
+
 		scriptPath := fmt.Sprintf("/tmp/script_%s.sh", stage.Name)
 		container = container.WithNewFile(scriptPath, stage.Command, dagger.ContainerWithNewFileOpts{
 			Permissions: 0755,
 		}).WithExec([]string{"sh", scriptPath})
+
+		output, err := container.Stdout(ctx)
+		if err != nil {
+			log.Printf("Pipeline execution failed: %v", err)
+			stageBuildDTO.CurrentState = dto.StageFailed
+			pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
+			pipelineBuildDTO.CurrentState = dto.PipelineFailed
+			http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
+			return
+		}
+
+		stageBuildDTO.CurrentState = dto.StageSuccess
+		pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
+		fmt.Println("Stage build output", output)
+		fmt.Println("Build snapshot: ", pipelineBuildDTO)
 	}
 
-	output, err := container.Stdout(ctx)
-	if err != nil {
-		log.Printf("Pipeline execution failed: %v", err)
-		http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
-		return
-	}
-
-	// 2. Fetch the host repository (where the user's code lives)
-	// In your real platform, this could come from a Git clone instead of the local host
-	// src := client.Host().Directory(".")
-	//
-	// output, err := client.Container().
-	// 	From("alpine").
-	// 	WithDirectory("/src", src).
-	// 	WithWorkdir("/src").
-	// 	WithExec([]string{"ls", "-la"}).
-	// 	Stdout(ctx)
-	// if err != nil {
-	// 	log.Printf("Pipeline execution failed: %v", err)
-	// 	http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
-	// 	return
-	// }
-
-	fmt.Println(output)
+	pipelineBuildDTO.CurrentState = dto.PipelineSuccess
+	fmt.Println("Final Build snapshot: ", pipelineBuildDTO)
 	fmt.Fprintln(w, `{"status": "Running Pipeline"}`)
 }
 
