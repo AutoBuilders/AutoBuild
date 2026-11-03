@@ -2,13 +2,10 @@
 # Build stage
 #
 FROM node:22-alpine AS build
-RUN apk add --no-cache openjdk17-jre-headless
 WORKDIR /app
-COPY pipeline-ui/package*.json ./
+COPY package*.json ./
 RUN npm ci
-COPY pipeline-ui/ .
-COPY apis/openapi-spec/ /apis/openapi-spec/
-RUN npm run generate:client-code
+COPY . .
 ARG VITE_API_BASE_URL
 ARG VITE_IDP
 ARG VITE_KC_URL
@@ -22,13 +19,11 @@ ENV VITE_KC_CLIENTID=$VITE_KC_CLIENTID
 RUN npm run build
 
 #
-# Runtime stage
+# Serve stage
 #
-FROM nginx:alpine
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY pipeline-ui/nginx.conf /etc/nginx/conf.d/default.conf
-RUN chown -R appuser:appgroup /usr/share/nginx/html \
-    && chmod -R 755 /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM node:22-alpine
+RUN npm install -g serve
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
