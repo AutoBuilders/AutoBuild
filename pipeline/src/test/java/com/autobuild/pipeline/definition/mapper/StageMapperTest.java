@@ -14,7 +14,7 @@ import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 @SpringJUnitConfig
-@ContextConfiguration(classes = {StageMapper.class})
+@ContextConfiguration(classes = { StageMapper.class })
 public class StageMapperTest {
 
     private StageEntity stage = DummyData.getStage();

@@ -67,29 +67,22 @@ public class PipelineServiceTest {
 
         doAnswer(inv -> {
             PipelineEntity p = inv.getArgument(0);
-            List<Stage> stages = p.getStages().stream().map(s ->
-                Stage.newBuilder()
-                    .setId(s.getId().toString())
-                    .setName(s.getName())
-                    .setScriptType(s.getScriptType())
-                    .setCommand("")
-                    .build()
-            ).collect(Collectors.toList());
-            return Pipeline.newBuilder()
-                .setId(p.getId().toString())
-                .setName(p.getName())
-                .addAllStages(stages)
-                .build();
+            List<Stage> stages = p.getStages().stream().map(s -> Stage.newBuilder().setId(s.getId().toString())
+                    .setName(s.getName()).setScriptType(s.getScriptType()).setCommand("").build())
+                    .collect(Collectors.toList());
+            return Pipeline.newBuilder().setId(p.getId().toString()).setName(p.getName()).addAllStages(stages).build();
         }).when(mapper).entityToDto(any(PipelineEntity.class));
 
         doAnswer(inv -> {
             Pipeline dto = inv.getArgument(0);
             PipelineEntity p = new PipelineEntity();
-            if (!dto.getId().isBlank()) p.setId(UUID.fromString(dto.getId()));
+            if (!dto.getId().isBlank())
+                p.setId(UUID.fromString(dto.getId()));
             p.setName(dto.getName());
             p.setStages(dto.getStagesList().stream().map(st -> {
                 StageEntity s = new StageEntity();
-                if (!st.getId().isBlank()) s.setId(UUID.fromString(st.getId()));
+                if (!st.getId().isBlank())
+                    s.setId(UUID.fromString(st.getId()));
                 s.setName(st.getName());
                 s.setScriptType(st.getScriptType());
                 return s;
@@ -100,7 +93,8 @@ public class PipelineServiceTest {
         doAnswer(inv -> {
             Stage sd = inv.getArgument(0);
             StageEntity s = new StageEntity();
-            if (!sd.getId().isBlank()) s.setId(UUID.fromString(sd.getId()));
+            if (!sd.getId().isBlank())
+                s.setId(UUID.fromString(sd.getId()));
             s.setName(sd.getName());
             s.setScriptType(sd.getScriptType());
             return s;
@@ -117,8 +111,7 @@ public class PipelineServiceTest {
     @Test
     public void testGetPipelineByIdWithInvalidId() {
         try (MockedStatic<UUID> uuid = mockStatic(UUID.class)) {
-            uuid.when(() -> UUID.fromString(anyString()))
-                    .thenThrow(new IllegalArgumentException("bad"));
+            uuid.when(() -> UUID.fromString(anyString())).thenThrow(new IllegalArgumentException("bad"));
             assertThrows(InvalidIdException.class, () -> service.getPipelineById("not-a-uuid"));
         }
     }
@@ -162,16 +155,14 @@ public class PipelineServiceTest {
         String otherName = pipeline.getStages().get(1).getName();
         Stage update = Stage.newBuilder().setId(target.getId().toString()).setName(otherName).build();
         Pipeline request = Pipeline.newBuilder().addAllStages(List.of(update)).build();
-        assertThrows(DuplicateEntryException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), request));
+        assertThrows(DuplicateEntryException.class, () -> service.modifyPipeline(pipeline.getId().toString(), request));
     }
 
     @Test
     public void testModifyPipelineStagesEmptyList() {
         ensurePipelineId();
         Pipeline request = Pipeline.newBuilder().build();
-        assertThrows(InvalidIdException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), request));
+        assertThrows(InvalidIdException.class, () -> service.modifyPipeline(pipeline.getId().toString(), request));
     }
 
     private void ensurePipelineId() {
@@ -182,12 +173,11 @@ public class PipelineServiceTest {
 
     @Test
     public void testCreatePipelineAllowsDuplicateStageNames() throws Exception {
-        Pipeline dto = Pipeline.newBuilder()
-            .setName("pipe-two")
-            .addAllStages(List.of(
-                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
-                Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo build2").build()))
-            .build();
+        Pipeline dto = Pipeline.newBuilder().setName("pipe-two")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
+                        Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo build2").build()))
+                .build();
         doReturn(false).when(repository).existsByName("pipe-two");
         doAnswer(inv -> {
             PipelineEntity p = inv.getArgument(0);
@@ -239,8 +229,7 @@ public class PipelineServiceTest {
         Pipeline request = Pipeline.newBuilder().addAllStages(List.of(update)).build();
 
         Pipeline result = service.modifyPipeline(pipeline.getId().toString(), request);
-        String updatedName = result.getStagesList().stream()
-                .filter(s -> s.getId().equals(target.getId().toString()))
+        String updatedName = result.getStagesList().stream().filter(s -> s.getId().equals(target.getId().toString()))
                 .findFirst().orElseThrow().getName();
         assertEquals(otherName, updatedName);
     }
@@ -252,8 +241,7 @@ public class PipelineServiceTest {
         doReturn(Optional.of(pipeline)).when(repository).findById(pipeline.getId());
         doReturn(true).when(repository).existsByName("newName");
         Pipeline patch = Pipeline.newBuilder().setName("newName").build();
-        assertThrows(DuplicateEntryException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), patch));
+        assertThrows(DuplicateEntryException.class, () -> service.modifyPipeline(pipeline.getId().toString(), patch));
     }
 
     @Test
@@ -274,8 +262,7 @@ public class PipelineServiceTest {
     public void testModifyPipelineNoNameNoStages() {
         ensurePipelineId();
         Pipeline patch = Pipeline.newBuilder().build();
-        assertThrows(InvalidIdException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), patch));
+        assertThrows(InvalidIdException.class, () -> service.modifyPipeline(pipeline.getId().toString(), patch));
     }
 
     @Test
@@ -287,8 +274,7 @@ public class PipelineServiceTest {
         Stage badCreate = Stage.newBuilder().setName("build").setCommand("echo hi").build();
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(badCreate)).build();
 
-        assertThrows(InvalidIdException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), patch));
+        assertThrows(InvalidIdException.class, () -> service.modifyPipeline(pipeline.getId().toString(), patch));
     }
 
     @Test
@@ -304,10 +290,8 @@ public class PipelineServiceTest {
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(update)).build();
 
         Pipeline result = service.modifyPipeline(pipeline.getId().toString(), patch);
-        assertEquals(existing.getName(),
-                result.getStagesList().stream()
-                        .filter(s -> s.getId().equals(existing.getId().toString()))
-                        .findFirst().orElseThrow().getName());
+        assertEquals(existing.getName(), result.getStagesList().stream()
+                .filter(s -> s.getId().equals(existing.getId().toString())).findFirst().orElseThrow().getName());
     }
 
     @Test
@@ -319,18 +303,16 @@ public class PipelineServiceTest {
         Stage del = Stage.newBuilder().setId(UUID.randomUUID().toString()).build();
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(del)).build();
 
-        assertThrows(InvalidIdException.class,
-                () -> service.modifyPipeline(pipeline.getId().toString(), patch));
+        assertThrows(InvalidIdException.class, () -> service.modifyPipeline(pipeline.getId().toString(), patch));
     }
 
     @Test
     public void testCreatePipelineSuccess() throws Exception {
-        Pipeline dto = Pipeline.newBuilder()
-            .setName("pipe-one")
-            .addAllStages(List.of(
-                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
-                Stage.newBuilder().setName("test").setScriptType("bash").setCommand("echo test").build()))
-            .build();
+        Pipeline dto = Pipeline.newBuilder().setName("pipe-one")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
+                        Stage.newBuilder().setName("test").setScriptType("bash").setCommand("echo test").build()))
+                .build();
         doReturn(false).when(repository).existsByName("pipe-one");
         doAnswer(inv -> {
             PipelineEntity p = inv.getArgument(0);
@@ -384,10 +366,8 @@ public class PipelineServiceTest {
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(del)).build();
 
         Pipeline result = service.modifyPipeline(pipeline.getId().toString(), patch);
-        assertThrows(NoSuchElementException.class,
-                () -> result.getStagesList().stream()
-                        .filter(s -> s.getId().equals(toDelete.getId().toString()))
-                        .findFirst().orElseThrow());
+        assertThrows(NoSuchElementException.class, () -> result.getStagesList().stream()
+                .filter(s -> s.getId().equals(toDelete.getId().toString())).findFirst().orElseThrow());
     }
 
     @Test
@@ -401,14 +381,13 @@ public class PipelineServiceTest {
         doNothing().when(fileService).updateStageScriptFile(any(StageEntity.class), anyString());
         doReturn("path").when(fileService).createStageScriptFile(any(PipelineEntity.class), any(Stage.class));
         Stage create = Stage.newBuilder().setName("deploy").setScriptType("bash").setCommand("echo deploy").build();
-        Stage updateStage = Stage.newBuilder().setId(existing.getId().toString()).setName("renamed").setCommand("echo changed").build();
+        Stage updateStage = Stage.newBuilder().setId(existing.getId().toString()).setName("renamed")
+                .setCommand("echo changed").build();
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(create, updateStage)).build();
         Pipeline result = service.modifyPipeline(pipeline.getId().toString(), patch);
         assertEquals(pipeline.getStages().size(), result.getStagesList().size());
-        assertEquals("renamed",
-                result.getStagesList().stream()
-                        .filter(s -> s.getId().equals(existing.getId().toString()))
-                        .findFirst().orElseThrow().getName());
+        assertEquals("renamed", result.getStagesList().stream()
+                .filter(s -> s.getId().equals(existing.getId().toString())).findFirst().orElseThrow().getName());
     }
 
     @Test
@@ -420,23 +399,19 @@ public class PipelineServiceTest {
         doReturn(pipeline).when(repository).save(any(PipelineEntity.class));
         doReturn(new HashMap<UUID, String>()).when(fileService).readScriptFiles(any(PipelineEntity.class));
         doNothing().when(fileService).updateStageScriptFile(any(StageEntity.class), anyString());
-        Stage update = Stage.newBuilder().setId(existing.getId().toString()).setName(existing.getName()).setCommand("echo new").build();
+        Stage update = Stage.newBuilder().setId(existing.getId().toString()).setName(existing.getName())
+                .setCommand("echo new").build();
         Pipeline patch = Pipeline.newBuilder().addAllStages(List.of(update)).build();
         Pipeline result = service.modifyPipeline(pipeline.getId().toString(), patch);
-        assertEquals(existing.getName(),
-                result.getStagesList().stream()
-                        .filter(s -> s.getId().equals(existing.getId().toString()))
-                        .findFirst().orElseThrow().getName());
+        assertEquals(existing.getName(), result.getStagesList().stream()
+                .filter(s -> s.getId().equals(existing.getId().toString())).findFirst().orElseThrow().getName());
     }
 
     @Test
     public void testReplacePipelineStagesCompletely() throws Exception {
         ensurePipelineId();
         pipeline.setName("existing-name");
-        pipeline.setStages(new ArrayList<>(List.of(
-            createStage("build", "bash"),
-            createStage("test", "bash")
-        )));
+        pipeline.setStages(new ArrayList<>(List.of(createStage("build", "bash"), createStage("test", "bash"))));
 
         doReturn(Optional.of(pipeline)).when(repository).findById(pipeline.getId());
         doReturn(false).when(repository).existsByName("existing-name");
@@ -445,10 +420,10 @@ public class PipelineServiceTest {
         doReturn("path").when(fileService).createStageScriptFile(any(PipelineEntity.class), any(Stage.class));
         doNothing().when(fileService).removeStageScriptFile(any(StageEntity.class));
 
-        Pipeline request = Pipeline.newBuilder()
-            .setName("existing-name")
-            .addAllStages(List.of(Stage.newBuilder().setName("deploy").setScriptType("bash").setCommand("echo deploy").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().setName("existing-name")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("deploy").setScriptType("bash").setCommand("echo deploy").build()))
+                .build();
 
         Pipeline result = service.replacePipeline(pipeline.getId().toString(), request);
         assertEquals(1, result.getStagesList().size());
@@ -463,13 +438,10 @@ public class PipelineServiceTest {
         doReturn(Optional.of(pipeline)).when(repository).findById(pipeline.getId());
         doReturn(false).when(repository).existsByName("test-pipeline");
 
-        Pipeline request = Pipeline.newBuilder()
-            .setName("test-pipeline")
-            .addAllStages(List.of(Stage.newBuilder().setName("stage").setCommand("echo test").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().setName("test-pipeline")
+                .addAllStages(List.of(Stage.newBuilder().setName("stage").setCommand("echo test").build())).build();
 
-        assertThrows(InvalidIdException.class,
-                () -> service.replacePipeline(pipeline.getId().toString(), request));
+        assertThrows(InvalidIdException.class, () -> service.replacePipeline(pipeline.getId().toString(), request));
     }
 
     @Test
@@ -485,10 +457,10 @@ public class PipelineServiceTest {
         doReturn("path").when(fileService).createStageScriptFile(any(PipelineEntity.class), any(Stage.class));
         doNothing().when(fileService).removeStageScriptFile(any(StageEntity.class));
 
-        Pipeline request = Pipeline.newBuilder()
-            .setName("newName")
-            .addAllStages(List.of(Stage.newBuilder().setName("stage2").setScriptType("bash").setCommand("echo world").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().setName("newName")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("stage2").setScriptType("bash").setCommand("echo world").build()))
+                .build();
 
         Pipeline result = service.replacePipeline(pipeline.getId().toString(), request);
         assertEquals("newName", result.getName());

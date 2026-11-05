@@ -16,7 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 /**
  * Service layer for stage build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
@@ -33,8 +33,7 @@ public class StageBuildService {
         Optional<StageBuildEntity> optionalStageBuild = repository.findById(stageBuildId);
 
         if (optionalStageBuild.isEmpty()) {
-            throw new EntityNotFoundException(
-                    "Stage Build with id: " + stageBuildId + " does not exist");
+            throw new EntityNotFoundException("Stage Build with id: " + stageBuildId + " does not exist");
         }
 
         String logs = pipelineFileService.readStageBuildLogFile(optionalStageBuild.get());
@@ -44,18 +43,18 @@ public class StageBuildService {
 
     // @Async
     // public void getStageBuildLiveLogs(final SseEmitter emitter, final UUID stageBuildId) {
-    //     Optional<StageBuild> optionalStageBuild = repository.findById(stageBuildId);
+    // Optional<StageBuild> optionalStageBuild = repository.findById(stageBuildId);
 
-    //     while (optionalStageBuild.isPresent()) {
-    //         if (!optionalStageBuild.get().getCurrentState().equals(StageExecutionState.RUNNING)) 
-    //             emitter.complete();
-    //         }
+    // while (optionalStageBuild.isPresent()) {
+    // if (!optionalStageBuild.get().getCurrentState().equals(StageExecutionState.RUNNING))
+    // emitter.complete();
+    // }
 
-    //         String logs = pipelineFileService.readStageBuildLogs(optionalStageBuild.get());
+    // String logs = pipelineFileService.readStageBuildLogs(optionalStageBuild.get());
 
-    //         emitter.send(Map.of("log",logs));
+    // emitter.send(Map.of("log",logs));
 
-    //         Thread.sleep();
-    //     }
+    // Thread.sleep();
+    // }
     // }
 }

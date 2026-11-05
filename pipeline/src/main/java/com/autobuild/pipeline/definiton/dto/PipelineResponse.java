@@ -11,6 +11,7 @@ import lombok.Setter;
 
 /**
  * <b>Temporary Solution</b>: Used for any CRUD response on Pipeline entity.
+ *
  * @author Suvabrata Chowdhury
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -20,7 +21,7 @@ public class PipelineResponse {
     @JsonInclude(JsonInclude.Include.ALWAYS)
     @Getter
     private PipelineEntity pipeline;
-    
+
     @Getter
     @Setter
     private List<String> errors;

@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for Pipeline Build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
@@ -52,20 +52,17 @@ public class PipelineBuildService {
     public List<PipelineBuild> getAllBuilds() {
         List<PipelineBuildEntity> builds = repository.findAll();
         log.info("Fetched all pipeline builds, count: {}", builds.size());
-        return builds.stream()
-                .map(pipeline -> {
-                    PipelineBuild dto = mapper.entityToDto(pipeline);
-                    return dto;
-                })
-                .toList();
+        return builds.stream().map(pipeline -> {
+            PipelineBuild dto = mapper.entityToDto(pipeline);
+            return dto;
+        }).toList();
     }
 
     public void deletePipelineBuild(UUID pipelineBuildId) throws IOException {
         Optional<PipelineBuildEntity> optionalPipelineBuild = repository.findById(pipelineBuildId);
 
         if (optionalPipelineBuild.isEmpty()) {
-            throw new EntityNotFoundException(
-                    "Pipeline Build with id: " + pipelineBuildId + " does not exist");
+            throw new EntityNotFoundException("Pipeline Build with id: " + pipelineBuildId + " does not exist");
         }
 
         PipelineBuildEntity pipelineBuild = optionalPipelineBuild.get();

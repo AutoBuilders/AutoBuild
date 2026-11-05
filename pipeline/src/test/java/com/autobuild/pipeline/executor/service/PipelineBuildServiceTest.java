@@ -74,8 +74,8 @@ public class PipelineBuildServiceTest {
 
     @Test
     public void getAllBuildsTest() {
-        doReturn(List.of(DummyData.getPipelineBuild(UUID.randomUUID()),
-                DummyData.getPipelineBuild(UUID.randomUUID()))).when(repository).findAll();
+        doReturn(List.of(DummyData.getPipelineBuild(UUID.randomUUID()), DummyData.getPipelineBuild(UUID.randomUUID())))
+                .when(repository).findAll();
 
         pipelineBuildService.getAllBuilds();
 

@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation for asynchronously start executing pipeline build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
@@ -112,7 +112,8 @@ public class PipelineExecutorImpl implements PipelineExecutor {
         pipelineExecutionObservable.notify(pipelineBuild);
     }
 
-    private void setPipelineBuildState(PipelineBuildEntity pipelineBuild, PipelineExecutionStateInternal pipelineExecutionState) {
+    private void setPipelineBuildState(PipelineBuildEntity pipelineBuild,
+            PipelineExecutionStateInternal pipelineExecutionState) {
         pipelineBuild.setCurrentState(pipelineExecutionState);
         pipelineExecutionObservable.notify(pipelineBuild);
     }

@@ -16,20 +16,20 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for continuously updating pipeline on it's stage change. Implementated as an observer.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
 @Slf4j
 @Service
-public class PipelineBuildContinuousUpdatorService implements PipelineExecutionObserver{
+public class PipelineBuildContinuousUpdatorService implements PipelineExecutionObserver {
 
     @Autowired
     private PipelineBuildRepository repository;
 
     private PipelineExecutionObservable pipelineExecutionObservable;
 
-    //TODO: check this dependency injection
+    // TODO: check this dependency injection
     @Autowired
     public PipelineBuildContinuousUpdatorService(PipelineExecutionObservable pipelineExecutionObservable) {
         this.pipelineExecutionObservable = pipelineExecutionObservable;
@@ -44,7 +44,7 @@ public class PipelineBuildContinuousUpdatorService implements PipelineExecutionO
     @Override
     public void update(PipelineBuildEntity pipelineBuild) {
         log.info("Updating build with state: " + pipelineBuild.getCurrentState());
-        
+
         Optional<PipelineBuildEntity> optionalBuild = repository.findById(pipelineBuild.getId());
 
         if (optionalBuild.isEmpty()) {
@@ -56,5 +56,5 @@ public class PipelineBuildContinuousUpdatorService implements PipelineExecutionO
         log.info("Updated build: " + pipelineBuild.getCurrentState());
     }
 
-    //TODO: check for predestroy unsubscribe inclusion
+    // TODO: check for predestroy unsubscribe inclusion
 }

@@ -113,11 +113,10 @@ public class PipelineControllerTest {
     @Test
     public void testModifyPipelineStagesCreate() throws Exception {
         Stage newStage = Stage.newBuilder().setName("deploy").setScriptType("bash")
-            .setCommand("#!/bin/bash\necho DEPLOY").build();
+                .setCommand("#!/bin/bash\necho DEPLOY").build();
 
-        Stage createdStage = Stage.newBuilder().setId(UUID.randomUUID().toString())
-            .setName(newStage.getName()).setScriptType(newStage.getScriptType())
-            .setCommand(newStage.getCommand()).build();
+        Stage createdStage = Stage.newBuilder().setId(UUID.randomUUID().toString()).setName(newStage.getName())
+                .setScriptType(newStage.getScriptType()).setCommand(newStage.getCommand()).build();
 
         Pipeline modified = pipelineDTO.toBuilder().addStages(createdStage).build();
 
@@ -135,14 +134,13 @@ public class PipelineControllerTest {
     public void testModifyPipelineStagesUpdate() throws Exception {
         Stage existing = pipelineDTO.getStagesList().get(0);
         Stage updated = existing.toBuilder().setName("renamed").setCommand("#!/bin/bash\necho UPDATED").build();
-        Pipeline modified = Pipeline.newBuilder()
-            .setId(pipelineDTO.getId()).setName(pipelineDTO.getName())
-            .addAllStages(List.of(updated)).build();
+        Pipeline modified = Pipeline.newBuilder().setId(pipelineDTO.getId()).setName(pipelineDTO.getName())
+                .addAllStages(List.of(updated)).build();
 
         Pipeline request = Pipeline.newBuilder()
-            .addAllStages(List.of(Stage.newBuilder().setId(existing.getId()).setName("renamed")
-                .setScriptType(existing.getScriptType()).setCommand("#!/bin/bash\necho UPDATED").build()))
-            .build();
+                .addAllStages(List.of(Stage.newBuilder().setId(existing.getId()).setName("renamed")
+                        .setScriptType(existing.getScriptType()).setCommand("#!/bin/bash\necho UPDATED").build()))
+                .build();
 
         doReturn(modified).when(pipelineService).modifyPipeline(eq("pid"), any(Pipeline.class));
 
@@ -155,46 +153,38 @@ public class PipelineControllerTest {
     @Test
     public void testModifyPipelineStagesDelete() throws Exception {
         Stage toDelete = pipelineDTO.getStagesList().get(0);
-        Pipeline modified = Pipeline.newBuilder()
-            .setId(pipelineDTO.getId()).setName(pipelineDTO.getName())
-            .build();
+        Pipeline modified = Pipeline.newBuilder().setId(pipelineDTO.getId()).setName(pipelineDTO.getName()).build();
 
         Pipeline request = Pipeline.newBuilder()
-            .addAllStages(List.of(Stage.newBuilder().setId(toDelete.getId()).build()))
-            .build();
+                .addAllStages(List.of(Stage.newBuilder().setId(toDelete.getId()).build())).build();
 
         doReturn(modified).when(pipelineService).modifyPipeline(eq("pid"), any(Pipeline.class));
 
         ResponseEntity<Pipeline> response = controller.modifyPipeline("pid", request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        boolean present = response.getBody().getStagesList().stream()
-            .anyMatch(s -> s.getId().equals(toDelete.getId()));
+        boolean present = response.getBody().getStagesList().stream().anyMatch(s -> s.getId().equals(toDelete.getId()));
         assertEquals(false, present);
     }
 
     @Test
     public void testModifyPipelineStagesDuplicateEntry() throws Exception {
-        Pipeline request = Pipeline.newBuilder()
-            .addAllStages(List.of(Stage.newBuilder().setName("duplicate").setScriptType("bash")
-                .setCommand("#!/bin/bash\necho X").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().addAllStages(List.of(Stage.newBuilder().setName("duplicate")
+                .setScriptType("bash").setCommand("#!/bin/bash\necho X").build())).build();
 
-        doThrow(new DuplicateEntryException("duplicate")).when(pipelineService)
-            .modifyPipeline(eq("pid"), any(Pipeline.class));
+        doThrow(new DuplicateEntryException("duplicate")).when(pipelineService).modifyPipeline(eq("pid"),
+                any(Pipeline.class));
 
         assertThrows(DuplicateEntryException.class, () -> controller.modifyPipeline("pid", request));
     }
 
     @Test
     public void testModifyPipelineStagesInvalidId() throws Exception {
-        Pipeline request = Pipeline.newBuilder()
-            .addAllStages(List.of(Stage.newBuilder().setName("stage").setScriptType("bash")
-                .setCommand("#!/bin/bash\necho X").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().addAllStages(List.of(
+                Stage.newBuilder().setName("stage").setScriptType("bash").setCommand("#!/bin/bash\necho X").build()))
+                .build();
 
-        doThrow(new InvalidIdException("invalid")).when(pipelineService)
-            .modifyPipeline(eq("pid"), any(Pipeline.class));
+        doThrow(new InvalidIdException("invalid")).when(pipelineService).modifyPipeline(eq("pid"), any(Pipeline.class));
 
         assertThrows(InvalidIdException.class, () -> controller.modifyPipeline("pid", request));
     }
@@ -216,8 +206,8 @@ public class PipelineControllerTest {
     public void testModifyPipelineBadRequestNoNameOrStages() throws Exception {
         Pipeline request = Pipeline.newBuilder().build();
 
-        doThrow(new InvalidIdException("Request must contain either name or stages"))
-            .when(pipelineService).modifyPipeline(eq("pid"), any(Pipeline.class));
+        doThrow(new InvalidIdException("Request must contain either name or stages")).when(pipelineService)
+                .modifyPipeline(eq("pid"), any(Pipeline.class));
 
         assertThrows(InvalidIdException.class, () -> controller.modifyPipeline("pid", request));
     }
@@ -226,33 +216,32 @@ public class PipelineControllerTest {
     public void testModifyPipelineStagesBadRequestEmpty() throws Exception {
         Pipeline request = Pipeline.newBuilder().build();
 
-        doThrow(new InvalidIdException("Request must contain either name or stages"))
-            .when(pipelineService).modifyPipeline(eq("pid"), any(Pipeline.class));
+        doThrow(new InvalidIdException("Request must contain either name or stages")).when(pipelineService)
+                .modifyPipeline(eq("pid"), any(Pipeline.class));
 
         assertThrows(InvalidIdException.class, () -> controller.modifyPipeline("pid", request));
     }
 
     @Test
     public void testCreatePipelineWithDuplicateStages() throws Exception {
-        Pipeline dto = Pipeline.newBuilder()
-            .setName("pipe-x")
-            .addAllStages(List.of(
-                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo 1").build(),
-                Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo 2").build()))
-            .build();
+        Pipeline dto = Pipeline.newBuilder().setName("pipe-x")
+                .addAllStages(
+                        List.of(Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo 1").build(),
+                                Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo 2").build()))
+                .build();
 
-        doThrow(new DuplicateEntryException("Duplicate stage name 'build'"))
-            .when(pipelineService).createPipeline(any(Pipeline.class));
+        doThrow(new DuplicateEntryException("Duplicate stage name 'build'")).when(pipelineService)
+                .createPipeline(any(Pipeline.class));
 
         assertThrows(DuplicateEntryException.class, () -> controller.createPipeline(dto));
     }
 
     @Test
     public void testCreatePipelineSuccess() throws Exception {
-        Pipeline dto = Pipeline.newBuilder()
-            .setName("pipe-y")
-            .addAllStages(List.of(Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo 1").build()))
-            .build();
+        Pipeline dto = Pipeline.newBuilder().setName("pipe-y")
+                .addAllStages(
+                        List.of(Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo 1").build()))
+                .build();
         Pipeline saved = dto.toBuilder().setId(UUID.randomUUID().toString()).build();
 
         when(pipelineService.createPipeline(dto)).thenReturn(saved);
@@ -272,15 +261,15 @@ public class PipelineControllerTest {
 
     @Test
     public void testReplacePipelineStagesCompletely() throws Exception {
-        Pipeline replaced = Pipeline.newBuilder()
-            .setId(UUID.randomUUID().toString()).setName(pipelineDTO.getName())
-            .addAllStages(List.of(Stage.newBuilder().setId(UUID.randomUUID().toString())
-                .setName("deploy").setScriptType("bash").setCommand("echo deploy").build()))
-            .build();
+        Pipeline replaced = Pipeline.newBuilder().setId(UUID.randomUUID().toString()).setName(pipelineDTO.getName())
+                .addAllStages(List.of(Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("deploy")
+                        .setScriptType("bash").setCommand("echo deploy").build()))
+                .build();
 
         Pipeline request = Pipeline.newBuilder()
-            .addAllStages(List.of(Stage.newBuilder().setName("deploy").setScriptType("bash").setCommand("echo deploy").build()))
-            .build();
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("deploy").setScriptType("bash").setCommand("echo deploy").build()))
+                .build();
 
         doReturn(replaced).when(pipelineService).replacePipeline(eq("pid"), any(Pipeline.class));
 
@@ -293,19 +282,20 @@ public class PipelineControllerTest {
 
     @Test
     public void testReplacePipelineNameAndStages() throws Exception {
-        Pipeline replaced = Pipeline.newBuilder()
-            .setId(UUID.randomUUID().toString()).setName("NewPipelineName")
-            .addAllStages(List.of(
-                Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("stage1").setScriptType("python").setCommand("print('hello')").build(),
-                Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("stage2").setScriptType("bash").setCommand("echo 'world'").build()))
-            .build();
+        Pipeline replaced = Pipeline.newBuilder().setId(UUID.randomUUID().toString()).setName("NewPipelineName")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("stage1").setScriptType("python")
+                                .setCommand("print('hello')").build(),
+                        Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("stage2").setScriptType("bash")
+                                .setCommand("echo 'world'").build()))
+                .build();
 
-        Pipeline request = Pipeline.newBuilder()
-            .setName("NewPipelineName")
-            .addAllStages(List.of(
-                Stage.newBuilder().setName("stage1").setScriptType("python").setCommand("print('hello')").build(),
-                Stage.newBuilder().setName("stage2").setScriptType("bash").setCommand("echo 'world'").build()))
-            .build();
+        Pipeline request = Pipeline.newBuilder().setName("NewPipelineName")
+                .addAllStages(List.of(
+                        Stage.newBuilder().setName("stage1").setScriptType("python").setCommand("print('hello')")
+                                .build(),
+                        Stage.newBuilder().setName("stage2").setScriptType("bash").setCommand("echo 'world'").build()))
+                .build();
 
         doReturn(replaced).when(pipelineService).replacePipeline(eq("pid"), any(Pipeline.class));
 
@@ -320,8 +310,8 @@ public class PipelineControllerTest {
     public void testReplacePipelineInvalidId() throws Exception {
         Pipeline request = Pipeline.newBuilder().setName("test").build();
 
-        doThrow(new InvalidIdException("Invalid ID")).when(pipelineService)
-            .replacePipeline(eq("invalid"), any(Pipeline.class));
+        doThrow(new InvalidIdException("Invalid ID")).when(pipelineService).replacePipeline(eq("invalid"),
+                any(Pipeline.class));
 
         assertThrows(InvalidIdException.class, () -> controller.updatePipeline("invalid", request));
     }
@@ -330,8 +320,8 @@ public class PipelineControllerTest {
     public void testReplacePipelineDuplicateName() throws Exception {
         Pipeline request = Pipeline.newBuilder().setName("existingName").build();
 
-        doThrow(new DuplicateEntryException("Name exists")).when(pipelineService)
-            .replacePipeline(eq("pid"), any(Pipeline.class));
+        doThrow(new DuplicateEntryException("Name exists")).when(pipelineService).replacePipeline(eq("pid"),
+                any(Pipeline.class));
 
         assertThrows(DuplicateEntryException.class, () -> controller.updatePipeline("pid", request));
     }

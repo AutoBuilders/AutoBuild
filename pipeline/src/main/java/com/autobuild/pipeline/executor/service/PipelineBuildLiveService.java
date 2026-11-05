@@ -24,9 +24,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Service for sending SSE on change of pipeline or it's stages. Implemented as
- * an Observer.
- * 
+ * Service for sending SSE on change of pipeline or it's stages. Implemented as an Observer.
+ *
  * @author Suvabrata Chowdhury
  */
 

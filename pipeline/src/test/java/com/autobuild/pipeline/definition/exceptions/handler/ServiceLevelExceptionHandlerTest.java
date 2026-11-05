@@ -62,7 +62,7 @@ public class ServiceLevelExceptionHandlerTest {
 
         doReturn(result).when(exception).getBindingResult();
 
-        doReturn(List.of(new FieldError("Dummy","dummy","dummy"))).when(result).getFieldErrors();
+        doReturn(List.of(new FieldError("Dummy", "dummy", "dummy"))).when(result).getFieldErrors();
 
         ErrorResponse errorResponse = globalHandler.handleMethodArgumentNotValidException(exception);
 

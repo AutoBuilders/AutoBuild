@@ -9,11 +9,11 @@ import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 
 /**
  * Repository for Stage Builds.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
 @Repository
-public interface StageBuildRepository extends JpaRepository<StageBuildEntity, UUID>{
+public interface StageBuildRepository extends JpaRepository<StageBuildEntity, UUID> {
 
 }

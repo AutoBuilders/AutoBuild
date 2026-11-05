@@ -9,11 +9,11 @@ import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 
 /**
  * Repository layer for PipelineBuild.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 
 @Repository
-public interface PipelineBuildRepository extends JpaRepository<PipelineBuildEntity, UUID>{
+public interface PipelineBuildRepository extends JpaRepository<PipelineBuildEntity, UUID> {
 
 }

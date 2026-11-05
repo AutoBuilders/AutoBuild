@@ -33,7 +33,7 @@ public class PipelineExecutorImplTest {
     private PipelineExecutor pipelineExecutor = new PipelineExecutorImpl();
 
     private PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
-    
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -44,17 +44,21 @@ public class PipelineExecutorImplTest {
         Process stageProcess = mock(Process.class);
         doReturn(0).when(stageProcess).waitFor();
 
-        try (MockedConstruction<ProcessBuilder> processBuilderMock = mockConstruction(ProcessBuilder.class, (mock, context) -> {
-            doReturn(stageProcess).when(mock).start();
-        })) {
+        try (MockedConstruction<ProcessBuilder> processBuilderMock = mockConstruction(ProcessBuilder.class,
+                (mock, context) -> {
+                    doReturn(stageProcess).when(mock).start();
+                })) {
             pipelineExecutor.executePipeline(pipelineBuild);
 
             ProcessBuilder mockProcessBuilderInstance = processBuilderMock.constructed().get(0);
 
             verify(mockProcessBuilderInstance, times(1)).redirectOutput(any(Redirect.class));
             verify(mockProcessBuilderInstance, times(1)).redirectErrorStream(true);
-            
-            assertTrue(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS)).toList().size() == 0);
+
+            assertTrue(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild
+                    .getStageBuilds().stream()
+                    .filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS))
+                    .toList().size() == 0);
         }
     }
 
@@ -63,19 +67,23 @@ public class PipelineExecutorImplTest {
         Process stageProcess = mock(Process.class);
         doReturn(1).when(stageProcess).waitFor();
 
-        try (MockedConstruction<ProcessBuilder> processBuilderMock = mockConstruction(ProcessBuilder.class, (mock, context) -> {
-            doReturn(stageProcess).when(mock).start();
-        })) {
+        try (MockedConstruction<ProcessBuilder> processBuilderMock = mockConstruction(ProcessBuilder.class,
+                (mock, context) -> {
+                    doReturn(stageProcess).when(mock).start();
+                })) {
             pipelineExecutor.executePipeline(pipelineBuild);
 
             ProcessBuilder mockProcessBuilderInstance = processBuilderMock.constructed().get(0);
 
             verify(mockProcessBuilderInstance, times(1)).redirectOutput(any(Redirect.class));
             verify(mockProcessBuilderInstance, times(1)).redirectErrorStream(true);
-            
-            assertFalse(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS)).toList().size() == 0);
+
+            assertFalse(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild
+                    .getStageBuilds().stream()
+                    .filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS))
+                    .toList().size() == 0);
         }
     }
 
-    //TODO: add some success, some failed some stopped stage tests 
+    // TODO: add some success, some failed some stopped stage tests
 }
