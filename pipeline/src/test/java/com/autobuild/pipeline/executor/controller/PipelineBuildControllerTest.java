@@ -43,17 +43,15 @@ public class PipelineBuildControllerTest {
     public void getPipelineBuildTest() {
         UUID pipelineBuildId = UUID.randomUUID();
 
-        PipelineBuild dummyPipelineBuild = PipelineBuild.newBuilder()
-                .setId(pipelineBuildId.toString())
-                .setPipelineId(UUID.randomUUID().toString())
-                .setPipelineName("Dummy Pipeline")
+        PipelineBuild dummyPipelineBuild = PipelineBuild.newBuilder().setId(pipelineBuildId.toString())
+                .setPipelineId(UUID.randomUUID().toString()).setPipelineName("Dummy Pipeline")
                 .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
-                .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
-                .build();
+                .addAllStageBuilds(List.of(DummyData.getStageBuildDTO())).build();
 
         doReturn(dummyPipelineBuild).when(service).getPipelineBuild(pipelineBuildId);
 
-        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller.getPipelineBuild(pipelineBuildId);
+        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller
+                .getPipelineBuild(pipelineBuildId);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -71,20 +69,14 @@ public class PipelineBuildControllerTest {
     @Test
     public void getAllBuildsTest() {
         List<com.autobuild.pipeline.executor.dto.PipelineBuild> dummyBuilds = List.of(
-                PipelineBuild.newBuilder()
-                        .setId(UUID.randomUUID().toString())
-                        .setPipelineId(UUID.randomUUID().toString())
-                        .setPipelineName("Dummy Pipeline")
+                PipelineBuild.newBuilder().setId(UUID.randomUUID().toString())
+                        .setPipelineId(UUID.randomUUID().toString()).setPipelineName("Dummy Pipeline")
                         .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
-                        .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
-                        .build(),
-                PipelineBuild.newBuilder()
-                        .setId(UUID.randomUUID().toString())
-                        .setPipelineId(UUID.randomUUID().toString())
-                        .setPipelineName("Dummy Pipeline")
+                        .addAllStageBuilds(List.of(DummyData.getStageBuildDTO())).build(),
+                PipelineBuild.newBuilder().setId(UUID.randomUUID().toString())
+                        .setPipelineId(UUID.randomUUID().toString()).setPipelineName("Dummy Pipeline")
                         .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_SUCCESS)
-                        .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
-                        .build());
+                        .addAllStageBuilds(List.of(DummyData.getStageBuildDTO())).build());
 
         doReturn(dummyBuilds).when(service).getAllBuilds();
 

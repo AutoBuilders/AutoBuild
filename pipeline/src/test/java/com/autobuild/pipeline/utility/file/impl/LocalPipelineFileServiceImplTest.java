@@ -48,12 +48,9 @@ public class LocalPipelineFileServiceImplTest {
                 .thenReturn(pipelinePath);
         filesMockedStatic.when(() -> Files.write(any(Path.class), any(byte[].class)))
                 .thenAnswer(inv -> (Path) inv.getArgument(0));
-        filesMockedStatic.when(() -> Files.deleteIfExists(any(Path.class)))
-                .thenReturn(true);
-        filesMockedStatic.when(() -> Files.delete(any(Path.class)))
-                .thenAnswer(inv -> null);
-        filesMockedStatic.when(() -> Files.walk(any(Path.class)))
-                .thenReturn(Stream.of(pipelinePath));
+        filesMockedStatic.when(() -> Files.deleteIfExists(any(Path.class))).thenReturn(true);
+        filesMockedStatic.when(() -> Files.delete(any(Path.class))).thenAnswer(inv -> null);
+        filesMockedStatic.when(() -> Files.walk(any(Path.class))).thenReturn(Stream.of(pipelinePath));
     }
 
     @AfterEach
@@ -64,8 +61,7 @@ public class LocalPipelineFileServiceImplTest {
     @Test
     public void testReadScriptFiles() throws IOException {
         pipelineFileService.readScriptFiles(pipeline);
-        filesMockedStatic.verify(() -> Files.readAllLines(any(Path.class)),
-                times(pipeline.getStages().size()));
+        filesMockedStatic.verify(() -> Files.readAllLines(any(Path.class)), times(pipeline.getStages().size()));
     }
 
     @Test
@@ -76,29 +72,25 @@ public class LocalPipelineFileServiceImplTest {
                 times(pipeline.getStages().size()));
         filesMockedStatic.verify(() -> Files.write(any(Path.class), any(byte[].class)),
                 times(pipeline.getStages().size()));
-        filesMockedStatic.verify(() -> Files.createDirectories(any(Path.class), any(FileAttribute.class)),
-                times(2));
+        filesMockedStatic.verify(() -> Files.createDirectories(any(Path.class), any(FileAttribute.class)), times(2));
     }
 
     @Test
     public void testRemoveScriptFiles() throws IOException {
         // override walk for full removal verification
-        Stream<Path> paths = Stream.of(
-                pipelinePath.resolve(pipeline.getStages().get(0).getId().toString()),
+        Stream<Path> paths = Stream.of(pipelinePath.resolve(pipeline.getStages().get(0).getId().toString()),
                 pipelinePath);
         filesMockedStatic.when(() -> Files.walk(any(Path.class))).thenReturn(paths);
 
         pipelineFileService.removeScriptFiles(pipelineDTO);
 
-        filesMockedStatic.verify(() -> Files.delete(any(Path.class)),
-                times(pipeline.getStages().size() + 1));
+        filesMockedStatic.verify(() -> Files.delete(any(Path.class)), times(pipeline.getStages().size() + 1));
     }
 
     @Test
     public void testRemoveScriptFilesWithEntity() throws IOException {
         pipelineFileService.removeScriptFiles(pipeline);
-        filesMockedStatic.verify(() -> Files.deleteIfExists(any(Path.class)),
-                times(pipeline.getStages().size() + 1));
+        filesMockedStatic.verify(() -> Files.deleteIfExists(any(Path.class)), times(pipeline.getStages().size() + 1));
     }
 
     @Test

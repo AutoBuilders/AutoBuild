@@ -9,13 +9,12 @@ import com.autobuild.pipeline.definiton.dto.Stage;
 
 /**
  * Used to map Stage Entity to Stage DTO.
+ *
  * @author Suvabrata Chowdhury
  */
 
 @Component
-public class StageMapper implements Mapper<
-        Stage,
-        StageEntity> {
+public class StageMapper implements Mapper<Stage, StageEntity> {
 
     @Override
     public StageEntity dtoToEntity(Stage dto) {
@@ -38,10 +37,7 @@ public class StageMapper implements Mapper<
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return Stage.newBuilder()
-            .setId(entity.getId().toString())
-            .setName(entity.getName())
-            .setScriptType(entity.getScriptType())
-            .build();
+        return Stage.newBuilder().setId(entity.getId().toString()).setName(entity.getName())
+                .setScriptType(entity.getScriptType()).build();
     }
 }

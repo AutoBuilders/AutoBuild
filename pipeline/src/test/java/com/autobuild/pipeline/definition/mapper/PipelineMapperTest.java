@@ -16,7 +16,7 @@ import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 @SpringJUnitConfig
-@ContextConfiguration(classes = {PipelineMapper.class})
+@ContextConfiguration(classes = { PipelineMapper.class })
 public class PipelineMapperTest {
 
     private PipelineEntity pipeline = DummyData.getPipeline();

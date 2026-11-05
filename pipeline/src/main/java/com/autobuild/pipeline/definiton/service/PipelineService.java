@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for pipeline CRUD operations.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 @Slf4j
@@ -53,17 +53,13 @@ public class PipelineService {
             Map<UUID, String> stageContents = fileService.readScriptFiles(pipeline);
             com.autobuild.pipeline.definiton.dto.Pipeline pipelineDTO = mapper.entityToDto(pipeline);
             // pipelineDTO.getStages()
-            //         .forEach(stage -> stage.setCommand(stageContents.get(stage.getId())));
-            com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = pipelineDTO.toBuilder()
-    .clearStages()
-    .addAllStages(
-        pipelineDTO.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(stageContents.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+            // .forEach(stage -> stage.setCommand(stageContents.get(stage.getId())));
+            com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = pipelineDTO.toBuilder().clearStages()
+                    .addAllStages(pipelineDTO.getStagesList().stream()
+                            .map(s -> s.toBuilder()
+                                    .setCommand(stageContents.getOrDefault(UUID.fromString(s.getId()), "")).build())
+                            .toList())
+                    .build();
             log.info("Pipeline with id {} successfully obtained", pipelineDTO.getId());
             return pipelineWithCommands;
         } catch (IllegalArgumentException e) {
@@ -74,19 +70,19 @@ public class PipelineService {
     public List<com.autobuild.pipeline.definiton.dto.Pipeline> getAllPipelines() {
         List<PipelineEntity> pipelines = repository.findAll();
         log.info("Fetched all pipelines, count: {}", pipelines.size());
-        return pipelines.stream()
-                .map(pipeline -> {
-                    com.autobuild.pipeline.definiton.dto.Pipeline dto = mapper.entityToDto(pipeline); // converting each fetched pipeline into PiplineDTO
-                    return dto;
-                })
-                .toList();
+        return pipelines.stream().map(pipeline -> {
+            com.autobuild.pipeline.definiton.dto.Pipeline dto = mapper.entityToDto(pipeline); // converting each fetched
+                                                                                              // pipeline into
+                                                                                              // PiplineDTO
+            return dto;
+        }).toList();
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline createPipeline(final com.autobuild.pipeline.definiton.dto.Pipeline pipelineDto)
+    public com.autobuild.pipeline.definiton.dto.Pipeline createPipeline(
+            final com.autobuild.pipeline.definiton.dto.Pipeline pipelineDto)
             throws IOException, DuplicateEntryException, InvalidIdException {
         if (repository.existsByName(pipelineDto.getName())) {
-            throw new DuplicateEntryException(
-                    "Pipeline with name '" + pipelineDto.getName() + "' already exists");
+            throw new DuplicateEntryException("Pipeline with name '" + pipelineDto.getName() + "' already exists");
         }
 
         for (com.autobuild.pipeline.definiton.dto.Stage stage : pipelineDto.getStagesList()) {
@@ -97,23 +93,19 @@ public class PipelineService {
         // pipelineDto.getStages().forEach(stage -> stage.setId(UUID.randomUUID()));
 
         com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithIds = pipelineDto.toBuilder()
-                .setId(UUID.randomUUID().toString())
-                .clearStages()
-                .addAllStages(pipelineDto.getStagesList().stream()
+                .setId(UUID.randomUUID().toString()).clearStages().addAllStages(pipelineDto.getStagesList().stream()
                         .map(s -> s.toBuilder().setId(UUID.randomUUID().toString()).build()).toList())
                 .build();
 
         PipelineEntity pipeline = mapper.dtoToEntity(pipelineWithIds);
         Map<UUID, String> scriptLocations = createScriptFiles(pipelineWithIds);
-        pipeline.getStages()
-                .forEach(stage -> stage.setPath(scriptLocations.get(stage.getId())));
+        pipeline.getStages().forEach(stage -> stage.setPath(scriptLocations.get(stage.getId())));
         PipelineEntity createdPipeline = repository.save(pipeline);
         log.info("Pipeline with id {} successfully created", createdPipeline.getId());
         return mapper.entityToDto(createdPipeline);
     }
 
-    public void deletePipelineById(String pipelineId)
-            throws IOException, InvalidIdException {
+    public void deletePipelineById(String pipelineId) throws IOException, InvalidIdException {
         validatePipelineId(pipelineId);
         try {
             PipelineEntity pipeline = getPipelineFromId(pipelineId);
@@ -124,7 +116,8 @@ public class PipelineService {
         }
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline modifyPipeline(String pipelineId, com.autobuild.pipeline.definiton.dto.Pipeline patchRequest)
+    public com.autobuild.pipeline.definiton.dto.Pipeline modifyPipeline(String pipelineId,
+            com.autobuild.pipeline.definiton.dto.Pipeline patchRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validatePipelineId(pipelineId);
@@ -132,16 +125,12 @@ public class PipelineService {
 
         PipelineEntity pipeline = getPipelineFromId(pipelineId);
 
-        boolean nameChange = patchRequest.getName() != null
-                && !patchRequest.getName().isBlank();
-        boolean stagesChange = patchRequest.getStagesList() != null
-                && !patchRequest.getStagesList().isEmpty();
+        boolean nameChange = patchRequest.getName() != null && !patchRequest.getName().isBlank();
+        boolean stagesChange = patchRequest.getStagesList() != null && !patchRequest.getStagesList().isEmpty();
 
         if (nameChange) {
-            if (!patchRequest.getName().equals(pipeline.getName())
-                    && repository.existsByName(patchRequest.getName())) {
-                throw new DuplicateEntryException(
-                        "Pipeline with name '" + patchRequest.getName() + "' already exists");
+            if (!patchRequest.getName().equals(pipeline.getName()) && repository.existsByName(patchRequest.getName())) {
+                throw new DuplicateEntryException("Pipeline with name '" + patchRequest.getName() + "' already exists");
             }
             pipeline.setName(patchRequest.getName());
         }
@@ -155,16 +144,12 @@ public class PipelineService {
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
         com.autobuild.pipeline.definiton.dto.Pipeline response = mapper.entityToDto(pipeline);
         // response.getStages().forEach(s -> s.setCommand(finalScripts.get(s.getId())));
-        com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = response.toBuilder()
-    .clearStages()
-    .addAllStages(
-        response.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+        com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = response.toBuilder().clearStages()
+                .addAllStages(response
+                        .getStagesList().stream().map(s -> s.toBuilder()
+                                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), "")).build())
+                        .toList())
+                .build();
         log.info("Pipeline with id {} successfully modified", pipelineId);
         return pipelineWithCommands;
     }
@@ -175,7 +160,8 @@ public class PipelineService {
         }
     }
 
-    private void validateModifyRequest(com.autobuild.pipeline.definiton.dto.Pipeline request) throws InvalidIdException {
+    private void validateModifyRequest(com.autobuild.pipeline.definiton.dto.Pipeline request)
+            throws InvalidIdException {
         boolean hasName = request.getName() != null && !request.getName().isBlank();
         boolean hasStages = request.getStagesList() != null && !request.getStagesList().isEmpty();
 
@@ -195,7 +181,8 @@ public class PipelineService {
         }
     }
 
-    private void processStageChanges(PipelineEntity pipeline, List<com.autobuild.pipeline.definiton.dto.Stage> stageRequests)
+    private void processStageChanges(PipelineEntity pipeline,
+            List<com.autobuild.pipeline.definiton.dto.Stage> stageRequests)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validateStageRequests(stageRequests);
@@ -216,18 +203,15 @@ public class PipelineService {
     }
 
     private boolean isDeleteOperation(com.autobuild.pipeline.definiton.dto.Stage req) {
-        return !req.getId().isBlank()
-                && req.getName().isBlank()
-                && req.getScriptType().isBlank()
+        return !req.getId().isBlank() && req.getName().isBlank() && req.getScriptType().isBlank()
                 && req.getCommand().isBlank();
     }
 
     private void createStage(PipelineEntity pipeline, com.autobuild.pipeline.definiton.dto.Stage req)
             throws IOException, InvalidIdException {
         validateScriptType(req.getScriptType());
-        com.autobuild.pipeline.definiton.dto.Stage reqWithId = req.toBuilder()
-    .setId(UUID.randomUUID().toString())
-    .build();
+        com.autobuild.pipeline.definiton.dto.Stage reqWithId = req.toBuilder().setId(UUID.randomUUID().toString())
+                .build();
         StageEntity entity = stageMapper.dtoToEntity(reqWithId);
         String path = fileService.createStageScriptFile(pipeline, reqWithId);
         entity.setPath(path);
@@ -277,30 +261,27 @@ public class PipelineService {
         }
     }
 
-    private void deleteStage(PipelineEntity pipeline, UUID stageId)
-            throws InvalidIdException, IOException {
+    private void deleteStage(PipelineEntity pipeline, UUID stageId) throws InvalidIdException, IOException {
         StageEntity toDelete = findStage(pipeline, stageId);
         fileService.removeStageScriptFile(toDelete);
         pipeline.getStages().removeIf(s -> s.getId().equals(stageId));
     }
 
     private StageEntity findStage(PipelineEntity pipeline, UUID id) throws InvalidIdException {
-        return pipeline.getStages().stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst()
+        return pipeline.getStages().stream().filter(s -> s.getId().equals(id)).findFirst()
                 .orElseThrow(() -> new InvalidIdException("Stage not found: " + id));
     }
 
     private PipelineEntity getPipelineFromId(final String pipelineId) {
         Optional<PipelineEntity> optionalPipeline = repository.findById(UUID.fromString(pipelineId));
         if (!optionalPipeline.isPresent()) {
-            throw new EntityNotFoundException(
-                    "Pipeline with id " + pipelineId + " not found");
+            throw new EntityNotFoundException("Pipeline with id " + pipelineId + " not found");
         }
         return optionalPipeline.get();
     }
 
-    private Map<UUID, String> createScriptFiles(com.autobuild.pipeline.definiton.dto.Pipeline pipeline) throws IOException {
+    private Map<UUID, String> createScriptFiles(com.autobuild.pipeline.definiton.dto.Pipeline pipeline)
+            throws IOException {
         try {
             return fileService.createScriptFiles(pipeline);
         } catch (IOException e) {
@@ -309,17 +290,16 @@ public class PipelineService {
         }
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline replacePipeline(String pipelineId, com.autobuild.pipeline.definiton.dto.Pipeline putRequest)
+    public com.autobuild.pipeline.definiton.dto.Pipeline replacePipeline(String pipelineId,
+            com.autobuild.pipeline.definiton.dto.Pipeline putRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validatePipelineId(pipelineId);
         PipelineEntity pipeline = getPipelineFromId(pipelineId);
 
         // Check for duplicate name
-        if (!putRequest.getName().equals(pipeline.getName())
-                && repository.existsByName(putRequest.getName())) {
-            throw new DuplicateEntryException(
-                    "Pipeline with name '" + putRequest.getName() + "' already exists");
+        if (!putRequest.getName().equals(pipeline.getName()) && repository.existsByName(putRequest.getName())) {
+            throw new DuplicateEntryException("Pipeline with name '" + putRequest.getName() + "' already exists");
         }
 
         // Replace name
@@ -335,8 +315,7 @@ public class PipelineService {
         for (com.autobuild.pipeline.definiton.dto.Stage stageDTO : putRequest.getStagesList()) {
             validateScriptType(stageDTO.getScriptType());
             com.autobuild.pipeline.definiton.dto.Stage stageWithId = stageDTO.toBuilder()
-    .setId(UUID.randomUUID().toString())
-    .build();
+                    .setId(UUID.randomUUID().toString()).build();
 
             String path = fileService.createStageScriptFile(pipeline, stageWithId);
             StageEntity newStage = stageMapper.dtoToEntity(stageWithId);
@@ -348,16 +327,12 @@ public class PipelineService {
 
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
         com.autobuild.pipeline.definiton.dto.Pipeline response = mapper.entityToDto(pipeline);
-        com.autobuild.pipeline.definiton.dto.Pipeline responseWithCommands = response.toBuilder()
-    .clearStages()
-    .addAllStages(
-        response.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+        com.autobuild.pipeline.definiton.dto.Pipeline responseWithCommands = response.toBuilder().clearStages()
+                .addAllStages(response
+                        .getStagesList().stream().map(s -> s.toBuilder()
+                                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), "")).build())
+                        .toList())
+                .build();
         log.info("Pipeline with id {} successfully replaced", pipelineId);
         return responseWithCommands;
     }

@@ -16,7 +16,7 @@ import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
 
 public class PipelineResponseTest {
-    
+
     @Test
     public void testDefaultConstructor() {
         PipelineResponse response = new PipelineResponse();
@@ -29,9 +29,9 @@ public class PipelineResponseTest {
         PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("test-pipeline");
-        
+
         PipelineResponse response = new PipelineResponse(pipeline);
-        
+
         assertNotNull(response.getPipeline());
         assertEquals(pipeline, response.getPipeline());
         assertEquals("test-pipeline", response.getPipeline().getName());
@@ -44,9 +44,9 @@ public class PipelineResponseTest {
         List<String> errors = new ArrayList<>();
         errors.add("Error 1");
         errors.add("Error 2");
-        
+
         response.setErrors(errors);
-        
+
         assertNotNull(response.getErrors());
         assertEquals(2, response.getErrors().size());
         assertTrue(response.getErrors().contains("Error 1"));
@@ -58,24 +58,24 @@ public class PipelineResponseTest {
         PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("complex-pipeline");
-        
+
         StageEntity stage1 = new StageEntity();
         stage1.setId(UUID.randomUUID());
         stage1.setName("build");
         stage1.setScriptType("bash");
-        
+
         StageEntity stage2 = new StageEntity();
         stage2.setId(UUID.randomUUID());
         stage2.setName("test");
         stage2.setScriptType("python");
-        
+
         List<StageEntity> stages = new ArrayList<>();
         stages.add(stage1);
         stages.add(stage2);
         pipeline.setStages(stages);
-        
+
         PipelineResponse response = new PipelineResponse(pipeline);
-        
+
         assertNotNull(response.getPipeline());
         assertEquals(2, response.getPipeline().getStages().size());
         assertEquals("build", response.getPipeline().getStages().get(0).getName());
@@ -87,13 +87,13 @@ public class PipelineResponseTest {
         PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("test-pipeline");
-        
+
         PipelineResponse response = new PipelineResponse(pipeline);
-        
+
         List<String> errors = new ArrayList<>();
         errors.add("Warning: Deprecated stage type");
         response.setErrors(errors);
-        
+
         assertNotNull(response.getPipeline());
         assertNotNull(response.getErrors());
         assertEquals("test-pipeline", response.getPipeline().getName());
@@ -104,7 +104,7 @@ public class PipelineResponseTest {
     public void testEmptyErrorsList() {
         PipelineResponse response = new PipelineResponse();
         response.setErrors(new ArrayList<>());
-        
+
         assertNotNull(response.getErrors());
         assertTrue(response.getErrors().isEmpty());
     }
