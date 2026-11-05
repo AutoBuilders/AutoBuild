@@ -4,7 +4,6 @@ import { PipelinesTable } from "../../components/pipelines/pipelinesTable";
 import { Button } from "../../components/ui/button";
 import { pipelineApiInstance } from "../../services/pipelines.api";
 import type {Pipeline} from '../../gen/api';
-import "./PipelinePage.css";
 import NavBar from "../../components/common/navBar";
 import { useNavigate } from "react-router-dom";
 
@@ -42,8 +41,8 @@ export default function PipelinePage() {
   return (
     <>
       <NavBar></NavBar>
-      <div className="main-container min-h-screen justify-center display-flex">
-        <div className="container p-20 text-center">
+      <div className="flex min-h-screen justify-center">
+        <div className="max-w-[80%] mx-auto text-center my-5 p-20">
           <h1 className="text-2xl font-bold text-center">MY PIPELINES</h1>
 
           <div className="flex justify-between items-center mt-10">
