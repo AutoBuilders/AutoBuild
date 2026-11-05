@@ -1,6 +1,7 @@
 package com.autobuild.pipeline.definiton.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,11 @@ public class PipelineService {
         }
 
         pipelineDto.setId(UUID.randomUUID());
-        pipelineDto.getStages().forEach(stage -> stage.setId(UUID.randomUUID()));
+        List<StageDTO> stages = pipelineDto.getStages();
+        for (int i = 0; i < stages.size(); i++) {
+            stages.get(i).setId(UUID.randomUUID());
+            stages.get(i).setStageOrder(i);
+        }
 
         Pipeline pipeline = mapper.dtoToEntity(pipelineDto);
         Map<UUID, String> scriptLocations = createScriptFiles(pipelineDto);
@@ -184,6 +189,37 @@ public class PipelineService {
                 updateStage(pipeline, req);
             }
         }
+
+        reorderStages(pipeline, stageRequests);
+    }
+
+    private void reorderStages(Pipeline pipeline, List<StageDTO> stageRequests) {
+        List<Stage> current = pipeline.getStages();
+
+        List<UUID> requestedIds = stageRequests.stream()
+                .filter(req -> req.getId() != null && !isDeleteOperation(req))
+                .map(StageDTO::getId)
+                .toList();
+
+        List<Stage> reordered = new ArrayList<>();
+        for (UUID id : requestedIds) {
+            current.stream()
+                    .filter(s -> s.getId().equals(id))
+                    .findFirst()
+                    .ifPresent(reordered::add);
+        }
+        for (Stage s : current) {
+            if (!reordered.contains(s)) {
+                reordered.add(s);
+            }
+        }
+
+        for (int i = 0; i < reordered.size(); i++) {
+            reordered.get(i).setStageOrder(i);
+        }
+
+        current.clear();
+        current.addAll(reordered);
     }
 
     private boolean isCreateOperation(StageDTO req) {
@@ -201,6 +237,7 @@ public class PipelineService {
             throws IOException, InvalidIdException {
         validateScriptType(req.getScriptType());
         req.setId(UUID.randomUUID());
+        req.setStageOrder(pipeline.getStages().size());
         Stage entity = stageMapper.dtoToEntity(req);
         String path = fileService.createStageScriptFile(pipeline, req);
         entity.setPath(path);
