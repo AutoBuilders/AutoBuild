@@ -273,6 +273,7 @@ components:
           type: string
         stageOrder:
           type: integer
+          format: int32
       required:
       - command
       - name
