@@ -10,14 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.autobuild.pipeline.configuration.MapperConfig;
 import com.autobuild.pipeline.definiton.dto.Pipeline;
 import com.autobuild.pipeline.definiton.dto.mapper.PipelineMapper;
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 @SpringJUnitConfig
-@ContextConfiguration(classes = {MapperConfig.class, PipelineMapper.class})
+@ContextConfiguration(classes = {PipelineMapper.class})
 public class PipelineMapperTest {
 
     private PipelineEntity pipeline = DummyData.getPipeline();

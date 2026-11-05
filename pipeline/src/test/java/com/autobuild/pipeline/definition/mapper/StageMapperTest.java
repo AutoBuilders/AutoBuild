@@ -8,14 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.autobuild.pipeline.configuration.MapperConfig;
 import com.autobuild.pipeline.definiton.dto.Stage;
 import com.autobuild.pipeline.definiton.dto.mapper.StageMapper;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 @SpringJUnitConfig
-@ContextConfiguration(classes = {MapperConfig.class, StageMapper.class})
+@ContextConfiguration(classes = {StageMapper.class})
 public class StageMapperTest {
 
     private StageEntity stage = DummyData.getStage();
