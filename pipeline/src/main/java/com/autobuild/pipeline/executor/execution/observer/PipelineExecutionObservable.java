@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 
 /**
  * Pipeline ongoing build (or execution) observable interface.
@@ -15,15 +15,15 @@ import com.autobuild.pipeline.executor.entity.PipelineBuild;
 
 @Component
 public interface PipelineExecutionObservable {
-    public void attachExecutionForObservation(PipelineBuild pipelineBuild);
-    public void removeExecutionForObservation(PipelineBuild pipelineBuild);
+    public void attachExecutionForObservation(PipelineBuildEntity pipelineBuild);
+    public void removeExecutionForObservation(PipelineBuildEntity pipelineBuild);
     public List<UUID> getAllAttachedExecutions();
 
     //subscribe for specific build
-    public void subscribe(PipelineBuild pipelineBuild, PipelineExecutionObserver subscriber);
-    public void unsubscribe(PipelineBuild pipelineBuild, PipelineExecutionObserver unsubscriber);
+    public void subscribe(PipelineBuildEntity pipelineBuild, PipelineExecutionObserver subscriber);
+    public void unsubscribe(PipelineBuildEntity pipelineBuild, PipelineExecutionObserver unsubscriber);
 
-    public List<PipelineExecutionObserver> getAllSpecificSubscribedObservers(PipelineBuild pipelineBuild);
+    public List<PipelineExecutionObserver> getAllSpecificSubscribedObservers(PipelineBuildEntity pipelineBuild);
 
     //subscribe for any build
     public void subscribe(PipelineExecutionObserver subscriber);
@@ -32,5 +32,5 @@ public interface PipelineExecutionObservable {
     public List<PipelineExecutionObserver> getAllGeneralSubscribedObservers();
 
     // notify observers
-    public void notify(PipelineBuild pipelineBuild);
+    public void notify(PipelineBuildEntity pipelineBuild);
 }

@@ -1,6 +1,6 @@
 package com.autobuild.pipeline.executor.execution.observer;
 
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 
 /**
  * Pipeline ongoing build (or execution) observer interface.
@@ -8,5 +8,5 @@ import com.autobuild.pipeline.executor.entity.PipelineBuild;
  * @author Suvabrata Chowdhury
  */
 public interface PipelineExecutionObserver {
-    public void update(PipelineBuild pipelineBuild);
+    public void update(PipelineBuildEntity pipelineBuild);
 }
