@@ -7,6 +7,7 @@ import org.hibernate.annotations.Checks;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -25,12 +26,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "stage")
 @Checks({
     @Check(name = "CHK_STAGE_NAME", constraints = "name != '' "),
     @Check(name = "CHK_STAGE_SCRIPT_TYPE", constraints = "script_type != '' "),
     @Check(name = "CHK_PATH_COMMAND", constraints = "path != '' ")
 })
-public class Stage {
+public class StageEntity {
     @Id
     @Column(name = "id")
     private UUID id;

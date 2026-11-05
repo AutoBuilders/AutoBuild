@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObserver;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
@@ -42,10 +42,10 @@ public class PipelineBuildContinuousUpdatorService implements PipelineExecutionO
 
     @Transactional
     @Override
-    public void update(PipelineBuild pipelineBuild) {
+    public void update(PipelineBuildEntity pipelineBuild) {
         log.info("Updating build with state: " + pipelineBuild.getCurrentState());
         
-        Optional<PipelineBuild> optionalBuild = repository.findById(pipelineBuild.getId());
+        Optional<PipelineBuildEntity> optionalBuild = repository.findById(pipelineBuild.getId());
 
         if (optionalBuild.isEmpty()) {
             throw new EntityNotFoundException("Pipeline build with id " + pipelineBuild.getId() + " does not exist");

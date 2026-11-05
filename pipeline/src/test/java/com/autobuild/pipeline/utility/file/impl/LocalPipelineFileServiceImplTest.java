@@ -16,16 +16,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import com.autobuild.pipeline.definiton.dto.PipelineDTO;
-import com.autobuild.pipeline.definiton.dto.StageDTO;
-import com.autobuild.pipeline.definiton.entity.Pipeline;
-import com.autobuild.pipeline.definiton.entity.Stage;
+import com.autobuild.pipeline.definiton.dto.Pipeline;
+import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
 public class LocalPipelineFileServiceImplTest {
-    private Pipeline pipeline = DummyData.getPipeline();
-    private PipelineDTO pipelineDTO = DummyData.getPipelineDTO();
+    private PipelineEntity pipeline = DummyData.getPipeline();
+    private Pipeline pipelineDTO = DummyData.getPipelineDTO();
 
     private Path pipelinePath = Path.of("..", "pipeline_scripts", pipeline.getId().toString());
 
@@ -38,7 +38,7 @@ public class LocalPipelineFileServiceImplTest {
         filesMockedStatic = mockStatic(Files.class);
 
         filesMockedStatic.when(() -> Files.readAllLines(any(Path.class)))
-                .thenReturn(List.of(pipelineDTO.getStages().get(0).getCommand()));
+                .thenReturn(List.of(pipelineDTO.getStagesList().get(0).getCommand()));
         filesMockedStatic.when(() -> Files.exists(any(Path.class))).thenReturn(false);
         filesMockedStatic.when(() -> Files.createDirectory(any(Path.class), any(FileAttribute.class)))
                 .thenReturn(pipelinePath);
@@ -103,7 +103,7 @@ public class LocalPipelineFileServiceImplTest {
 
     @Test
     public void testCreateStageScriptFile() throws IOException {
-        StageDTO newStage = pipelineDTO.getStages().get(0);
+        Stage newStage = pipelineDTO.getStagesList().get(0);
         String path = pipelineFileService.createStageScriptFile(pipeline, newStage);
 
         // Two exists checks: parent directory + pipeline directory
@@ -117,7 +117,7 @@ public class LocalPipelineFileServiceImplTest {
 
     @Test
     public void testUpdateStageScriptFile() throws IOException {
-        Stage stage = pipeline.getStages().get(0);
+        StageEntity stage = pipeline.getStages().get(0);
         stage.setPath(pipelinePath.resolve(stage.getId().toString()).toString());
 
         pipelineFileService.updateStageScriptFile(stage, "#!/bin/bash\necho UPDATED");
@@ -127,7 +127,7 @@ public class LocalPipelineFileServiceImplTest {
 
     @Test
     public void testRemoveStageScriptFile() throws IOException {
-        Stage stage = pipeline.getStages().get(0);
+        StageEntity stage = pipeline.getStages().get(0);
         stage.setPath(pipelinePath.resolve(stage.getId().toString()).toString());
 
         pipelineFileService.removeStageScriptFile(stage);
@@ -137,18 +137,18 @@ public class LocalPipelineFileServiceImplTest {
 
     @Test
     public void testReadStageScriptFile() throws IOException {
-        Stage stage = pipeline.getStages().get(0);
+        StageEntity stage = pipeline.getStages().get(0);
         stage.setPath(pipelinePath.resolve(stage.getId().toString()).toString());
 
         String content = pipelineFileService.readStageScriptFile(stage);
 
         filesMockedStatic.verify(() -> Files.readAllLines(any(Path.class)), times(1));
-        assert content.equals(pipelineDTO.getStages().get(0).getCommand());
+        assert content.equals(pipelineDTO.getStagesList().get(0).getCommand());
     }
 
     @Test
     public void testReadStageScriptFileBlankPath() throws IOException {
-        Stage stage = new Stage();
+        StageEntity stage = new StageEntity();
         stage.setPath("");
         String content = pipelineFileService.readStageScriptFile(stage);
         assert content.isEmpty();

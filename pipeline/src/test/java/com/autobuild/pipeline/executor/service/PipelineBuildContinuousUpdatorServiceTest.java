@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
@@ -33,7 +33,7 @@ public class PipelineBuildContinuousUpdatorServiceTest {
     @InjectMocks
     private PipelineBuildContinuousUpdatorService pipelineBuildContinuousUpdatorService;
 
-    private PipelineBuild dummyBuild = DummyData.getPipelineBuild();
+    private PipelineBuildEntity dummyBuild = DummyData.getPipelineBuild();
 
     @BeforeEach
     public void setup() {
