@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.autobuild.pipeline.configuration.FeatureFlag;
 import com.autobuild.pipeline.configuration.FeatureFlagService;
-import com.autobuild.pipeline.definiton.dto.PipelineDTO;
+import com.autobuild.pipeline.definiton.dto.Pipeline;
 import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.service.PipelineService;
@@ -58,14 +58,14 @@ public class PipelineController {
 
     @Operation(summary = "Get a pipeline")
     @GetMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineDTO> getPipelineById(@PathVariable String pipelineId)
+    public ResponseEntity<Pipeline> getPipelineById(@PathVariable String pipelineId)
             throws InvalidIdException, IOException {
         return ResponseEntity.ok(pipelineService.getPipelineById(pipelineId));
     }
 
     @Operation(summary = "Get all pipelines")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PipelineDTO>> getAllPipelines() {
+    public ResponseEntity<List<Pipeline>> getAllPipelines() {
         return ResponseEntity.ok(pipelineService.getAllPipelines());
     }
 
@@ -74,9 +74,9 @@ public class PipelineController {
         responses = @ApiResponse(responseCode = "201")
     )
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineDTO> createPipeline(@RequestBody @Valid PipelineDTO pipelineRequest)
+    public ResponseEntity<Pipeline> createPipeline(@RequestBody @Valid Pipeline pipelineRequest)
             throws DuplicateEntryException, IOException, InvalidIdException {
-        PipelineDTO createdPipeline = pipelineService.createPipeline(pipelineRequest);
+        Pipeline createdPipeline = pipelineService.createPipeline(pipelineRequest);
         URI location = URI.create("/api/v1/pipeline/" + createdPipeline.getId());
         return ResponseEntity.created(location).body(createdPipeline);
     }
@@ -87,9 +87,9 @@ public class PipelineController {
         deprecated = true
     )
     @PatchMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineDTO> modifyPipeline(
+    public ResponseEntity<Pipeline> modifyPipeline(
             @PathVariable String pipelineId,
-            @RequestBody PipelineDTO patchRequest)
+            @RequestBody Pipeline patchRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
         if (!featureFlagService.getBooleanValue(FeatureFlag.ENABLE_EDIT_PIPELINE.getKey())) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
@@ -114,9 +114,9 @@ public class PipelineController {
         deprecated = true
     )
     @PutMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineDTO> updatePipeline(
+    public ResponseEntity<Pipeline> updatePipeline(
             @PathVariable String pipelineId,
-            @RequestBody @Valid PipelineDTO putRequest)
+            @RequestBody @Valid Pipeline putRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
         if (!featureFlagService.getBooleanValue(FeatureFlag.ENABLE_EDIT_PIPELINE.getKey())) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();

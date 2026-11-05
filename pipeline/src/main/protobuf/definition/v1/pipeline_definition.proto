@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package definition.v1;
+
+option java_package = "com.autobuild.pipeline.definiton.dto";
+option java_multiple_files = true;
+
+// option go_package = "";
+// go_multiple_files doesn't exist - Go always generates one file per proto file.
+
+message Stage {
+  string id = 1;
+  string name = 2;
+  string script_type = 3;
+  string command = 4;
+}
+
+message Pipeline {
+  string id = 1;
+  string name = 2;
+  repeated Stage stages = 3;
+}

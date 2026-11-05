@@ -2,11 +2,12 @@ package com.autobuild.pipeline.executor.entity;
 
 import java.util.UUID;
 
-import com.autobuild.pipeline.definiton.entity.Stage;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionState;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.executor.execution.state.StageExecutionStateInternal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -30,37 +31,32 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class StageBuild {
+@Table(name = "stage_build")
+public class StageBuildEntity {
     @Id
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "stage_id", referencedColumnName = "id", nullable = false)
-    private Stage stage;
+    private StageEntity stage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stage_build_current_state", nullable = false)
-    private StageExecutionState currentState;
+    private StageExecutionStateInternal currentState;
 
-    @Column(name = "stage_order", nullable = false)
-    private int stageOrder;
 
     @Column(name = "log_path", nullable = false)
     private String logPath;
 
-    public StageBuild(Stage stage) {
+    public StageBuildEntity(StageEntity stage) {
         this.stage = stage;
-        this.stageOrder = stage.getStageOrder();
     }
 
-    public StageBuild(UUID id, Stage stage, StageExecutionState currentState, String logPath) {
-        this(id, stage, currentState, stage.getStageOrder(), logPath);
-    }
 
     @PrePersist
     public void setDefaultState() {
         if (null == this.currentState) {
-            this.currentState = StageExecutionState.WAITING;
+            this.currentState = StageExecutionStateInternal.WAITING;
         }
     }
 }

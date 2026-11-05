@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 
 /**
  * Repository Layer for all pipeline related entities.
@@ -13,7 +13,7 @@ import com.autobuild.pipeline.definiton.entity.Pipeline;
  */
 
 @Repository
-public interface PipelineRepository extends JpaRepository<Pipeline, UUID> {
+public interface PipelineRepository extends JpaRepository<PipelineEntity, UUID> {
 
     boolean existsByName(String name);
 

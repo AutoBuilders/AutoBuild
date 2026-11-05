@@ -1,11 +1,14 @@
 package com.autobuild.pipeline.definiton.dto.mapper;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.autobuild.pipeline.definiton.dto.PipelineDTO;
-import com.autobuild.pipeline.definiton.entity.Pipeline;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.definiton.dto.Pipeline;
+import com.autobuild.pipeline.definiton.dto.Stage;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Used to map Pipeline Entity to Pipeline DTO.
@@ -13,28 +16,60 @@ import com.autobuild.pipeline.definiton.entity.Pipeline;
  */
 
 @Component
-public class PipelineMapper implements Mapper<PipelineDTO, Pipeline>{
-    @Autowired
-    private ModelMapper mapper;
+public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
 
     // @Autowired
     // private StageMapper stageMapper;
 
     @Override
-    public Pipeline dtoToEntity(PipelineDTO pipelineDTO) {
-        if (null == pipelineDTO) {
+    public PipelineEntity dtoToEntity(Pipeline pipelineProto) {
+        if (null == pipelineProto) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return this.mapper.map(pipelineDTO, Pipeline.class);
+        List<StageEntity> stages = pipelineProto.getStagesList()
+            .stream()
+            .map(stageProto -> {
+              StageEntity s = new StageEntity();
+              if (!stageProto.getId().isBlank()) {
+                s.setId(UUID.fromString(stageProto.getId()));
+              }
+              s.setName(stageProto.getName());
+              s.setScriptType(stageProto.getScriptType());
+              return s;
+            })
+            .toList();
+
+        PipelineEntity pipeline = new PipelineEntity();
+        if (!pipelineProto.getId().isBlank()) {
+          pipeline.setId(UUID.fromString(pipelineProto.getId()));
+        }
+        pipeline.setName(pipelineProto.getName());
+        pipeline.setStages(stages);
+        return pipeline;
     }
 
     @Override
-    public PipelineDTO entityToDto(Pipeline pipeline) {
+    public Pipeline entityToDto(PipelineEntity pipeline) {
         if (null == pipeline) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return this.mapper.map(pipeline, PipelineDTO.class);
+        List<Stage> stagesProto = pipeline.getStages()
+            .stream()
+            .map(stage -> Stage.newBuilder()
+                .setId(stage.getId().toString())
+                .setName(stage.getName())
+                .setScriptType(stage.getScriptType())
+                .build())
+            .toList();
+
+        Pipeline pipelineProto = Pipeline.newBuilder()
+            .setId(pipeline.getId().toString())
+            .setName(pipeline.getName())
+            .addAllStages(stagesProto)
+            .build();
+
+        return pipelineProto;
     }
 }

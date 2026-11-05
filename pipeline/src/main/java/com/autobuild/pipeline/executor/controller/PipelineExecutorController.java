@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.service.PipelineExecutorService;
+
+import com.autobuild.pipeline.executor.dto.PipelineBuild;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -45,9 +46,9 @@ public class PipelineExecutorController {
 
     @Operation(summary = "Execute a pipeline", responses = @ApiResponse(responseCode = "203"))
     @PostMapping(value = "/pipeline", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineBuildDTO> executePipeline(@RequestBody @Valid PipelineExecuteRequest request)
+    public ResponseEntity<PipelineBuild> executePipeline(@RequestBody @Valid PipelineExecuteRequest request)
             throws IOException {
-        PipelineBuildDTO build = service.executePipeline(request);
+        PipelineBuild build = service.executePipeline(request);
 
         return ResponseEntity.accepted().body(build);
     }

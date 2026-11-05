@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum StageExecutionState {
+public enum StageExecutionStateInternal {
     WAITING("Stage is waiting to be executed."),
     RUNNING("Stage execution has started."),
     SUCCESS("Stage execution has finished and it succeeded."),

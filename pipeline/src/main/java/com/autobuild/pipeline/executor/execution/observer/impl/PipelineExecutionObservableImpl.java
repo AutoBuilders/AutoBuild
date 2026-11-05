@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObserver;
 
@@ -23,7 +23,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
 
     // Todo: may not be required
     @Override
-    public void attachExecutionForObservation(PipelineBuild pipelineBuild) {
+    public void attachExecutionForObservation(PipelineBuildEntity pipelineBuild) {
         if (specificSubscribers.containsKey(pipelineBuild.getId())) {
             throw new IllegalArgumentException("Build is already being observed");
         }
@@ -33,7 +33,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
 
     // todo: may not be required
     @Override
-    public void removeExecutionForObservation(PipelineBuild pipelineBuild) {
+    public void removeExecutionForObservation(PipelineBuildEntity pipelineBuild) {
         specificSubscribers.remove(pipelineBuild.getId());
     }
 
@@ -43,7 +43,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
     }
 
     @Override
-    public void subscribe(PipelineBuild pipelineBuild, PipelineExecutionObserver subscriber) {
+    public void subscribe(PipelineBuildEntity pipelineBuild, PipelineExecutionObserver subscriber) {
         if (null == subscriber || null == pipelineBuild) {
             throw new IllegalArgumentException("Null arguments given");
         }
@@ -54,7 +54,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
     }
 
     @Override
-    public void unsubscribe(PipelineBuild pipelineBuild, PipelineExecutionObserver unsubscriber) {
+    public void unsubscribe(PipelineBuildEntity pipelineBuild, PipelineExecutionObserver unsubscriber) {
         if (null == unsubscriber || null == pipelineBuild) {
             throw new IllegalArgumentException("Null arguments given");
         }
@@ -66,7 +66,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
     }
 
     @Override
-    public List<PipelineExecutionObserver> getAllSpecificSubscribedObservers(PipelineBuild pipelineBuild) {
+    public List<PipelineExecutionObserver> getAllSpecificSubscribedObservers(PipelineBuildEntity pipelineBuild) {
         return specificSubscribers.get(pipelineBuild.getId());
     }
 
@@ -94,7 +94,7 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
     }
 
     @Override
-    public void notify(PipelineBuild pipelineBuild) {
+    public void notify(PipelineBuildEntity pipelineBuild) {
         if (null == pipelineBuild) {
             throw new IllegalArgumentException("Null pipeline build given");
         }
