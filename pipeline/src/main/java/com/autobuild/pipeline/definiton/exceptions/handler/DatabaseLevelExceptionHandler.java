@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Global handler for handling database level exceptions.
+ *
  * @author Suvabrata Chowdhury
  */
 
@@ -24,18 +25,16 @@ public class DatabaseLevelExceptionHandler {
         log.error(exception.getMessage(), exception);
 
         return ErrorResponse.builder(exception, HttpStatus.NOT_FOUND, exception.getMessage())
-                .property("errorCategory", "Client Error")
-                .build();
+                .property("errorCategory", "Client Error").build();
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ErrorResponse handleConstraintViolationException(ConstraintViolationException exception) {
         log.error(exception.getMessage(), exception);
 
-        String errorMessage = exception.getConstraintName() 
-                                + "," + exception.getMessage() 
-                                + "," + exception.getErrorMessage();
-        
+        String errorMessage = exception.getConstraintName() + "," + exception.getMessage() + ","
+                + exception.getErrorMessage();
+
         return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, errorMessage)
                 .property("errorCategory", "Client Error").build();
     }

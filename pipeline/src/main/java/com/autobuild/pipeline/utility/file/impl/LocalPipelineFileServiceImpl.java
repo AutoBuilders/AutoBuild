@@ -27,12 +27,10 @@ import com.autobuild.pipeline.utility.file.PipelineFileService;
 import com.autobuild.pipeline.utility.file.extension.Extensions;
 
 /**
- * Pipeline file service implementation for storing script file in local
- * machine.
- * 
- * The maintained directory structure is,
- * /pipeline_id/stage_id
- * 
+ * Pipeline file service implementation for storing script file in local machine.
+ *
+ * The maintained directory structure is, /pipeline_id/stage_id
+ *
  * @author Suvabrata Chowdhury
  */
 
@@ -43,34 +41,26 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     private static final Path DEFAULT_SCRIPT_LOG_PATH = Path.of("..", "pipeline_build_logs");
 
     private static final FileAttribute<Set<PosixFilePermission>> PERMISSIONS = PosixFilePermissions.asFileAttribute(
-            Set.of(
-                    PosixFilePermission.OWNER_EXECUTE,
-                    PosixFilePermission.OWNER_WRITE,
-                    PosixFilePermission.OWNER_READ));
+            Set.of(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_READ));
 
     private static final FileAttribute<Set<PosixFilePermission>> LOG_FILE_PERMISSIONS = PosixFilePermissions
             .asFileAttribute(Set.of(
-                            // PosixFilePermission.OWNER_EXECUTE,
-                            PosixFilePermission.OWNER_WRITE,
-                            PosixFilePermission.OWNER_READ));
+                    // PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_READ));
 
     @Override
     public Map<UUID, String> readScriptFiles(final PipelineEntity pipeline) throws IOException {
         Map<UUID, String> scriptContents = new HashMap<>();
 
         try {
-            pipeline.getStages()
-                    .forEach(
-                            stage -> {
-                                try {
-                                    String content = StringUtils.join(
-                                            Files.readAllLines(Path.of(stage.getPath())),
-                                            "\n");
-                                    scriptContents.put(stage.getId(), content);
-                                } catch (IOException e) {
-                                    throw new UncheckedIOException(e);
-                                }
-                            });
+            pipeline.getStages().forEach(stage -> {
+                try {
+                    String content = StringUtils.join(Files.readAllLines(Path.of(stage.getPath())), "\n");
+                    scriptContents.put(stage.getId(), content);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
 
             return scriptContents;
         } catch (UncheckedIOException e) {

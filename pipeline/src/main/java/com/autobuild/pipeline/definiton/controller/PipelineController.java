@@ -34,18 +34,12 @@ import jakarta.validation.Valid;
 
 /**
  * Controller for all CRUD operations on Pipeline.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 @Tag(name = "Pipeline", description = "Operations related to pipeline")
 @SecurityRequirement(name = "bearerAuth")
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        description = "JWT authentication. Enter token as: Bearer <token>"
-)
+@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", description = "JWT authentication. Enter token as: Bearer <token>")
 @RestController
 @RequestMapping("/api/v1/pipeline")
 public class PipelineController {
@@ -69,10 +63,7 @@ public class PipelineController {
         return ResponseEntity.ok(pipelineService.getAllPipelines());
     }
 
-    @Operation(
-        summary = "Create a pipeline",
-        responses = @ApiResponse(responseCode = "201")
-    )
+    @Operation(summary = "Create a pipeline", responses = @ApiResponse(responseCode = "201"))
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Pipeline> createPipeline(@RequestBody @Valid Pipeline pipelineRequest)
             throws DuplicateEntryException, IOException, InvalidIdException {
@@ -81,15 +72,9 @@ public class PipelineController {
         return ResponseEntity.created(location).body(createdPipeline);
     }
 
-    @Operation(
-        summary = "[Experimental]: Update a pipeline",
-        description = "API to update pipeline. It's currently under development. Do not use it!",
-        deprecated = true
-    )
+    @Operation(summary = "[Experimental]: Update a pipeline", description = "API to update pipeline. It's currently under development. Do not use it!", deprecated = true)
     @PatchMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pipeline> modifyPipeline(
-            @PathVariable String pipelineId,
-            @RequestBody Pipeline patchRequest)
+    public ResponseEntity<Pipeline> modifyPipeline(@PathVariable String pipelineId, @RequestBody Pipeline patchRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
         if (!featureFlagService.getBooleanValue(FeatureFlag.ENABLE_EDIT_PIPELINE.getKey())) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
@@ -97,27 +82,17 @@ public class PipelineController {
         return ResponseEntity.ok(pipelineService.modifyPipeline(pipelineId, patchRequest));
     }
 
-    @Operation(
-        summary = "Delete a pipeline",
-        responses = @ApiResponse(responseCode = "204")
-    )
+    @Operation(summary = "Delete a pipeline", responses = @ApiResponse(responseCode = "204"))
     @DeleteMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deletePipeline(@PathVariable String pipelineId)
-            throws IOException, InvalidIdException {
+    public ResponseEntity<Void> deletePipeline(@PathVariable String pipelineId) throws IOException, InvalidIdException {
         pipelineService.deletePipelineById(pipelineId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(
-        summary = "[Experimental]: Update a pipeline",
-        description = "API to update pipeline. It's currently under development. Do not use it!",
-        deprecated = true
-    )
+    @Operation(summary = "[Experimental]: Update a pipeline", description = "API to update pipeline. It's currently under development. Do not use it!", deprecated = true)
     @PutMapping(value = "/{pipelineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pipeline> updatePipeline(
-            @PathVariable String pipelineId,
-            @RequestBody @Valid Pipeline putRequest)
-            throws InvalidIdException, IOException, DuplicateEntryException {
+    public ResponseEntity<Pipeline> updatePipeline(@PathVariable String pipelineId,
+            @RequestBody @Valid Pipeline putRequest) throws InvalidIdException, IOException, DuplicateEntryException {
         if (!featureFlagService.getBooleanValue(FeatureFlag.ENABLE_EDIT_PIPELINE.getKey())) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }

@@ -12,11 +12,12 @@ import java.util.UUID;
 
 /**
  * Used to map Pipeline Entity to Pipeline DTO.
+ *
  * @author Suvabrata Chowdhury
  */
 
 @Component
-public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
+public class PipelineMapper implements Mapper<Pipeline, PipelineEntity> {
 
     // @Autowired
     // private StageMapper stageMapper;
@@ -27,22 +28,19 @@ public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        List<StageEntity> stages = pipelineProto.getStagesList()
-            .stream()
-            .map(stageProto -> {
-              StageEntity s = new StageEntity();
-              if (!stageProto.getId().isBlank()) {
+        List<StageEntity> stages = pipelineProto.getStagesList().stream().map(stageProto -> {
+            StageEntity s = new StageEntity();
+            if (!stageProto.getId().isBlank()) {
                 s.setId(UUID.fromString(stageProto.getId()));
-              }
-              s.setName(stageProto.getName());
-              s.setScriptType(stageProto.getScriptType());
-              return s;
-            })
-            .toList();
+            }
+            s.setName(stageProto.getName());
+            s.setScriptType(stageProto.getScriptType());
+            return s;
+        }).toList();
 
         PipelineEntity pipeline = new PipelineEntity();
         if (!pipelineProto.getId().isBlank()) {
-          pipeline.setId(UUID.fromString(pipelineProto.getId()));
+            pipeline.setId(UUID.fromString(pipelineProto.getId()));
         }
         pipeline.setName(pipelineProto.getName());
         pipeline.setStages(stages);
@@ -55,20 +53,12 @@ public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        List<Stage> stagesProto = pipeline.getStages()
-            .stream()
-            .map(stage -> Stage.newBuilder()
-                .setId(stage.getId().toString())
-                .setName(stage.getName())
-                .setScriptType(stage.getScriptType())
-                .build())
-            .toList();
+        List<Stage> stagesProto = pipeline.getStages().stream().map(stage -> Stage.newBuilder()
+                .setId(stage.getId().toString()).setName(stage.getName()).setScriptType(stage.getScriptType()).build())
+                .toList();
 
-        Pipeline pipelineProto = Pipeline.newBuilder()
-            .setId(pipeline.getId().toString())
-            .setName(pipeline.getName())
-            .addAllStages(stagesProto)
-            .build();
+        Pipeline pipelineProto = Pipeline.newBuilder().setId(pipeline.getId().toString()).setName(pipeline.getName())
+                .addAllStages(stagesProto).build();
 
         return pipelineProto;
     }

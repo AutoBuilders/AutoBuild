@@ -25,17 +25,11 @@ import jakarta.validation.Valid;
 
 /**
  * Controller for executing a pipeline.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
 @Tag(name = "Pipeline")
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        description = "JWT authentication. Enter token as: Bearer <token>"
-)
+@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", description = "JWT authentication. Enter token as: Bearer <token>")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/v1/execute")
