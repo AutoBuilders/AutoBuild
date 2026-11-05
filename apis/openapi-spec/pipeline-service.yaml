@@ -319,6 +319,9 @@ components:
           format: uuid
         stageName:
           type: string
+        stageOrder:
+          type: integer
+          format: int32
         currentState:
           type: string
           enum:

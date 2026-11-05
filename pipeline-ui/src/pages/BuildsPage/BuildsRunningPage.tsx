@@ -33,7 +33,10 @@ export default function BuildsRunningPage() {
         console.error("Error getting build");
       }
 
-      setBuild(data);
+      setBuild({
+        ...data,
+        stageBuilds: [...(data.stageBuilds ?? [])].sort((a, b) => (a.stageOrder ?? 0) - (b.stageOrder ?? 0)),
+      });
 
       if (data.stageBuilds !== undefined && data.stageBuilds.length > 0) {
         setSelectedStageId(data.stageBuilds[0].id as string);
@@ -62,7 +65,10 @@ export default function BuildsRunningPage() {
         console.error("Error getting build");
       }
 
-      setBuild(data);
+      setBuild({
+        ...data,
+        stageBuilds: [...(data.stageBuilds ?? [])].sort((a, b) => (a.stageOrder ?? 0) - (b.stageOrder ?? 0)),
+      });
     }, 10000);
 
     // Cleanup
@@ -86,7 +92,7 @@ export default function BuildsRunningPage() {
       setBuild((prev) => ({
         ...prev!,
         currentState: parsed.currentState,
-        stageBuilds: parsed.stageBuilds,
+        stageBuilds: [...(parsed.stageBuilds ?? [])].sort((a, b) => (a.stageOrder ?? 0) - (b.stageOrder ?? 0)),
       }));
 
       if (parsed.currentState !== PipelineBuildCurrentStateEnum.Running) {

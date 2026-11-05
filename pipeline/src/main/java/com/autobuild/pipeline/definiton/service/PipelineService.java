@@ -86,12 +86,9 @@ public class PipelineService {
             validateScriptType(stage.getScriptType());
         }
 
+        validateStageOrders(pipelineDto.getStages());
         pipelineDto.setId(UUID.randomUUID());
-        List<StageDTO> stages = pipelineDto.getStages();
-        for (int i = 0; i < stages.size(); i++) {
-            stages.get(i).setId(UUID.randomUUID());
-            stages.get(i).setStageOrder(i);
-        }
+        pipelineDto.getStages().forEach(stage -> stage.setId(UUID.randomUUID()));
 
         Pipeline pipeline = mapper.dtoToEntity(pipelineDto);
         Map<UUID, String> scriptLocations = createScriptFiles(pipelineDto);
@@ -259,6 +256,16 @@ public class PipelineService {
 
         if (req.getCommand() != null && !req.getCommand().isBlank()) {
             fileService.updateStageScriptFile(toUpdate, req.getCommand());
+        }
+    }
+
+    private void validateStageOrders(List<StageDTO> stages) throws DuplicateEntryException {
+        Set<Integer> seen = new HashSet<>();
+        for (StageDTO stage : stages) {
+            if (!seen.add(stage.getStageOrder())) {
+                throw new DuplicateEntryException(
+                        "Duplicate stageOrder value: " + stage.getStageOrder());
+            }
         }
     }
 
