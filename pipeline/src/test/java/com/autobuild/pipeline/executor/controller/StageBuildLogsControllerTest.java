@@ -37,20 +37,20 @@ public class StageBuildLogsControllerTest {
 
     @Test
     public void getStageBuildLogsTest() throws IOException {
-        doReturn(Map.of("log", "hello world")).when(service).getStageBuildLogs(any(UUID.class));
+        doReturn(Map.of("log","hello world")).when(service).getStageBuildLogs(any(UUID.class));
 
         ResponseEntity<Map<String, String>> response = controller.getStageBuildLogs(UUID.randomUUID());
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-
+        
         assertNotNull(response.getBody());
     }
 
     @Test
     public void getStageBuildLogsErrorTest() throws IOException {
         doThrow(new EntityNotFoundException("dummy exception")).when(service).getStageBuildLogs(any(UUID.class));
-
+        
         assertThrows(EntityNotFoundException.class, () -> controller.getStageBuildLogs(UUID.randomUUID()));
     }
 }

@@ -17,66 +17,79 @@ import com.autobuild.pipeline.executor.execution.state.StageExecutionStateIntern
 
 public class DummyData {
 
-    // Pipeline Crud
+    //Pipeline Crud
     public static StageEntity getStage() {
-        return new StageEntity(UUID.randomUUID(), "dummyStage1", "bash", "./dummyFolder/");
+        return new StageEntity(UUID.randomUUID(),"dummyStage1","bash","./dummyFolder/");
     }
 
-    public static Stage getStageDTO() {
-        return Stage.newBuilder().setId(UUID.randomUUID().toString()).setName("dummyStage1").setScriptType("bash")
-                .setCommand("echo Hello").build();
+    public static  Stage getStageDTO() {
+        return Stage.newBuilder()
+            .setId(UUID.randomUUID().toString())
+            .setName("dummyStage1")
+            .setScriptType("bash")
+            .setCommand("echo Hello")
+            .build();
     }
 
-    public static PipelineEntity getPipeline() {
-        return new PipelineEntity(UUID.randomUUID(), "my pipeline", List.of(getStage()));
+    public static  PipelineEntity getPipeline() {
+        return new PipelineEntity(UUID.randomUUID(), "my pipeline",List.of(getStage()));
     }
 
-    public static PipelineEntity getPipeline(UUID pipelineId) {
-        return new PipelineEntity(pipelineId, "my pipeline", List.of(getStage()));
+    public static  PipelineEntity getPipeline(UUID pipelineId) {
+        return new PipelineEntity(pipelineId, "my pipeline",List.of(getStage()));
     }
 
     public static Pipeline getPipelineDTO() {
-        return Pipeline.newBuilder().setId(UUID.randomUUID().toString()).setName("my pipeline")
-                .addAllStages(List.of(getStageDTO())).build();
+        return Pipeline.newBuilder()
+            .setId(UUID.randomUUID().toString())
+            .setName("my pipeline")
+            .addAllStages(List.of(getStageDTO()))
+            .build();
     }
 
-    // Pipeline Execution
+    //Pipeline Execution
     public static PipelineExecuteRequest getPipelineRequest() {
         return new PipelineExecuteRequest(UUID.randomUUID());
     }
 
     public static StageBuildEntity getStageBuild() {
-        return new StageBuildEntity(UUID.randomUUID(), DummyData.getStage(), StageExecutionStateInternal.WAITING,
-                "./dummyFolder/");
+        return new StageBuildEntity(UUID.randomUUID(), DummyData.getStage(), StageExecutionStateInternal.WAITING, "./dummyFolder/");
     }
 
     public static PipelineBuildEntity getPipelineBuild() {
-        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()),
-                PipelineExecutionStateInternal.WAITING);
+        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionStateInternal.WAITING);
     }
 
     public static PipelineBuildEntity getPipelineBuild(UUID pipelineUuid) {
-        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid),
-                List.of(DummyData.getStageBuild()), PipelineExecutionStateInternal.WAITING);
+        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionStateInternal.WAITING);
     }
 
     public static StageBuild getStageBuildDTO() {
-        return StageBuild.newBuilder().setId(UUID.randomUUID().toString()).setStageId(UUID.randomUUID().toString())
-                .setStageName("Dummy Stage")
-                .setCurrentState(com.autobuild.pipeline.executor.dto.StageExecutionState.STAGE_WAITING).build();
+        return StageBuild.newBuilder()
+            .setId(UUID.randomUUID().toString())
+            .setStageId(UUID.randomUUID().toString())
+            .setStageName("Dummy Stage")
+            .setCurrentState(com.autobuild.pipeline.executor.dto.StageExecutionState.STAGE_WAITING)
+            .build();
     }
 
     public static PipelineBuild getPipelineBuildDTO() {
-        return PipelineBuild.newBuilder().setId(UUID.randomUUID().toString())
-                .setPipelineId(UUID.randomUUID().toString()).setPipelineName("Dummy Pipeline")
-                .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
-                .addAllStageBuilds(List.of(DummyData.getStageBuildDTO())).build();
+        return PipelineBuild.newBuilder()
+            .setId(UUID.randomUUID().toString())
+            .setPipelineId(UUID.randomUUID().toString())
+            .setPipelineName("Dummy Pipeline")
+            .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+            .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
+            .build();
     }
 
     public static PipelineBuild getPipelineBuildDTO(UUID pipelineId) {
-        return PipelineBuild.newBuilder().setId(UUID.randomUUID().toString()).setPipelineId(pipelineId.toString())
-                .setPipelineName("Dummy Pipeline")
-                .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
-                .addAllStageBuilds(List.of(DummyData.getStageBuildDTO())).build();
+        return PipelineBuild.newBuilder()
+            .setId(UUID.randomUUID().toString())
+            .setPipelineId(pipelineId.toString())
+            .setPipelineName("Dummy Pipeline")
+            .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+            .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
+            .build();
     }
 }

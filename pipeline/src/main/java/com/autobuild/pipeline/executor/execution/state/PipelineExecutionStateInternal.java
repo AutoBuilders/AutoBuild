@@ -5,14 +5,15 @@ import lombok.Getter;
 
 /**
  * Pipeline Build / execution state.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
 @AllArgsConstructor
 @Getter
 public enum PipelineExecutionStateInternal {
-    WAITING("Pipeline is waiting to be executed."), RUNNING("Pipeline execution has started."),
+    WAITING("Pipeline is waiting to be executed."),
+    RUNNING("Pipeline execution has started."),
     SUCCESS("Pipeline execution has finished and it succeeded."),
     FAILED("Pipeline execution has finished and it failed.");
 

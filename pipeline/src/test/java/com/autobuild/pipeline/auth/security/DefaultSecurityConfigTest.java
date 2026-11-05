@@ -33,10 +33,10 @@ public class DefaultSecurityConfigTest {
     @Test
     void testDefaultSecurity() throws Exception {
         localSecurityConfig.defaultSecurityFilterChain(mockHttpSecurity);
-
-        verify(mockHttpSecurity, times(1)).csrf(any());
-        verify(mockHttpSecurity, times(1)).authorizeHttpRequests(any());
-        verify(mockHttpSecurity, times(1)).httpBasic(any());
-        verify(mockHttpSecurity, times(1)).formLogin(any());
+        
+        verify(mockHttpSecurity,times(1)).csrf(any());
+        verify(mockHttpSecurity,times(1)).authorizeHttpRequests(any());
+        verify(mockHttpSecurity,times(1)).httpBasic(any());
+        verify(mockHttpSecurity,times(1)).formLogin(any());
     }
 }

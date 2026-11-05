@@ -27,11 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service layer for executing a pipeline.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
-// TODO: too much dependencies. refactor
+//TODO: too much dependencies. refactor
 
 @Slf4j
 @Service
@@ -92,7 +92,9 @@ public class PipelineExecutorService {
 
     // TODO: abstract this logic
     private PipelineBuildEntity createBuild(final PipelineEntity pipeline) {
-        List<StageBuildEntity> stageBuilds = pipeline.getStages().stream().map(stage -> {
+        List<StageBuildEntity> stageBuilds = pipeline.getStages()
+        .stream()
+        .map(stage -> {
             StageBuildEntity stageBuild = new StageBuildEntity(stage);
             stageBuild.setId(UUID.randomUUID());
 
