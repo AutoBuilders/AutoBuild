@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor, within, cleanup } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
 import BuildsRunningPage from "../../src/pages/BuildsPage/BuildsRunningPage";
@@ -51,7 +51,11 @@ describe("BuildsRunningPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockParams.id = "1";
-    mockEventSourceInstances.length = 0; // Clear the instances array
+    mockEventSourceInstances.length = 0;
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   it("renders builds running page content", () => {
@@ -243,6 +247,81 @@ describe("BuildsRunningPage", () => {
 
     // Verify the EventSource close method was called (component closes it on non-RUNNING states)
     expect(eventSourceInstance.close).toHaveBeenCalled();
+  });
+
+  it("sorts stageBuilds by stageOrder on initial load", async () => {
+    const mockBuildsResponse = {
+      status: 200,
+      data: {
+        id: "1",
+        pipelineId: "10",
+        pipelineName: "Pipeline 1",
+        currentState: PipelineBuildCurrentStateEnum.Success,
+        stageBuilds: [
+          { id: "2", stageName: "Second Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
+          { id: "1", stageName: "First Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Success },
+        ]
+      }
+    };
+    vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildsResponse as any);
+    vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValue({ status: 200, data: {} } as any);
+
+    render(
+      <MemoryRouter>
+        <BuildsRunningPage />
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Pipeline 1");
+
+    const stageButtons = await screen.findAllByRole("button", { name: /Stage/ });
+    expect(stageButtons[0]).toHaveTextContent("First Stage");
+    expect(stageButtons[1]).toHaveTextContent("Second Stage");
+  });
+
+  it("sorts stageBuilds by stageOrder when receiving SSE message", async () => {
+    const mockBuildResponse = {
+      status: 200,
+      data: {
+        id: "1",
+        pipelineId: "10",
+        pipelineName: "Pipeline 1",
+        currentState: PipelineBuildCurrentStateEnum.Running,
+        stageBuilds: [
+          { id: "1", stageName: "Alpha Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Running },
+        ]
+      }
+    };
+    vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildResponse as any);
+    vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValue({ status: 200, data: {} } as any);
+
+    render(
+      <MemoryRouter>
+        <BuildsRunningPage />
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Pipeline 1");
+
+    await waitFor(() => expect(mockEventSourceInstances.length).toBeGreaterThan(0), { timeout: 1000 });
+
+    const eventSourceInstance = mockEventSourceInstances[0];
+
+    eventSourceInstance.onmessage!({
+      data: JSON.stringify({
+        currentState: PipelineBuildCurrentStateEnum.Success,
+        stageBuilds: [
+          { id: "2", stageName: "Beta Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
+          { id: "1", stageName: "Alpha Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Success },
+        ]
+      })
+    } as MessageEvent);
+
+    await waitFor(() => {
+      const stageButtons = screen.getAllByRole("button", { name: /Stage/ });
+      expect(stageButtons[0]).toHaveTextContent("Alpha Stage");
+      expect(stageButtons[1]).toHaveTextContent("Beta Stage");
+    });
   });
 
   it("displays stage details with logs section", async () => {
