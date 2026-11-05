@@ -12,7 +12,7 @@ function LandingPage() {
         <h1 className="text-3xl font-semibold mb-2">Hello</h1>
         <p className="text-xl text-gray-600 mb-10">Welcome!</p>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-row gap-6">
           {/* PIPELINES TILE */}
           <Button
             variant="tile"
