@@ -22,7 +22,7 @@ import lombok.Setter;
 
 /**
  * Pipeline Entity definition.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
@@ -31,8 +31,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "pipeline", uniqueConstraints = {
-        @UniqueConstraint(name = "UK_PIPELINE_NAME", columnNames = { "name" }) })
+@Table(name = "pipeline",uniqueConstraints = {
+    @UniqueConstraint(name = "UK_PIPELINE_NAME", columnNames = { "name" })
+})
 @Check(name = "CHK_PIPELINE_NAME", constraints = "name != '' ")
 public class PipelineEntity {
     @Id
@@ -45,6 +46,10 @@ public class PipelineEntity {
 
     @NotEmpty
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "pipeline_stages", joinColumns = @JoinColumn(name = "pipeline_id"), inverseJoinColumns = @JoinColumn(name = "stage_id"))
+    @JoinTable(
+        name = "pipeline_stages", 
+        joinColumns = @JoinColumn(name = "pipeline_id"),
+        inverseJoinColumns = @JoinColumn(name = "stage_id")
+    )
     private List<StageEntity> stages; // TODO: need to take an abstract implementation of stage
 }
