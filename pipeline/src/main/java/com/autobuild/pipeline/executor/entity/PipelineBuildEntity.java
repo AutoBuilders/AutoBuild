@@ -27,11 +27,11 @@ import lombok.Setter;
 
 /**
  * PipelineBuild entity to hold data/metadata about execution in table.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
-// TODO: Add timestamps
+//TODO: Add timestamps
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -48,7 +48,11 @@ public class PipelineBuildEntity {
 
     @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "pipeline_stage_builds", joinColumns = @JoinColumn(name = "pipeline_build_id"), inverseJoinColumns = @JoinColumn(name = "stage_build_id"))
+    @JoinTable(
+        name = "pipeline_stage_builds",
+        joinColumns = @JoinColumn(name = "pipeline_build_id"),
+        inverseJoinColumns = @JoinColumn(name = "stage_build_id")
+    )
     private List<StageBuildEntity> stageBuilds;
 
     @Enumerated(EnumType.STRING)

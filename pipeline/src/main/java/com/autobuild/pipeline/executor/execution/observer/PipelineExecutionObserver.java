@@ -4,7 +4,7 @@ import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 
 /**
  * Pipeline ongoing build (or execution) observer interface.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 public interface PipelineExecutionObserver {

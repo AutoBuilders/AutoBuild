@@ -42,8 +42,7 @@ public class PipelineExecutorControllerTest {
 
     @Test
     public void testExecutePipeline() throws IOException {
-        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller
-                .executePipeline(executeRequest);
+        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller.executePipeline(executeRequest);
 
         assertNotNull(response);
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
@@ -58,8 +57,7 @@ public class PipelineExecutorControllerTest {
 
     @Test
     public void testExecutePipelineRuntimeError() throws IOException {
-        doThrow(new RuntimeException("Something runtime exception")).when(service)
-                .executePipeline(any(PipelineExecuteRequest.class));
+        doThrow(new RuntimeException("Something runtime exception")).when(service).executePipeline(any(PipelineExecuteRequest.class));
 
         assertThrows(RuntimeException.class, () -> controller.executePipeline(executeRequest));
     }

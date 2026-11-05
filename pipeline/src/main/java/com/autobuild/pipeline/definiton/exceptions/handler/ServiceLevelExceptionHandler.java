@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Global handler for any/all exceptions coming from Pipeline.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
@@ -31,7 +31,8 @@ public class ServiceLevelExceptionHandler {
         log.error(exception.getMessage(), exception);
 
         return ErrorResponse.builder(exception, HttpStatus.CONFLICT, exception.getMessage())
-                .property("errorCategory", "Client Error").build();
+                .property("errorCategory", "Client Error")
+                .build();
     }
 
     @ExceptionHandler(InvalidIdException.class)
@@ -39,15 +40,20 @@ public class ServiceLevelExceptionHandler {
         log.error(exception.getMessage(), exception);
 
         return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage())
-                .property("errorCategory", "Client Error").build();
+                .property("errorCategory", "Client Error")
+                .build();
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ErrorResponse handleConstraintViolationException(ConstraintViolationException exception) {
         log.error(exception.getMessage(), exception);
 
-        List<String> errorMessages = exception.getConstraintViolations().stream().map(
-                constraintViolation -> constraintViolation.getPropertyPath() + " " + constraintViolation.getMessage())
+        List<String> errorMessages = exception.getConstraintViolations()
+                .stream().map(
+                        constraintViolation -> constraintViolation
+                                .getPropertyPath()
+                                + " " +
+                                constraintViolation.getMessage())
                 .toList();
 
         return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, errorMessages.toString())
@@ -58,8 +64,14 @@ public class ServiceLevelExceptionHandler {
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.error(exception.getMessage(), exception);
 
-        List<String> errorMessages = exception.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage()).toList();
+        List<String> errorMessages = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(
+                        fieldError -> fieldError.getField()
+                                + ": "
+                                + fieldError.getDefaultMessage())
+                .toList();
 
         return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, errorMessages.toString())
                 .property("errorCategory", "Client Error").build();
@@ -85,6 +97,8 @@ public class ServiceLevelExceptionHandler {
     public ErrorResponse illegalStateException(IllegalStateException exception) {
         log.error(exception.getMessage(), exception);
 
-        return ErrorResponse.builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage()).build();
+        return ErrorResponse
+                .builder(exception, HttpStatus.BAD_REQUEST, exception.getMessage())
+                .build();
     }
 }

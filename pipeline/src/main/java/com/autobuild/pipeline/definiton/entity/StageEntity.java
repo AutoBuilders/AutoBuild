@@ -17,7 +17,7 @@ import lombok.Setter;
 
 /**
  * Stage Entity Definition.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
@@ -27,9 +27,11 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "stage")
-@Checks({ @Check(name = "CHK_STAGE_NAME", constraints = "name != '' "),
-        @Check(name = "CHK_STAGE_SCRIPT_TYPE", constraints = "script_type != '' "),
-        @Check(name = "CHK_PATH_COMMAND", constraints = "path != '' ") })
+@Checks({
+    @Check(name = "CHK_STAGE_NAME", constraints = "name != '' "),
+    @Check(name = "CHK_STAGE_SCRIPT_TYPE", constraints = "script_type != '' "),
+    @Check(name = "CHK_PATH_COMMAND", constraints = "path != '' ")
+})
 public class StageEntity {
     @Id
     @Column(name = "id")

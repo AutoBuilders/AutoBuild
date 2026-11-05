@@ -29,7 +29,7 @@ public class DatabaseLevelExceptionHandlerTest {
     @Test
     public void testHandleConstraintViolationException() {
         ConstraintViolationException exception = mock(ConstraintViolationException.class);
-
+        
         ErrorResponse errorResponse = globalHandler.handleConstraintViolationException(exception);
 
         assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());

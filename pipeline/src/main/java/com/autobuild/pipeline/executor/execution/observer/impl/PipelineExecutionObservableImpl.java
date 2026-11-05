@@ -12,7 +12,7 @@ import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObser
 
 /**
  * Pipeline ongoing execution observer implementation.
- *
+ * 
  * @author Suvabrata Chowdhury
  */
 
@@ -48,7 +48,9 @@ public class PipelineExecutionObservableImpl implements PipelineExecutionObserva
             throw new IllegalArgumentException("Null arguments given");
         }
 
-        specificSubscribers.computeIfAbsent(pipelineBuild.getId(), id -> new CopyOnWriteArrayList<>()).add(subscriber);
+        specificSubscribers.computeIfAbsent(
+                pipelineBuild.getId(),
+                id -> new CopyOnWriteArrayList<>()).add(subscriber);
     }
 
     @Override

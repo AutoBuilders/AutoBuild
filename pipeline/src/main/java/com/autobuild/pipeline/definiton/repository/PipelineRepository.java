@@ -9,7 +9,6 @@ import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 
 /**
  * Repository Layer for all pipeline related entities.
- *
  * @author Suvabrata Chowdhury
  */
 

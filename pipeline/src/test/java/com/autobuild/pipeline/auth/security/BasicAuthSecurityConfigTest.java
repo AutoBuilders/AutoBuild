@@ -34,9 +34,9 @@ public class BasicAuthSecurityConfigTest {
     void testFilterChain() throws Exception {
         basicAuthSecurityConfig.filterChain(mockHttpSecurity);
 
-        verify(mockHttpSecurity, times(1)).csrf(any());
-        verify(mockHttpSecurity, times(1)).authorizeHttpRequests(any());
-        verify(mockHttpSecurity, times(1)).httpBasic(any());
-        verify(mockHttpSecurity, times(1)).formLogin(any());
+        verify(mockHttpSecurity,times(1)).csrf(any());
+        verify(mockHttpSecurity,times(1)).authorizeHttpRequests(any());
+        verify(mockHttpSecurity,times(1)).httpBasic(any());
+        verify(mockHttpSecurity,times(1)).formLogin(any());
     }
 }
