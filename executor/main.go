@@ -13,6 +13,27 @@ import (
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
 )
 
+func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
+	pipelineBuildDTO := dto.PipelineBuildDTO{
+		PipelineId: pipelineDTO.Id,
+		CurrentState: dto.PipelineWaiting,
+		StageBuilds: []dto.StageBuildDTO{},
+	}
+
+	for _, stageDTO := range pipelineDTO.Stages {
+		stageBuildDTO := dto.StageBuildDTO {
+			StageId: stageDTO.Id,
+			CurrentState: dto.StageWaiting,
+		}
+
+		pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
+	}
+
+	b, _ := json.MarshalIndent(pipelineBuildDTO, "", "  ")
+	fmt.Println("init build dto:", string(b))
+	return pipelineBuildDTO
+}
+
 func executePipeline(w http.ResponseWriter, r *http.Request) {
 	// Parse the DTO
 	var pipelineDTO dto.PipelineDTO
@@ -22,7 +43,6 @@ func executePipeline(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid JSON payload: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(pipelineDTO) // TODO: Remove as not required now
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -40,20 +60,21 @@ func executePipeline(w http.ResponseWriter, r *http.Request) {
 	// define dagger container
 	container := client.Container().From("alpine").WithWorkdir("/src")
 
-	// var pipelineBuildDTO dto.PipelineBuildDTO
-	pipelineBuildDTO := dto.PipelineBuildDTO{
-		PipelineId: pipelineDTO.Id,
-		CurrentState: dto.PipelineRunning,
-		StageBuilds: []dto.StageBuildDTO{},
-	}
+	pipelineBuildDTO := initializePipelineBuild(pipelineDTO)
+	pipelineBuildDTO.CurrentState = dto.PipelineRunning
+	
+	anyStageBuildFailed := false
 
-	fmt.Println("Pipeline Build state: ", pipelineBuildDTO.CurrentState)
 	// execute per stage in the container
-	for _ , stage := range pipelineDTO.Stages {
+	for i, stage := range pipelineDTO.Stages {
+		notify(pipelineBuildDTO)
+		stageBuild := &pipelineBuildDTO.StageBuilds[i]
+
 		fmt.Println("Executing Stage ", stage.Name)
-		stageBuildDTO := dto.StageBuildDTO {
-			StageId: stage.Id,
-			CurrentState: dto.StageRunning,
+
+		if anyStageBuildFailed {
+			stageBuild.CurrentState = dto.StageStopped
+			continue
 		}
 
 		scriptPath := fmt.Sprintf("/tmp/script_%s.sh", stage.Name)
@@ -61,25 +82,39 @@ func executePipeline(w http.ResponseWriter, r *http.Request) {
 			Permissions: 0755,
 		}).WithExec([]string{"sh", scriptPath})
 
+		stageBuild.CurrentState = dto.StageRunning
 		output, err := container.Stdout(ctx)
 		if err != nil {
+			anyStageBuildFailed = true
+			stageBuild.CurrentState = dto.StageFailed
+
 			log.Printf("Pipeline execution failed: %v", err)
-			stageBuildDTO.CurrentState = dto.StageFailed
-			pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
-			pipelineBuildDTO.CurrentState = dto.PipelineFailed
-			http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
-			return
+			continue
 		}
 
-		stageBuildDTO.CurrentState = dto.StageSuccess
-		pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
 		fmt.Println("Stage build output", output)
-		fmt.Println("Build snapshot: ", pipelineBuildDTO)
+
+		stageBuild.CurrentState = dto.StageSuccess
+
 	}
 
-	pipelineBuildDTO.CurrentState = dto.PipelineSuccess
-	fmt.Println("Final Build snapshot: ", pipelineBuildDTO)
-	fmt.Fprintln(w, `{"status": "Running Pipeline"}`)
+	if anyStageBuildFailed {
+		pipelineBuildDTO.CurrentState = dto.PipelineFailed
+		http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
+	} else {
+		pipelineBuildDTO.CurrentState = dto.PipelineSuccess
+		// http.StatusOK(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(pipelineBuildDTO)
+	}
+
+	notify(pipelineBuildDTO)
+}
+
+func notify(pipelineBuildDTO dto.PipelineBuildDTO) {
+	fmt.Println("-------------------------------")
+	b, _ := json.MarshalIndent(pipelineBuildDTO, "", "  ")
+	fmt.Println("Build snapshot:", string(b))
+	fmt.Println("-------------------------------")
 }
 
 func main() {
