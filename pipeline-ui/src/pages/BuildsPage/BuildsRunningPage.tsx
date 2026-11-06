@@ -1,33 +1,31 @@
-import type React from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import {
-  getLiveBuildUpdates,
-} from "../../services/pipelines.api";
-
+import { getLiveBuildUpdates, pipelineBuildApiInstance, stageBuildApiInstance } from "../../services/pipelines.api";
 import NavBar from "../../components/common/navBar";
 import PipelineHeader from "../../components/pipelines/pipelineHeader";
-import BuildStageList from "../../components/builds/buildsStageList";
-import BuildStageDetails from "../../components/builds/buildsStageDetails";
-import { CheckCircle, Loader, Trash, XCircle } from "lucide-react";
+import StageList from "../../components/common/stageList";
+import { BuildStatusBanner } from "../../components/common/stageListComponents";
+import { Trash } from "lucide-react";
 import { booleanFlags } from "../../flags/booleanFlags";
-
-import { PipelineBuildCurrentStateEnum, type PipelineBuild } from "../../gen";
-import { pipelineBuildApiInstance } from "../../services/pipelines.api";
+import { PipelineBuildCurrentStateEnum, StageBuildCurrentStateEnum, type PipelineBuild } from "../../gen";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 export default function BuildsRunningPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [build, setBuild] = useState<PipelineBuild | null>(null);
   const [selectedStageId, setSelectedStageId] = useState<string>("");
   const [isDeleteVisible, setIsDeleteVisible] = useState(false);
+  const [buildLogs, setBuildLogs] = useState<string>("");
 
+  // Fetch initial build and set the first stage as selected
+  // This use effect runs only once when the component mounts or when the id changes.
   useEffect(() => {
     const buildId = id as string;
 
-    // --- 1. Fetch initial build ---
     async function load() {
-      const {status, data} = await pipelineBuildApiInstance.getPipelineBuild(buildId);
+      const { status, data } = await pipelineBuildApiInstance.getPipelineBuild(buildId);
 
       if (status !== 200) {
         console.error("Error getting build");
@@ -43,43 +41,77 @@ export default function BuildsRunningPage() {
     load();
   }, [id]);
 
+
+  // Fetch logs for selected stage, polling if not final
+  useEffect(() => {
+    if (!selectedStageId) return;
+
+    // Find the selected stage from the build's stageBuilds
+    const selectedStage = (build?.stageBuilds ?? []).find((s) => s.id === selectedStageId);
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    async function fetchLogs() {
+      try {
+        const { status, data } = await stageBuildApiInstance.getStageBuildLogs(selectedStageId);
+        if (status !== 200) {
+          console.error("Error getting stage build log");
+        }
+        setBuildLogs(data.log);
+      } catch (err) {
+        console.error("Failed to load logs", err);
+      }
+    }
+
+    fetchLogs();
+
+    const isFinal = ([
+      StageBuildCurrentStateEnum.Failed,
+      StageBuildCurrentStateEnum.Stopped,
+      StageBuildCurrentStateEnum.Success,
+    ] as string[]).includes(selectedStage?.currentState ?? "");
+
+    if (!isFinal) {
+      intervalId = setInterval(fetchLogs, 3000);
+    }
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [selectedStageId, build?.stageBuilds]);
+
+  // Polling for overall build state every 3 seconds if not final (success or failed)
   useEffect(() => {
     const buildId = id as string;
 
-    // Stop polling for final states
+    // If the build is already in a final state, we don't need to poll for updates.
     if (([PipelineBuildCurrentStateEnum.Success, PipelineBuildCurrentStateEnum.Failed] as PipelineBuildCurrentStateEnum[]).includes(build?.currentState as PipelineBuildCurrentStateEnum)) {
-      return; // no interval created
+      return;
     }
 
-    // Skip polling while running (SSE should handle this)
-    if (build?.currentState === PipelineBuildCurrentStateEnum.Running) return;
-
-    // Start polling
+    // Polling for build state every 3 seconds
     const intervalId = setInterval(async () => {
-      const {status, data} = await pipelineBuildApiInstance.getPipelineBuild(buildId);
+      const { status, data } = await pipelineBuildApiInstance.getPipelineBuild(buildId);
 
       if (status !== 200) {
         console.error("Error getting build");
       }
 
       setBuild(data);
-    }, 10000);
+    }, 3000);
 
-    // Cleanup
     return () => clearInterval(intervalId);
   }, [build?.currentState, id]);
 
+  // SSE for live build updates
   useEffect(() => {
     if (booleanFlags.ENABLE_SSE === false) return;
-
     if (build?.currentState !== PipelineBuildCurrentStateEnum.Running) return;
 
     const buildId = id as string;
     const url = getLiveBuildUpdates(buildId);
-
     const es = new EventSource(url);
 
-    // TODO: Better implementation with ID.
     es.onmessage = (event) => {
       const parsed = JSON.parse(event.data);
 
@@ -107,71 +139,81 @@ export default function BuildsRunningPage() {
   if (isDeleteVisible === false && build.currentState !== PipelineBuildCurrentStateEnum.Running) {
     setIsDeleteVisible(true);
   }
-  const selectedStage = (build.stageBuilds ?? []).find((s) => s.id === selectedStageId);
+
+  // The currently running/failed stage name for the banner
+  const activeStageName =
+    build.currentState === PipelineBuildCurrentStateEnum.Running
+      ? (build.stageBuilds ?? []).find((s) => s.currentState === StageBuildCurrentStateEnum.Running)?.stageName
+      : build.currentState === PipelineBuildCurrentStateEnum.Failed
+        ? (build.stageBuilds ?? []).find((s) => s.currentState === StageBuildCurrentStateEnum.Failed)?.stageName
+        : undefined;
 
   async function handleDelete() {
-    const {status} = await pipelineBuildApiInstance.deletePipelineBuild(build?.id as string);
+    const { status } = await pipelineBuildApiInstance.deletePipelineBuild(build?.id as string);
 
     if (status !== 204) {
       console.error("Error deleting build");
     }
 
-    window.location.href = "/builds";
+    navigate("/builds");
   }
-
-  const stateMap: Record<string, { icon: React.ReactNode; color: string }> = {
-    [PipelineBuildCurrentStateEnum.Success]: { icon: <CheckCircle className="text-green-600" size={18} aria-label="success-circle-pipeline"/>, color: "text-green-600" },
-    [PipelineBuildCurrentStateEnum.Failed]: { icon: <XCircle className="text-red-600" size={18} />, color: "text-red-600" },
-    [PipelineBuildCurrentStateEnum.Running]: { icon: <Loader className="text-yellow-600 animate-spin" size={25} />, color: "text-yellow-600" },
-    [PipelineBuildCurrentStateEnum.Waiting]: { icon: <Loader className="text-blue-600 animate-spin" size={18} />, color: "text-blue-600" },
-  };
-  const { icon = null, color = "text-gray-500" } = stateMap[build.currentState ?? ""] ?? {};
 
   return (
     <>
       <NavBar />
 
-      <div className="min-h-screen p-14 ml-10">
-        <div className=" mb-10 mt-10 text-center flex-row gap-6 flex">
+      <div className="min-h-screen bg-[#F5F5F5] px-16 py-10 pb-24">
+        {/* Back link */}
+        <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Builds", route: "/builds" }, { label: build.pipelineName ?? "Build" }]} />
+
+        {/* Header row */}
+        <div className="flex items-start justify-between mb-2">
           <PipelineHeader name={build.pipelineName} />
-          <span className={color}>{icon}</span>
+
           {/* Delete button */}
           <div className="relative group inline-block">
             <button
               onClick={isDeleteVisible ? handleDelete : undefined}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all shadow-sm
-      ${
-        isDeleteVisible
-          ? "bg-red-400 text-white hover:bg-red-500 cursor-pointer"
-          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-      }`}
+                ${isDeleteVisible
+                  ? "bg-red-400 text-white hover:bg-red-500 cursor-pointer"
+                  : "bg-zinc-200 text-zinc-400 cursor-not-allowed"
+                }`}
             >
               <Trash size={18} />
-              Delete
+              Delete Build
             </button>
 
-            {/* Tooltip */}
             {!isDeleteVisible && (
-              <div
-                className="absolute left-1/2 -translate-x-1/2 mt-2 w-max px-3 py-1 
-      rounded-md bg-black text-white text-xs opacity-0 group-hover:opacity-100 
-      transition-opacity pointer-events-none shadow-lg"
-              >
+              <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-max px-3 py-1 rounded-md bg-black text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
                 This Build is running, can't delete now.
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-row gap-10">
-          <BuildStageList
-            stages={build.stageBuilds!}
-            selectedId={selectedStageId}
-            onSelect={setSelectedStageId}
-          />
-
-          {selectedStage && <BuildStageDetails stage={selectedStage} />}
+        {/* Status banner */}
+        <div className="mt-6">
+          <BuildStatusBanner state={build.currentState} currentStageName={activeStageName} />
         </div>
+
+        {/* Stage label */}
+        <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-4">
+          Stages · {(build.stageBuilds ?? []).length}
+        </p>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-[#E4E4E7] mb-6" />
+
+        {/* Stage flow */}
+        <StageList
+          buildStages={build.stageBuilds ?? []}
+          selectedBuildStageId={selectedStageId}
+          onBuildStageSelect={(stageId) => {
+            setSelectedStageId(stageId);
+          }}
+          buildLogs={buildLogs}
+        />
       </div>
     </>
   );

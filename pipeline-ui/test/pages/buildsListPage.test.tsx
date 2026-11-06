@@ -57,9 +57,9 @@ describe("BuildsListPage", () => {
 
     expect(pipelineBuildApiInstance.getAllBuilds).toHaveBeenCalled();
 
-    // Wait for the builds to be rendered (the names come from getPipeline)
-    const build1 = await screen.findByText("build-1");
-    const build2 = await screen.findByText("build-2");
+    // Wait for the builds to be rendered (pipeline names are displayed)
+    const build1 = await screen.findByText("Pipeline 1");
+    const build2 = await screen.findByText("Pipeline 2");
     expect(build1).toBeInTheDocument();
     expect(build2).toBeInTheDocument();
   });
@@ -95,13 +95,13 @@ describe("BuildsListPage", () => {
     );
 
     // Wait for the builds to be rendered
-    const build1 = await screen.findByText("build-1");
-    const build2 = await screen.findByText("build-2");
+    const build1 = await screen.findByText("Pipeline 1");
+    const build2 = await screen.findByText("Pipeline 2");
     expect(build1).toBeInTheDocument();
     expect(build2).toBeInTheDocument();
 
     // Type in the search input
-    const searchInput = screen.getByPlaceholderText("Value");
+    const searchInput = screen.getByPlaceholderText("search builds...");
     fireEvent.change(searchInput, { target: { value: "Pipeline 1" } });
 
     // Wait for the filtering to take effect
