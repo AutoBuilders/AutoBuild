@@ -1,4 +1,4 @@
 export const booleanFlags = {
-    ENABLE_SSE : true,
-    ENABLE_EDIT_PIPELINE : false
+    ENABLE_SSE: false,
+    ENABLE_EDIT_PIPELINE: false
 }

@@ -1,371 +1,101 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import BuildStageList from "../../../src/components/builds/buildsStageList";
+import { BuildStageCard } from "../../../src/components/common/stageListComponents";
 import type { StageBuild } from "../../../src/gen/api";
 
-describe("BuildStageList", () => {
-  const mockOnSelect = vi.fn();
+describe("BuildStageCard", () => {
+  const mockOnToggle = vi.fn();
 
-  const mockStages: StageBuild[] = [
-    {
-      id: "1",
-      stageName: "Build Stage",
-      stageId: "101",
-      currentState: "SUCCESS",
-    },
-    {
-      id: "2",
-      stageName: "Test Stage",
-      stageId: "102",
-      currentState: "FAILED",
-    },
-    {
-      id: "3",
-      stageName: "Deploy Stage",
-      stageId: "103",
-      currentState: "RUNNING",
-    },
-    {
-      id: "4",
-      stageName: "Verify Stage",
-      stageId: "104",
-      currentState: "STOPPED",
-    },
-    {
-      id: "5",
-      stageName: "Cleanup Stage",
-      stageId: "105",
-      currentState: "WAITING",
-    },
-  ];
+  const successStage: StageBuild = { id: "1", stageName: "Build Stage", stageId: "101", currentState: "SUCCESS" };
+  const failedStage: StageBuild  = { id: "2", stageName: "Test Stage",  stageId: "102", currentState: "FAILED"  };
+  const runningStage: StageBuild = { id: "3", stageName: "Deploy Stage",stageId: "103", currentState: "RUNNING" };
+  const stoppedStage: StageBuild = { id: "4", stageName: "Verify Stage",stageId: "104", currentState: "STOPPED" };
+  const waitingStage: StageBuild = { id: "5", stageName: "Cleanup Stage",stageId: "105",currentState: "WAITING" };
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => vi.clearAllMocks());
 
   describe("Rendering", () => {
-    it("renders the component with title", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      expect(screen.getByText("Stages")).toBeInTheDocument();
-    });
-
-    it("renders all stages with correct names", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
+    it("renders stage name", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
       expect(screen.getByText("Build Stage")).toBeInTheDocument();
-      expect(screen.getByText("Test Stage")).toBeInTheDocument();
-      expect(screen.getByText("Deploy Stage")).toBeInTheDocument();
-      expect(screen.getByText("Verify Stage")).toBeInTheDocument();
-      expect(screen.getByText("Cleanup Stage")).toBeInTheDocument();
     });
 
-    it("renders empty list when no stages provided", () => {
-      render(
-        <BuildStageList stages={[]} selectedId="1" onSelect={mockOnSelect} />,
-      );
-
-      expect(screen.getByText("Stages")).toBeInTheDocument();
-      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    it("renders order number padded to two digits", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      expect(screen.getByText("01")).toBeInTheDocument();
     });
 
-    it("renders correct number of stage buttons", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
+    it("renders BASH badge", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      expect(screen.getByText("BASH")).toBeInTheDocument();
+    });
 
-      const buttons = screen.getAllByRole("button");
-      expect(buttons).toHaveLength(5);
+    it("renders logs section when expanded", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={true} onToggle={mockOnToggle} logs="some logs" />);
+      expect(screen.getByText("Logs")).toBeInTheDocument();
+      expect(screen.getByText("some logs")).toBeInTheDocument();
+    });
+
+    it("does not render logs section when collapsed", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="some logs" />);
+      expect(screen.queryByText("LOGS")).not.toBeInTheDocument();
+    });
+
+    it("shows placeholder text when expanded but no logs", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={true} onToggle={mockOnToggle} logs="" />);
+      expect(screen.getByText("No logs yet.")).toBeInTheDocument();
+    });
+
+    it("handles long stage names", () => {
+      const longName: StageBuild = { id: "1", stageName: "This is a very long stage name that might overflow", stageId: "1", currentState: "SUCCESS" };
+      render(<BuildStageCard stage={longName} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      expect(screen.getByText("This is a very long stage name that might overflow")).toBeInTheDocument();
+    });
+
+    it("handles special characters in names", () => {
+      const specialStage: StageBuild = { id: "1", stageName: "Build & Test (Prod)", stageId: "1", currentState: "SUCCESS" };
+      render(<BuildStageCard stage={specialStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      expect(screen.getByText("Build & Test (Prod)")).toBeInTheDocument();
     });
   });
 
-  describe("Stage Selection", () => {
-    it("highlights the selected stage by id", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="2"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const testStageButton = screen.getByText("Test Stage").closest("button");
-      expect(testStageButton).toHaveClass("bg-blue-100", "border-blue-400");
-    });
-
-    it("does not highlight non-selected stages", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="2"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const buildStageButton = screen
-        .getByText("Build Stage")
-        .closest("button");
-      expect(buildStageButton).toHaveClass("bg-gray-100", "border-gray-300");
-      expect(buildStageButton).not.toHaveClass("bg-blue-100");
-    });
-
-    it("calls onSelect with correct stage id when stage is clicked", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const testStageButton = screen.getByText("Test Stage");
-      fireEvent.click(testStageButton);
-
-      expect(mockOnSelect).toHaveBeenCalledTimes(1);
-      expect(mockOnSelect).toHaveBeenCalledWith("2");
-    });
-
-    it("calls onSelect with different stage ids on multiple clicks", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
+  describe("Selection / toggle", () => {
+    it("calls onToggle when clicked", () => {
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
       fireEvent.click(screen.getByText("Build Stage"));
-      fireEvent.click(screen.getByText("Deploy Stage"));
-      fireEvent.click(screen.getByText("Cleanup Stage"));
-
-      expect(mockOnSelect).toHaveBeenCalledTimes(3);
-      expect(mockOnSelect).toHaveBeenNthCalledWith(1, "1");
-      expect(mockOnSelect).toHaveBeenNthCalledWith(2, "3");
-      expect(mockOnSelect).toHaveBeenNthCalledWith(3, "5");
+      expect(mockOnToggle).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe("Stage Status Icons", () => {
+  describe("Stage status icons", () => {
     it("displays green check icon for SUCCESS state", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const buildStageButton = screen
-        .getByText("Build Stage")
-        .closest("button");
-      const icon = buildStageButton?.querySelector("svg");
-
-      expect(icon).toBeInTheDocument();
+      render(<BuildStageCard stage={successStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      const icon = screen.getByText("Build Stage").closest("button")?.querySelector("svg");
       expect(icon).toHaveClass("text-green-600");
     });
 
     it("displays red X icon for FAILED state", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="2"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const testStageButton = screen.getByText("Test Stage").closest("button");
-      const icon = testStageButton?.querySelector("svg");
-
-      expect(icon).toBeInTheDocument();
+      render(<BuildStageCard stage={failedStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      const icon = screen.getByText("Test Stage").closest("button")?.querySelector("svg");
       expect(icon).toHaveClass("text-red-600");
     });
 
     it("displays yellow spinning loader for RUNNING state", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="3"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const deployStageButton = screen
-        .getByText("Deploy Stage")
-        .closest("button");
-      const icon = deployStageButton?.querySelector("svg");
-
-      expect(icon).toBeInTheDocument();
-      expect(icon).toHaveClass("text-yellow-600", "animate-spin");
+      render(<BuildStageCard stage={runningStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      const icon = screen.getByText("Deploy Stage").closest("button")?.querySelector("svg");
+      expect(icon).toHaveClass("text-yellow-500", "animate-spin");
     });
 
     it("displays gray X icon for STOPPED state", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="4"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const verifyStageButton = screen
-        .getByText("Verify Stage")
-        .closest("button");
-      const icon = verifyStageButton?.querySelector("svg");
-
-      expect(icon).toBeInTheDocument();
-      expect(icon).toHaveClass("text-gray-600");
+      render(<BuildStageCard stage={stoppedStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      const icon = screen.getByText("Verify Stage").closest("button")?.querySelector("svg");
+      expect(icon).toHaveClass("text-zinc-400");
     });
 
     it("displays blue spinning loader for WAITING state", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="5"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const cleanupStageButton = screen
-        .getByText("Cleanup Stage")
-        .closest("button");
-      const icon = cleanupStageButton?.querySelector("svg");
-
-      expect(icon).toBeInTheDocument();
-      expect(icon).toHaveClass("text-blue-600", "animate-spin");
-    });
-
-    it("renders correct icon based on currentState", () => {
-      const stagesWithDifferentStates: StageBuild[] = [
-        { id: "1", stageName: "Stage 1", stageId: "1", currentState: "SUCCESS" },
-        { id: "2", stageName: "Stage 2", stageId: "2", currentState: "FAILED" },
-        { id: "3", stageName: "Stage 3", stageId: "3", currentState: "STOPPED" },
-      ];
-
-      render(
-        <BuildStageList
-          stages={stagesWithDifferentStates}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const icons = screen
-        .getAllByRole("button")
-        .map((btn) => btn.querySelector("svg"));
-
-      expect(icons[0]).toHaveClass("text-green-600");
-      expect(icons[1]).toHaveClass("text-red-600");
-      expect(icons[2]).toHaveClass("text-gray-600");
-    });
-  });
-
-  describe("Edge Cases", () => {
-    it("handles single stage", () => {
-      const singleStage: StageBuild[] = [
-        {
-          id: "1",
-          stageName: "Only Stage",
-          stageId: "101",
-          currentState: "SUCCESS",
-        },
-      ];
-
-      render(
-        <BuildStageList
-          stages={singleStage}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      expect(screen.getByText("Only Stage")).toBeInTheDocument();
-      expect(screen.getAllByRole("button")).toHaveLength(1);
-    });
-
-    it("handles very long stage names", () => {
-      const longNameStage: StageBuild[] = [
-        {
-          id: "1",
-          stageName:
-            "This is a very long stage name that might overflow the container and cause layout issues",
-          stageId: "101",
-          currentState: "SUCCESS",
-        },
-      ];
-
-      render(
-        <BuildStageList
-          stages={longNameStage}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      expect(
-        screen.getByText(
-          "This is a very long stage name that might overflow the container and cause layout issues",
-        ),
-      ).toBeInTheDocument();
-    });
-
-    it("handles unknown selectedId (no selection highlighted)", () => {
-      render(
-        <BuildStageList
-          stages={mockStages}
-          selectedId="999"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      const buttons = screen.getAllByRole("button");
-      buttons.forEach((button) => {
-        expect(button).not.toHaveClass("bg-blue-100");
-        expect(button).toHaveClass("bg-gray-100");
-      });
-    });
-
-    it("handles stages with special characters in names", () => {
-      const specialCharStages: StageBuild[] = [
-        {
-          id: "1",
-          stageName: "Build & Test",
-          stageId: "101",
-          currentState: "SUCCESS",
-        },
-        {
-          id: "2",
-          stageName: "Deploy (Production)",
-          stageId: "102",
-          currentState: "RUNNING",
-        },
-      ];
-
-      render(
-        <BuildStageList
-          stages={specialCharStages}
-          selectedId="1"
-          onSelect={mockOnSelect}
-        />,
-      );
-
-      expect(screen.getByText("Build & Test")).toBeInTheDocument();
-      expect(screen.getByText("Deploy (Production)")).toBeInTheDocument();
+      render(<BuildStageCard stage={waitingStage} order={1} expanded={false} onToggle={mockOnToggle} logs="" />);
+      const icon = screen.getByText("Cleanup Stage").closest("button")?.querySelector("svg");
+      expect(icon).toHaveClass("text-blue-500", "animate-spin");
     });
   });
 });

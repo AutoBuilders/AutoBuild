@@ -35,7 +35,7 @@ describe("PipelinePage", () => {
         <PipelinePage />
       </MemoryRouter>,
     );
-    expect(screen.getByText("My Pipelines")).toBeInTheDocument();
+    expect(screen.getByText("MY PIPELINES")).toBeInTheDocument();
     expect(screen.getByText("Create")).toBeInTheDocument();
   });
 

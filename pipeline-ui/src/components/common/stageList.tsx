@@ -1,14 +1,39 @@
 import { useRef, useState } from "react";
-import type { Stage } from "../../gen/api";
-import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages } from "./stageListComponents";
+import type { Stage, StageBuild } from "../../gen/api";
+import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages, BuildStageCard } from "./stageListComponents";
 
-interface Props {
+
+/**
+ * This component renders a list of stages in a pipeline. It supports two modes:
+ * 1. Pipeline mode: displays stages in a pipeline, allows editing, reordering, and adding new stages.
+ * 2. Build mode: displays stages in a build, allows selecting a stage to view logs.
+ * 
+ * The component uses TypeScript's discriminated union types to differentiate between the two modes.
+ */
+
+interface PipelineProps {
   stages: Stage[];
   canEdit: boolean;
   onStagesChange: (stages: Stage[]) => void;
+  buildStages?: never;
+  selectedBuildStageId?: never;
+  onBuildStageSelect?: never;
+  buildLogs?: never;
 }
 
-export default function StageList({ stages, canEdit, onStagesChange }: Props) {
+interface BuildProps {
+  stages?: never;
+  canEdit?: never;
+  onStagesChange?: never;
+  buildStages: StageBuild[];
+  selectedBuildStageId: string;
+  onBuildStageSelect: (id: string) => void;
+  buildLogs: string;
+}
+
+type Props = PipelineProps | BuildProps;
+
+export default function StageList({ stages, canEdit, onStagesChange, buildStages, selectedBuildStageId, onBuildStageSelect, buildLogs }: Props) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // drag-to-reorder
@@ -24,11 +49,11 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
   }
 
   function updateStage(updated: Stage) {
-    onStagesChange(stages.map((s) => (s.id === updated.id ? updated : s)));
+    onStagesChange!(stages!.map((s) => (s.id === updated.id ? updated : s)));
   }
 
   function deleteStage(id: string) {
-    onStagesChange(stages.filter((s) => s.id !== id));
+    onStagesChange!(stages!.filter((s) => s.id !== id));
     if (expandedId === id) setExpandedId(null);
   }
 
@@ -36,10 +61,10 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
     const newStage: Stage = {
       id: crypto.randomUUID(),
       name: "",
-      scriptType: "SHELL",
+      scriptType: "bash",
       command: "",
     };
-    onStagesChange([...stages, newStage].map((s, i) => ({ ...s, order: i + 1 })));
+    onStagesChange!([...stages!, newStage].map((s, i) => ({ ...s, order: i + 1 })));
     setExpandedId((newStage as any).id);
   }
 
@@ -58,10 +83,10 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
   // When the drag ends, we check if the dragged stage was moved to a new position. If so, we reorder the stages and call onStagesChange with the new order.
   function handleStageDragEnd() {
     if (dragIdx.current !== null && dragOverIdx !== null && dragIdx.current !== dragOverIdx) {
-      const next = [...stages];
+      const next = [...stages!];
       const [moved] = next.splice(dragIdx.current, 1);
       next.splice(dragOverIdx, 0, moved);
-      onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+      onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
     }
     dragIdx.current = null;
     setDragOverIdx(null);
@@ -79,12 +104,12 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
       const newStage: Stage = {
         id: crypto.randomUUID(),
         name: "",
-        scriptType: "SHELL",
+        scriptType: "bash",
         command: "",
       };
-      const next = [...stages];
+      const next = [...stages!];
       next.splice(newDropIdx, 0, newStage);
-      onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+      onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
       setExpandedId((newStage as any).id);
     }
     setIsDraggingNew(false);
@@ -103,26 +128,46 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
     const newStage: Stage = {
       id: crypto.randomUUID(),
       name: "",
-      scriptType: "SHELL",
+      scriptType: "bash",
       command: "",
     };
-    const next = [...stages];
+    const next = [...stages!];
     next.splice(insertIdx, 0, newStage);
-    onStagesChange(next.map((s, i) => ({ ...s, order: i + 1 })));
+    onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
     setExpandedId((newStage as any).id);
     setIsDraggingNew(false);
     setNewDropIdx(null);
   }
 
+  // Build mode — render BuildStageCards horizontally, no drag/edit
+  if (buildStages !== undefined) {
+    return (
+      <div className="flex items-start overflow-x-auto pb-4">
+        {buildStages.map((stage, idx) => (
+          <div key={stage.id} className="flex items-start shrink-0">
+            <BuildStageCard
+              stage={stage}
+              order={idx + 1}
+              expanded={selectedBuildStageId === stage.id}
+              onToggle={() => onBuildStageSelect(stage.id as string)}
+              logs={selectedBuildStageId === stage.id ? buildLogs : ""}
+            />
+            {idx < buildStages.length - 1 && <Connector />}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   // Empty state
-  if (stages.length === 0) {
+  if (stages!.length === 0) {
     return (
       <>
         <div
           onDragOver={(e) => { e.preventDefault(); if (isDraggingNew) setNewDropIdx(0); }}
           onDrop={() => handleDropZoneDrop(0)}
         >
-          <EmptyStages canEdit={canEdit} dragTarget={isDraggingNew && newDropIdx === 0} />
+          <EmptyStages canEdit={canEdit!} dragTarget={isDraggingNew && newDropIdx === 0} />
         </div>
         {canEdit && (
           <FloatingAddBox onDragStart={handleNewDragStart} onDragEnd={handleNewDragEnd} onClick={addStageAtEnd} />
@@ -141,7 +186,7 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
               onDragOver={(e) => handleDropZoneDragOver(e, 0)}
               onDrop={() => handleDropZoneDrop(0)}
             />
-            {stages.map((stage, idx) => (
+            {stages!.map((stage, idx) => (
               <div key={stage.id} className="flex items-start shrink-0">
                 <EditableStageCard
                   stage={stage}
@@ -165,7 +210,7 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
             ))}
           </>
         ) : (
-          stages.map((stage, idx) => (
+          stages!.map((stage, idx) => (
             <div key={stage.id} className="flex items-start shrink-0">
               <StageCard
                 stage={stage}
@@ -173,7 +218,7 @@ export default function StageList({ stages, canEdit, onStagesChange }: Props) {
                 expanded={expandedId === stage.id}
                 onToggle={() => toggleExpand(stage.id as string)}
               />
-              {idx < stages.length - 1 && <Connector />}
+              {idx < stages!.length - 1 && <Connector />}
             </div>
           ))
         )}

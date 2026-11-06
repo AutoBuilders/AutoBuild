@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import StageList from "../../components/pipelines/stageList";
+import StageList from "../../components/common/stageList";
 import { booleanFlags } from "../../flags/booleanFlags";
 
 import type { Pipeline, Stage } from "../../gen/api";
@@ -164,15 +164,15 @@ export default function PipelineDetailPage() {
         {/* Back link / editing badge */}
         {isEditing ? (
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-[12px] font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded px-2 py-0.5">
+            <span className="text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded px-2 py-0.5">
               Editing
             </span>
-            <span className="text-[13px] text-[#71717A]">Changes are not saved yet</span>
+            <span className="text-sm text-[#71717A]">Changes are not saved yet</span>
           </div>
         ) : (
           <button
             onClick={() => navigate("/pipelines")}
-            className="flex items-center gap-1 text-[13px] text-[#71717A] hover:text-[#18181B] transition-colors mb-5"
+            className="flex items-center gap-1 text-sm text-[#71717A] hover:text-[#18181B] transition-colors mb-5"
           >
             ← My Pipelines
           </button>
@@ -183,7 +183,7 @@ export default function PipelineDetailPage() {
           <div className="flex-1 mr-8">
             {isEditing ? (
               <input
-                className="w-full max-w-xl bg-transparent text-[#18181B] text-[28px]
+                className="w-full max-w-xl bg-transparent text-[#18181B] text-3xl
                   border-0 border-b-2 border-blue-500 outline-none px-0 py-1 placeholder:text-[#A1A1AA]"
                 style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}
                 value={editablePipeline?.name ?? ""}
@@ -193,7 +193,7 @@ export default function PipelineDetailPage() {
               />
             ) : (
               <h1
-                className="text-[28px] text-[#18181B] leading-tight tracking-tight"
+                className="text-3xl text-[#18181B] leading-tight tracking-tight"
                 style={{ fontFamily: "'Libre Baskerville', Georgia, serif" }}
               >
                 {pipeline.name}
@@ -207,14 +207,14 @@ export default function PipelineDetailPage() {
               <>
                 <button
                   onClick={handleCancel}
-                  className="h-9 px-4 text-[13px] font-medium text-[#52525B] bg-white border border-[#E4E4E7]
+                  className="h-9 px-4 text-sm font-medium text-[#52525B] bg-white border border-[#E4E4E7]
                     rounded-md hover:bg-[#F4F4F5] transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSave}
-                  className="h-9 px-4 text-[13px] font-medium text-white bg-[#18181B]
+                  className="h-9 px-4 text-sm font-medium text-white bg-[#18181B]
                     rounded-md hover:bg-[#27272A] transition-colors"
                 >
                   {saveOrCreate}
@@ -225,7 +225,7 @@ export default function PipelineDetailPage() {
                 {isDeleteVisible && (
                   <button
                     onClick={handleDelete}
-                    className="h-9 px-4 text-[13px] font-medium text-red-600 border border-red-200
+                    className="h-9 px-4 text-sm font-medium text-red-600 border border-red-200
                       rounded-md hover:bg-red-50 transition-colors"
                   >
                     Delete
@@ -233,7 +233,7 @@ export default function PipelineDetailPage() {
                 )}
                 <button
                   onClick={handleStartBuild}
-                  className="flex items-center gap-1.5 h-9 px-4 text-[13px] font-medium text-[#18181B]
+                  className="flex items-center gap-1.5 h-9 px-4 text-sm font-medium text-[#18181B]
                     bg-white border border-[#E4E4E7] rounded-md hover:bg-[#F4F4F5] transition-colors"
                 >
                   <Play size={13} />
@@ -242,7 +242,7 @@ export default function PipelineDetailPage() {
                 {booleanFlags.ENABLE_EDIT_PIPELINE && (
                   <button
                     onClick={handleEdit}
-                    className="flex items-center gap-1.5 h-9 px-4 text-[13px] font-medium text-white
+                    className="flex items-center gap-1.5 h-9 px-4 text-sm font-medium text-white
                       bg-[#18181B] rounded-md hover:bg-[#27272A] transition-colors"
                   >
                     <Pencil size={13} />
@@ -256,7 +256,7 @@ export default function PipelineDetailPage() {
 
         {/* Metadata row */}
         {!isEditing && (
-          <div className="flex items-center gap-2 mb-6 text-[13px] text-[#52525B]">
+          <div className="flex items-center gap-2 mb-6 text-sm text-[#52525B]">
             <span>{activePipeline.stages.length} stages</span>
           </div>
         )}
@@ -265,7 +265,7 @@ export default function PipelineDetailPage() {
         <div className="w-full h-px bg-[#E4E4E7] mb-6" />
 
         {/* Stages label */}
-        <p className="text-[11px] font-medium uppercase tracking-widest text-[#71717A] mb-4">
+        <p className="text-xs font-medium uppercase tracking-widest text-[#71717A] mb-4">
           Stages · {activePipeline.stages.length}
         </p>
 

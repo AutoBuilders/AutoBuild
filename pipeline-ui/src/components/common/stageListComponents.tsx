@@ -1,4 +1,12 @@
-import type { Stage } from "../../gen/api";
+import { CheckCircle, XCircle, Loader } from "lucide-react";
+import type { Stage, StageBuild, StageBuildCurrentStateEnum as StageBuildStateType } from "../../gen/api";
+import { StageBuildCurrentStateEnum, PipelineBuildCurrentStateEnum, type PipelineBuildCurrentStateEnum as PipelineBuildStateType } from "../../gen/api";
+
+/**
+ * This file contains the components used in the StageList component, which displays a list of stages in a pipeline or build. 
+ * It includes icons, connectors, drop zones, stage cards (both view and edit modes), 
+ * floating add box, empty state, and build-specific components.
+ */
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
 
@@ -55,7 +63,7 @@ export function IconGitBranch() {
 
 export function Connector({ faded }: { faded?: boolean }) {
   return (
-    <div className={`flex items-center shrink-0 pt-[38px] transition-opacity ${faded ? "opacity-20" : ""}`}>
+    <div className={`flex items-center shrink-0 pt-10 transition-opacity ${faded ? "opacity-20" : ""}`}>
       <div className="w-5 h-px bg-[#D4D4D8]" />
       <span className="text-[#C4C4C4]"><IconChevronRight /></span>
     </div>
@@ -94,7 +102,7 @@ export function StageCard({ stage, order, expanded, onToggle }: {
   return (
     <button
       onClick={onToggle}
-      className={`w-[192px] shrink-0 text-left rounded-lg border bg-white transition-all duration-150 ${
+      className={`w-48 shrink-0 text-left rounded-lg border bg-white transition-all duration-150 ${
         expanded
           ? "border-[#18181B] shadow-sm"
           : "border-[#E4E4E7] hover:border-[#A1A1AA] hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
@@ -102,24 +110,24 @@ export function StageCard({ stage, order, expanded, onToggle }: {
     >
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <span className="font-mono text-[11px] text-[#A1A1AA]">
+          <span className="font-mono text-xs text-[#A1A1AA]">
             {String(order).padStart(2, "0")}
           </span>
           <span className={`text-[#A1A1AA] transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
             <IconChevronRight />
           </span>
         </div>
-        <p className="text-[14px] font-medium text-[#18181B] leading-snug truncate">{stage.name}</p>
-        <span className="inline-block mt-2 font-mono text-[11px] text-[#71717A] bg-[#F4F4F5] rounded px-1.5 py-0.5 uppercase">
-          {stage.scriptType ?? "shell"}
+        <p className="text-sm font-medium text-[#18181B] leading-snug truncate">{stage.name}</p>
+        <span className="inline-block mt-2 font-mono text-xs text-[#71717A] bg-[#F4F4F5] rounded px-1.5 py-0.5 uppercase">
+          {stage.scriptType ?? "bash"}
         </span>
       </div>
 
       {/* If expanded, show the comands included in the stage */}
       {expanded && (
         <div className="border-t border-[#F4F4F5] px-4 pb-4 pt-3 text-left">
-          <p className="text-[11px] font-medium uppercase tracking-widest text-[#A1A1AA] mb-2">Commands</p>
-          <pre className="font-mono text-[11px] text-[#18181B] bg-[#F8F8F8] rounded p-2.5 whitespace-pre-wrap break-words leading-relaxed">
+          <p className="text-xs font-medium uppercase tracking-widest text-[#A1A1AA] mb-2">Commands</p>
+          <pre className="font-mono text-xs text-[#18181B] bg-[#F8F8F8] rounded p-2.5 whitespace-pre-wrap break-words leading-relaxed">
             {stage.command || <span className="text-[#A1A1AA]">No commands defined.</span>}
           </pre>
         </div>
@@ -168,7 +176,7 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
           : expanded
             ? "border-blue-400 shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
             : "border-[#E4E4E7] hover:border-[#A1A1AA] hover:shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
-      } ${expanded ? "w-[280px]" : "w-[192px]"}`}
+      } ${expanded ? "w-72" : "w-48"}`}
     >
       {/* Card header — click to expand, drag handle visible */}
       <div
@@ -178,7 +186,7 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-1.5">
             <span className="text-[#C4C4C4]"><IconGrip /></span>
-            <span className="font-mono text-[11px] text-[#A1A1AA]">
+            <span className="font-mono text-xs text-[#A1A1AA]">
               {String(order).padStart(2, "0")}
             </span>
           </div>
@@ -186,11 +194,11 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
             <IconChevronRight />
           </span>
         </div>
-        <p className="text-[14px] font-medium text-[#18181B] leading-snug truncate">
+        <p className="text-sm font-medium text-[#18181B] leading-snug truncate">
           {stage.name || <span className="text-[#A1A1AA] font-normal">Untitled stage</span>}
         </p>
-        <span className="inline-block mt-2 font-mono text-[11px] text-[#71717A] bg-[#F4F4F5] rounded px-1.5 py-0.5 uppercase">
-          {stage.scriptType ?? "shell"}
+        <span className="inline-block mt-2 font-mono text-xs text-[#71717A] bg-[#F4F4F5] rounded px-1.5 py-0.5 uppercase">
+          {stage.scriptType ?? "bash"}
         </span>
       </div>
 
@@ -202,11 +210,11 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
           onDragStart={(e) => e.stopPropagation()}
         >
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
               Name
             </label>
             <input
-              className="w-full h-8 px-2.5 text-[13px] bg-white border border-[#E4E4E7] rounded text-[#18181B]
+              className="w-full h-8 px-2.5 text-sm bg-white border border-[#E4E4E7] rounded text-[#18181B]
                 placeholder-[#A1A1AA] focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition"
               value={stage.name}
               onChange={(e) => onChange({ ...stage, name: e.target.value })}
@@ -215,28 +223,27 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
               Script type
             </label>
             <select
-              className="w-full h-8 px-2.5 text-[13px] bg-white border border-[#E4E4E7] rounded text-[#18181B]
+              className="w-full h-8 px-2.5 text-sm bg-white border border-[#E4E4E7] rounded text-[#18181B]
                 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition cursor-pointer"
-              value={stage.scriptType ?? "SHELL"}
+              value={stage.scriptType ?? "BASH"}
               onChange={(e) => onChange({ ...stage, scriptType: e.target.value })}
             >
-              <option value="SHELL">SHELL</option>
-              <option value="PYTHON">PYTHON</option>
-              <option value="POWERSHELL">POWERSHELL</option>
+              <option value="bash">BASH</option>
+              
             </select>
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
+            <label className="block text-xs font-medium uppercase tracking-widest text-[#A1A1AA] mb-1.5">
               Commands
             </label>
             <textarea
               data-testid="StageCommandsTextarea"
-              className="w-full px-2.5 py-2 text-[12px] font-mono bg-[#F8F8F8] border border-[#E4E4E7] rounded
+              className="w-full px-2.5 py-2 text-xs font-mono bg-[#F8F8F8] border border-[#E4E4E7] rounded
                 text-[#18181B] placeholder-[#A1A1AA] focus:outline-none focus:border-blue-400 focus:ring-2
                 focus:ring-blue-100 transition resize-none leading-relaxed"
               rows={5}
@@ -249,7 +256,7 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
           <button
             onClick={onDelete}
             data-testid="StageDelete"
-            className="flex items-center gap-1.5 text-[12px] text-[#DC2626] hover:text-[#B91C1C] transition-colors pt-0.5"
+            className="flex items-center gap-1.5 text-xs text-[#DC2626] hover:text-[#B91C1C] transition-colors pt-0.5"
           >
             <IconTrash />
             Remove stage
@@ -275,14 +282,14 @@ export function FloatingAddBox({ onDragStart, onDragEnd, onClick }: {
       onDragEnd={onDragEnd}
       onClick={onClick}
       data-testid="Plus"
-      className="fixed bottom-8 right-8 z-40 flex flex-col items-center justify-center w-[112px] h-[68px]
+      className="fixed bottom-8 right-8 z-40 flex flex-col items-center justify-center w-28 h-16
         bg-white border-2 border-dashed border-[#A1A1AA] rounded-xl cursor-pointer
         shadow-md hover:border-[#18181B] hover:shadow-lg transition-all gap-1 select-none group"
       title="Click to add a stage, or drag to insert at a specific position"
     >
       <span className="text-[#A1A1AA] group-hover:text-[#18181B] transition-colors"><IconPlus /></span>
-      <span className="text-[12px] font-medium text-[#71717A] group-hover:text-[#18181B] transition-colors">New Stage</span>
-      <span className="text-[10px] text-[#A1A1AA]">click or drag</span>
+      <span className="text-xs font-medium text-[#71717A] group-hover:text-[#18181B] transition-colors">New Stage</span>
+      <span className="text-xs text-[#A1A1AA]">click or drag</span>
     </div>
   );
 }
@@ -296,10 +303,110 @@ export function EmptyStages({ canEdit, dragTarget }: { canEdit: boolean; dragTar
       ${dragTarget ? "border-blue-400 bg-blue-50" : "border-[#E4E4E7]"}`}
     >
       <span className="text-[#A1A1AA]"><IconGitBranch /></span>
-      <p className="text-[14px] font-medium text-[#18181B]">No stages configured</p>
-      <p className="text-[13px] text-[#71717A]">
+      <p className="text-sm font-medium text-[#18181B]">No stages configured</p>
+      <p className="text-sm text-[#71717A]">
         {canEdit ? 'Drag the "New Stage" box into this area.' : "Edit this pipeline to add stages."}
       </p>
     </div>
   );
+}
+
+// ── Build-specific components ─────────────────────────────────────────────────
+
+// State icon for a build stage — only used in build context.
+export function BuildStateIcon({ state }: { state: StageBuildStateType | undefined }) {
+  switch (state) {
+    case StageBuildCurrentStateEnum.Success:
+      return <CheckCircle className="text-green-600 w-4 h-4" aria-label="success-circle-stage" />;
+    case StageBuildCurrentStateEnum.Failed:
+      return <XCircle className="text-red-600 w-4 h-4" />;
+    case StageBuildCurrentStateEnum.Running:
+      return <Loader className="text-yellow-500 animate-spin w-4 h-4" />;
+    case StageBuildCurrentStateEnum.Waiting:
+      return <Loader className="text-blue-500 animate-spin w-4 h-4" />;
+    case StageBuildCurrentStateEnum.Stopped:
+      return <XCircle className="text-zinc-400 w-4 h-4" />;
+    default:
+      return <span className="w-4 h-4 inline-block" />;
+  }
+}
+
+// Border colour for a selected build stage card based on its state.
+function buildCardBorderClass(state: StageBuildStateType | undefined, expanded: boolean): string {
+  if (!expanded) return "border-zinc-200 hover:border-zinc-400";
+  switch (state) {
+    case StageBuildCurrentStateEnum.Success: return "border-green-500 shadow-sm";
+    case StageBuildCurrentStateEnum.Failed:  return "border-red-500 shadow-sm";
+    case StageBuildCurrentStateEnum.Running: return "border-yellow-400 shadow-sm";
+    case StageBuildCurrentStateEnum.Waiting: return "border-blue-400 shadow-sm";
+    default: return "border-zinc-400 shadow-sm";
+  }
+}
+
+// Card for a single build stage — mirrors StageCard structure but uses StageBuild data
+// and shows status icon + inline logs instead of commands.
+export function BuildStageCard({ stage, order, expanded, onToggle, logs }: {
+  stage: StageBuild;
+  order: number;
+  expanded: boolean;
+  onToggle: () => void;
+  logs: string;
+}) {
+  return (
+    <button
+      onClick={onToggle}
+      className={`shrink-0 text-left rounded-lg border bg-white transition-all duration-150 ${buildCardBorderClass(stage.currentState, expanded)} ${expanded ? "w-72" : "w-48"}`}
+    >
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <span className="font-mono text-xs text-zinc-400">
+            {String(order).padStart(2, "0")}
+          </span>
+          <BuildStateIcon state={stage.currentState} />
+        </div>
+        <p className="text-sm font-medium text-zinc-900 leading-snug truncate">{stage.stageName}</p>
+        <span className="inline-block mt-2 font-mono text-xs text-zinc-500 bg-zinc-100 rounded px-1.5 py-0.5 uppercase">
+          BASH
+        </span>
+      </div>
+
+      {expanded && (
+        <div className="border-t border-zinc-100 px-4 pb-4 pt-3 text-left">
+          <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-2">Logs</p>
+          <pre className="font-mono text-xs text-zinc-800 bg-zinc-50 rounded p-2.5 whitespace-pre-wrap break-words leading-relaxed max-h-64 overflow-y-auto">
+            {logs || <span className="text-zinc-400">No logs yet.</span>}
+          </pre>
+        </div>
+      )}
+    </button>
+  );
+}
+
+// Banner shown at the top of the builds running page indicating the overall build status.
+// Returns null for SUCCESS and other final/neutral states — only shown for RUNNING and FAILED.
+export function BuildStatusBanner({ state, currentStageName }: {
+  state: PipelineBuildStateType | undefined;
+  currentStageName?: string;
+}) {
+  if (state === PipelineBuildCurrentStateEnum.Running) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm mb-6">
+        <Loader className="animate-spin w-4 h-4 shrink-0" />
+        <span>
+          Build is running{currentStageName ? ` · ${currentStageName} in progress` : ""}
+        </span>
+      </div>
+    );
+  }
+  if (state === PipelineBuildCurrentStateEnum.Failed) {
+    return (
+      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm mb-6">
+        <XCircle className="w-4 h-4 shrink-0" />
+        <span>
+          Build failed{currentStageName ? ` at stage ${currentStageName}` : ""}
+        </span>
+      </div>
+    );
+  }
+  return null;
 }

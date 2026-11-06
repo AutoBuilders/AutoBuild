@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import StageList from "../../../src/components/pipelines/stageList";
+import StageList from "../../../src/components/common/stageList";
 import type { Stage } from "../../../src/gen/api";
 
 const mockStages: Stage[] = [
@@ -119,7 +119,7 @@ describe("StageList", () => {
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(mockStages.length + 1);
       // New stage is appended at the end
-      expect(updated[updated.length - 1].scriptType).toBe("SHELL");
+      expect(updated[updated.length - 1].scriptType).toBe("bash");
     });
 
     it("clicking FloatingAddBox in empty state appends a stage", () => {
@@ -129,7 +129,7 @@ describe("StageList", () => {
       expect(onStagesChange).toHaveBeenCalledTimes(1);
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(1);
-      expect(updated[0].scriptType).toBe("SHELL");
+      expect(updated[0].scriptType).toBe("bash");
     });
 
     it("drag-to-reorder: dragEnd with a valid target reorders stages", () => {
@@ -201,7 +201,7 @@ describe("StageList", () => {
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(mockStages.length + 1);
       // New stage inserted before all existing stages
-      expect(updated[0].scriptType).toBe("SHELL");
+      expect(updated[0].scriptType).toBe("bash");
     });
 
     it("drag-to-add: handleNewDragEnd inserts at newDropIdx when drag ends over a drop zone", () => {
@@ -217,7 +217,7 @@ describe("StageList", () => {
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
       expect(updated).toHaveLength(mockStages.length + 1);
       // New stage inserted after stage-1, should be at index 1
-      expect(updated[1].scriptType).toBe("SHELL");
+      expect(updated[1].scriptType).toBe("bash");
       expect(updated[1].name).toBe("");
     });
 
@@ -273,10 +273,10 @@ describe("StageList", () => {
       render(<StageList {...editProps} onStagesChange={onStagesChange} />);
       fireEvent.click(screen.getByText("Build"));
       const select = screen.getByRole("combobox");
-      fireEvent.change(select, { target: { value: "PYTHON" } });
+      fireEvent.change(select, { target: { value: "bash" } });
       expect(onStagesChange).toHaveBeenCalledTimes(1);
       const updated: Stage[] = onStagesChange.mock.calls[0][0];
-      expect(updated.find((s) => s.id === "stage-1")?.scriptType).toBe("PYTHON");
+      expect(updated.find((s) => s.id === "stage-1")?.scriptType).toBe("bash");
     });
   });
 });

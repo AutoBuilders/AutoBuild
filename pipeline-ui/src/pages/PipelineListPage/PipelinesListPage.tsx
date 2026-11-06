@@ -49,7 +49,7 @@ export default function PipelinePage() {
       <NavBar></NavBar>
       <div className="main-container min-h-screen justify-center display-flex">
         <div className="container p-20 text-center">
-          <h1 className="text-3xl font-semibold text-left">My Pipelines</h1>
+          <h1 className="text-2xl font-bold text-left">MY PIPELINES</h1>
           <h3 className="text-l font-light text-left">Manage your CI/CD Pipelines</h3>
 
           <div className="flex justify-between items-center mt-10">
@@ -77,7 +77,7 @@ export default function PipelinePage() {
                 {filtered.map((p) => (
                   <TableRow
                     onClick={() => {
-                      window.location.href = `/pipelines/${p.id}`;
+                      navigate(`/pipelines/${p.id}`);
                     }}
                     className="hover:cursor-pointer"
                   >
