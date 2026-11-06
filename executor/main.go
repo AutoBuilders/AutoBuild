@@ -42,18 +42,32 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	appProfile := os.Getenv("EXECUTOR_PROFILE")
-
-	if appProfile == "" {
-		log.Fatal("Please pass along a valid application profile")
-	}
-
-	envFile := ".env." + appProfile
-	err := godotenv.Load(envFile)
-	if err!=nil {
-		log.Fatal("Error ocurred while loading env file: ", envFile)
-	}
+	loadEnv()
 	// Create an isolated router instance (instead of global DefaultServeMux)
+	serverPortAddr, server := initServer()
+
+	log.Println("Server listening on http://localhost", serverPortAddr)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Server failed: %s", err)
+	}
+}
+
+func initServer() (string, *http.Server) {
+	mux := attachHTTPHandlers()
+
+	// Configure server settings explicitly
+	serverPortAddr := ":" + os.Getenv("EXECUTOR_PORT")
+	server := &http.Server{
+		Addr:           serverPortAddr,
+		Handler:        mux,
+		ReadTimeout:    10 * time.Second, // Max duration reading the entire request
+		WriteTimeout:   10 * time.Second, // Max duration writing the response
+		MaxHeaderBytes: 1 << 20,          // 1 MB max header size
+	}
+	return serverPortAddr, server
+}
+
+func attachHTTPHandlers() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Define routes
@@ -67,19 +81,19 @@ func main() {
 	})
 
 	mux.HandleFunc("POST /api/v1/execute/pipeline", handleExecute)
+	return mux
+}
 
-	// Configure server settings explicitly
-	serverPortAddr := ":" + os.Getenv("EXECUTOR_PORT")
-	server := &http.Server{
-		Addr:           serverPortAddr,
-		Handler:        mux,
-		ReadTimeout:    10 * time.Second, // Max duration reading the entire request
-		WriteTimeout:   10 * time.Second, // Max duration writing the response
-		MaxHeaderBytes: 1 << 20,          // 1 MB max header size
+func loadEnv() {
+	appProfile := os.Getenv("EXECUTOR_PROFILE")
+
+	if appProfile == "" {
+		log.Fatal("Please pass along a valid application profile")
 	}
 
-	log.Println("Server listening on http://localhost", serverPortAddr)
-	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("Server failed: %s", err)
+	envFile := ".env." + appProfile
+	err := godotenv.Load(envFile)
+	if err != nil {
+		log.Fatal("Error ocurred while loading env file: ", envFile)
 	}
 }
