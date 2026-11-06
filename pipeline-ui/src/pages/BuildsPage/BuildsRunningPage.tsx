@@ -18,7 +18,8 @@ export default function BuildsRunningPage() {
   const [isDeleteVisible, setIsDeleteVisible] = useState(false);
   const [buildLogs, setBuildLogs] = useState<string>("");
 
-  // Fetch initial build
+  // Fetch initial build and set the first stage as selected
+  // This use effect runs only once when the component mounts or when the id changes.
   useEffect(() => {
     const buildId = id as string;
 
@@ -39,10 +40,12 @@ export default function BuildsRunningPage() {
     load();
   }, [id]);
 
+
   // Fetch logs for selected stage, polling if not final
   useEffect(() => {
     if (!selectedStageId) return;
 
+    // Find the selected stage from the build's stageBuilds
     const selectedStage = (build?.stageBuilds ?? []).find((s) => s.id === selectedStageId);
 
     let intervalId: ReturnType<typeof setInterval> | null = null;
@@ -68,7 +71,7 @@ export default function BuildsRunningPage() {
     ] as string[]).includes(selectedStage?.currentState ?? "");
 
     if (!isFinal) {
-      intervalId = setInterval(fetchLogs, 10000);
+      intervalId = setInterval(fetchLogs, 3000);
     }
 
     return () => {
@@ -76,16 +79,16 @@ export default function BuildsRunningPage() {
     };
   }, [selectedStageId, build?.stageBuilds]);
 
-  // Polling for build state when not running
+  // Polling for overall build state every 3 seconds if not final (success or failed)
   useEffect(() => {
     const buildId = id as string;
 
+    // If the build is already in a final state, we don't need to poll for updates.
     if (([PipelineBuildCurrentStateEnum.Success, PipelineBuildCurrentStateEnum.Failed] as PipelineBuildCurrentStateEnum[]).includes(build?.currentState as PipelineBuildCurrentStateEnum)) {
       return;
     }
 
-    if (build?.currentState === PipelineBuildCurrentStateEnum.Running) return;
-
+    // Polling for build state every 3 seconds
     const intervalId = setInterval(async () => {
       const { status, data } = await pipelineBuildApiInstance.getPipelineBuild(buildId);
 
@@ -94,7 +97,7 @@ export default function BuildsRunningPage() {
       }
 
       setBuild(data);
-    }, 10000);
+    }, 3000);
 
     return () => clearInterval(intervalId);
   }, [build?.currentState, id]);
@@ -135,8 +138,6 @@ export default function BuildsRunningPage() {
   if (isDeleteVisible === false && build.currentState !== PipelineBuildCurrentStateEnum.Running) {
     setIsDeleteVisible(true);
   }
-
-  const selectedStage = (build.stageBuilds ?? []).find((s) => s.id === selectedStageId);
 
   // The currently running/failed stage name for the banner
   const activeStageName =
@@ -214,7 +215,6 @@ export default function BuildsRunningPage() {
           selectedBuildStageId={selectedStageId}
           onBuildStageSelect={(stageId) => {
             setSelectedStageId(stageId);
-            setBuildLogs("");
           }}
           buildLogs={buildLogs}
         />
