@@ -81,6 +81,7 @@ public class MapperConfig {
         typeMapper.addMapping(StageBuild::getId, StageBuildDTO::setId);
         typeMapper.addMapping(stageBuild -> stageBuild.getStage().getId(), StageBuildDTO::setStageId);
         typeMapper.addMapping(stageBuild -> stageBuild.getStage().getName(), StageBuildDTO::setStageName);
+        typeMapper.addMapping(stageBuild -> stageBuild.getStage().getStageOrder(), StageBuildDTO::setStageOrder);
         typeMapper.addMapping(StageBuild::getCurrentState, StageBuildDTO::setCurrentState);
     }
 

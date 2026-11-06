@@ -33,4 +33,10 @@ public class StageDTO {
 
     @NotEmpty
     private String command;
+
+    private int stageOrder;
+
+    public StageDTO(UUID id, String name, String scriptType, String command) {
+        this(id, name, scriptType, command, 0);
+    }
 }

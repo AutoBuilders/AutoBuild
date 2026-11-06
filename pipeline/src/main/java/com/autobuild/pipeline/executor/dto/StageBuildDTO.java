@@ -28,5 +28,11 @@ public class StageBuildDTO {
 
     private String stageName;
 
+    private int stageOrder;
+
     private StageExecutionState currentState;
+
+    public StageBuildDTO(UUID id, UUID stageId, String stageName, StageExecutionState currentState) {
+        this(id, stageId, stageName, 0, currentState);
+    }
 }

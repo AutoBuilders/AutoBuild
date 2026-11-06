@@ -340,6 +340,73 @@ describe("PipelineDetailsPage", () => {
     });
   });
 
+  it("createPipeline is called with stageOrder set by index for each stage", async () => {
+    mockParams.id = "0";
+
+    const mockResponse = {
+      status: 201,
+      data: mockPipelineTemplate
+    };
+    (pipelineApiInstance.createPipeline as any).mockResolvedValueOnce(mockResponse);
+
+    render(
+      <MemoryRouter>
+        <PipelineDetails />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(screen.getByText("Create")).toBeInTheDocument());
+
+    // Add two stages via the + button
+    const addButton = screen.getByTestId("Plus");
+    fireEvent.click(addButton);
+    fireEvent.click(addButton);
+
+    // Click Create
+    fireEvent.click(screen.getByText("Create"));
+
+    await waitFor(() => {
+      expect(pipelineApiInstance.createPipeline).toHaveBeenCalledWith(
+        expect.objectContaining({
+          stages: expect.arrayContaining([
+            expect.objectContaining({ stageOrder: 0 }),
+            expect.objectContaining({ stageOrder: 1 }),
+          ]),
+        })
+      );
+    });
+  });
+
+  it("createPipeline stages are sent in the same order as displayed", async () => {
+    mockParams.id = "0";
+
+    const mockResponse = {
+      status: 201,
+      data: mockPipelineTemplate
+    };
+    (pipelineApiInstance.createPipeline as any).mockResolvedValueOnce(mockResponse);
+
+    render(
+      <MemoryRouter>
+        <PipelineDetails />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(screen.getByText("Create")).toBeInTheDocument());
+
+    // Click Create with no stages — stageOrder array should be empty
+    fireEvent.click(screen.getByText("Create"));
+
+    await waitFor(() => {
+      expect(pipelineApiInstance.createPipeline).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "New Pipeline",
+          stages: [],
+        })
+      );
+    });
+  });
+
   // TODO update Pipeline tests to be writtern once update pipeline  functionality is implemented.
 
   it("build button calls executeBuild and navigates to build details page", async () => {
