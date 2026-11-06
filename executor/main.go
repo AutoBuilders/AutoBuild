@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"time"
 
 	"github.com/AutoBuilders/AutoBuild/executor/build"
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
 	"github.com/AutoBuilders/AutoBuild/executor/runner"
+	"github.com/joho/godotenv"
 )
 
 func handleExecute(w http.ResponseWriter, r *http.Request) {
@@ -40,6 +42,17 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	appProfile := os.Getenv("EXECUTOR_PROFILE")
+
+	if appProfile == "" {
+		log.Fatal("Please pass along a valid application profile")
+	}
+
+	envFile := ".env." + appProfile
+	err := godotenv.Load(envFile)
+	if err!=nil {
+		log.Fatal("Error ocurred while loading env file: ", envFile)
+	}
 	// Create an isolated router instance (instead of global DefaultServeMux)
 	mux := http.NewServeMux()
 
@@ -56,15 +69,16 @@ func main() {
 	mux.HandleFunc("POST /api/v1/execute/pipeline", handleExecute)
 
 	// Configure server settings explicitly
+	serverPortAddr := ":" + os.Getenv("EXECUTOR_PORT")
 	server := &http.Server{
-		Addr:           ":8080",
+		Addr:           serverPortAddr,
 		Handler:        mux,
 		ReadTimeout:    10 * time.Second, // Max duration reading the entire request
 		WriteTimeout:   10 * time.Second, // Max duration writing the response
 		MaxHeaderBytes: 1 << 20,          // 1 MB max header size
 	}
 
-	log.Println("Server listening on http://localhost:8080")
+	log.Println("Server listening on http://localhost", serverPortAddr)
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("Server failed: %s", err)
 	}

@@ -2,7 +2,10 @@ module github.com/AutoBuilders/AutoBuild/executor
 
 go 1.27.3
 
-require dagger.io/dagger v0.21.11
+require (
+	dagger.io/dagger v0.21.11
+	github.com/joho/godotenv v1.5.1
+)
 
 require (
 	github.com/99designs/gqlgen v0.17.89 // indirect

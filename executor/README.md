@@ -17,13 +17,13 @@ docker run \
 Script to start go service
 
 ```sh
-_DAGGER_RUNNER_HOST=tcp://localhost:8081 go run main.go
+_DAGGER_RUNNER_HOST=tcp://localhost:8081 EXECUTOR_PROFILE=local go run main.go
 ```
 
 ## Local Execution
 
 ```sh
-go run main.go
+EXECUTOR_PROFILE=local go run main.go
 ```
 
 No separate dagger service is required as it will fallback to starting it's own container.
