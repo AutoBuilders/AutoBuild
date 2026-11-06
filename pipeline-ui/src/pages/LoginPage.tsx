@@ -18,7 +18,7 @@ export default function LoginPage() {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     try {
       const { token } = await loginApi(username, password);
-      void token;
+      // this approach needs to change once we implement our proper auth with idp login page
       login();
       navigate("/");
     } catch (err: any) {

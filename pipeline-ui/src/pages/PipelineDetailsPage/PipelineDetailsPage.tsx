@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import StageList from "../../components/common/stageList";
 import { booleanFlags } from "../../flags/booleanFlags";
 
-import type { Pipeline, Stage } from "../../gen/api";
+import type { Pipeline } from "../../gen/api";
 import { pipelineApiInstance, pipelineBuildApiInstance } from "../../services/pipelines.api";
 
 import { Play, Pencil } from "lucide-react";

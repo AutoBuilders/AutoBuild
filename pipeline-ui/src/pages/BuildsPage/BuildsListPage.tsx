@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { SearchBar } from "../../components/common/searchBar";
 import { pipelineBuildApiInstance } from "../../services/pipelines.api";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/common/navBar";
 import type { PipelineBuild } from "../../gen";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../components/ui/table";
@@ -15,7 +15,6 @@ import Breadcrumb from "../../components/common/breadcrumb";
 
 
 export default function BuildsListPage() {
-  const { id } = useParams();
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
