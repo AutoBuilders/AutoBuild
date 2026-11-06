@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
-<<<<<<< HEAD
-=======
 /**
  * Breadcrumb component for navigation.
  * @param crumbs - An array of breadcrumb objects, each containing a label and an optional route.
@@ -10,7 +8,6 @@ import { ChevronRight } from "lucide-react";
  * TODO: The current UI design is a little weird and shows breadcrumbs all over the place, but this is a temporary solution until we have a better design in the future.
  */
 
->>>>>>> 61d44b71 (Adding breadcrumbs to the UI)
 interface Crumb {
   label: string;
   route?: string; // omit for the current (last) crumb
