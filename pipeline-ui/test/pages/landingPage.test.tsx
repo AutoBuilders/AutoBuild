@@ -21,8 +21,7 @@ describe("LandingPage", () => {
         <LandingPage />
       </MemoryRouter>,
     );
-    expect(screen.getByText("Welcome!")).toBeInTheDocument();
-    expect(screen.getByText("Hello")).toBeInTheDocument();
+    expect(screen.getByText("What are we working on today?")).toBeInTheDocument();
   });
 
   it("navigates to Pipelines", async () => {

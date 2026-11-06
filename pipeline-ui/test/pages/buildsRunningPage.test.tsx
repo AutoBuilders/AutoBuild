@@ -101,7 +101,7 @@ describe("BuildsRunningPage", () => {
     };
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildsResponse as any);
     vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValueOnce({
-      log: "Stage 1 logs...",
+      status: 200, data: { log: "Stage 1 logs..." },
     } as any);
 
     render(
@@ -110,9 +110,9 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    // Wait for the build pipeline name to be rendered
-    const build = await screen.findByText("Pipeline 1");
-    expect(build).toBeInTheDocument();
+    // Wait for the build pipeline name to be rendered (heading specifically, breadcrumb also renders it)
+    const heading = await screen.findByRole("heading", { name: "Pipeline 1" });
+    expect(heading).toBeInTheDocument();
 
     // Verify getBuildData was called (note: id is passed as string "1" from useParams)
     expect(pipelineBuildApiInstance.getPipelineBuild).toHaveBeenCalledWith("1");
@@ -138,7 +138,7 @@ describe("BuildsRunningPage", () => {
     };
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildsResponse as any);
     vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValueOnce({
-      log: "Stage 1 logs...",
+      status: 200, data: { log: "Stage 1 logs..." },
     } as any);
 
     render(
@@ -148,7 +148,7 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     // Wait a bit for useEffect to run and potentially create EventSource
     await waitFor(
@@ -199,7 +199,7 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     // Wait for EventSource to be created
     await waitFor(
@@ -269,7 +269,7 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     const stageButtons = await screen.findAllByRole("button", { name: /Stage/ });
     expect(stageButtons[0]).toHaveTextContent("Alpha Stage");
@@ -298,7 +298,7 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     await waitFor(() => expect(mockEventSourceInstances.length).toBeGreaterThan(0), { timeout: 1000 });
 
@@ -355,7 +355,7 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     // Wait for the stage details to appear with the Logs label
     await waitFor(() => {

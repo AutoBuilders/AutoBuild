@@ -77,9 +77,9 @@ export default function NavBar() {
       {/* CENTER — Navigation */}
       <div className="flex items-center justify-center gap-8 text-lg">
         <NavButton label="Home" route="/" />
-        <NavButton label="Pipelines" route="/pipelines" />
+        {/* <NavButton label="Pipelines" route="/pipelines" />
         <NavButton label="Builds" route="/builds" />
-        <NavButton label="Projects" route="/" />
+        <NavButton label="Projects" route="/" /> */}
         <NavButton label="About" route="/about" />
       </div>
 
