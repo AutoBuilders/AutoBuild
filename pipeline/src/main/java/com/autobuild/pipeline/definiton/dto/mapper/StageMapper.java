@@ -19,7 +19,7 @@ public class StageMapper implements Mapper<
 
     @Override
     public StageEntity dtoToEntity(Stage dto) {
-        if (dto == null) {
+        if (null == dto) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
