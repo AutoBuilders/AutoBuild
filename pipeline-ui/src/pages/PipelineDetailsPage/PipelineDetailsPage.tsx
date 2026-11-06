@@ -110,6 +110,7 @@ export default function PipelineDetailPage() {
       } as unknown as Pipeline;
       
       const {status, data} = await pipelineApiInstance.createPipeline(pipelineToSave);
+      // TODO: handle error properly
       if (status !== 201 || typeof data.id === "undefined") {
         setError(data as unknown as string[]);
         setIsCreateMode(true);
@@ -122,9 +123,6 @@ export default function PipelineDetailPage() {
       navigate(`/pipelines/${data.id}`);
       return;
     }
-
-    setIsEditing(false);
-    navigate(`/pipelines/${data.id}`);
   }
 
   // Handler for the "Cancel" button click
