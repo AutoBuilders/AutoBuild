@@ -165,7 +165,7 @@ export default function BuildsRunningPage() {
         {/* Back link */}
         <button
           onClick={() => navigate("/builds")}
-          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 transition-colors mb-5"
+          className="flex items-center gap-1 text-sm text-[#71717A] hover:text-zinc-900 transition-colors mb-5"
         >
           ← My Builds
         </button>

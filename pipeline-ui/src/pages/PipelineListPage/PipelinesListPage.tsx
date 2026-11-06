@@ -50,7 +50,7 @@ export default function PipelinePage() {
       <div className="main-container min-h-screen justify-center display-flex">
         <div className="container p-20 text-center">
           <h1 className="text-2xl font-bold text-left">MY PIPELINES</h1>
-          <h3 className="text-l font-light text-left">Manage your CI/CD Pipelines</h3>
+          <h3 className="text-md font-light text-left">Manage your CI/CD Pipelines</h3>
 
           <div className="flex justify-between items-center mt-10">
             <SearchBar page = "pipelines" value={search} onChange={setSearch} />

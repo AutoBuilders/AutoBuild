@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        tile: "rounded-2xl shadow-md bg-white border border-gray-200 hover:shadow-lg hover:bg-gray-50 active:scale-[0.98] transition-all",
+        tile: "group rounded-2xl bg-white border border-zinc-200 shadow-sm transition-all duration-200 ease-out hover:scale-[1.03] hover:shadow-xl active:scale-[0.97] active:shadow-sm [&_svg]:size-auto",
       },
       size: {
         default: "h-9 px-4 py-2",
