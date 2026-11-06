@@ -364,6 +364,27 @@ public class PipelineServiceTest {
     }
 
     @Test
+    public void testCreatePipelineRejectsDuplicateStageOrder() {
+        PipelineDTO dto = new PipelineDTO();
+        dto.setName("pipe");
+        dto.setStages(List.of(
+                new StageDTO(null, "build", "bash", "echo build", 0),
+                new StageDTO(null, "test", "bash", "echo test", 0)));
+        doReturn(false).when(repository).existsByName("pipe");
+        assertThrows(DuplicateEntryException.class, () -> service.createPipeline(dto));
+    }
+
+    @Test
+    public void testCreatePipelineRejectsNegativeStageOrder() {
+        PipelineDTO dto = new PipelineDTO();
+        dto.setName("pipe");
+        dto.setStages(List.of(
+                new StageDTO(null, "build", "bash", "echo build", -1)));
+        doReturn(false).when(repository).existsByName("pipe");
+        assertThrows(InvalidIdException.class, () -> service.createPipeline(dto));
+    }
+
+    @Test
     public void testDeletePipelineSuccess() throws Exception {
         ensurePipelineId();
         pipeline.setStages(new ArrayList<>(pipeline.getStages()));

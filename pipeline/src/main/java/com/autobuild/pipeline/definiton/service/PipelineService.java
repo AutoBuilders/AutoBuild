@@ -259,9 +259,12 @@ public class PipelineService {
         }
     }
 
-    private void validateStageOrders(List<StageDTO> stages) throws DuplicateEntryException {
+    private void validateStageOrders(List<StageDTO> stages) throws DuplicateEntryException, InvalidIdException {
         Set<Integer> seen = new HashSet<>();
         for (StageDTO stage : stages) {
+            if (stage.getStageOrder() < 0) {
+                throw new InvalidIdException("stageOrder must be a non-negative integer: " + stage.getStageOrder());
+            }
             if (!seen.add(stage.getStageOrder())) {
                 throw new DuplicateEntryException(
                         "Duplicate stageOrder value: " + stage.getStageOrder());

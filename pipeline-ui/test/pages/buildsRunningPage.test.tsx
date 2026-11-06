@@ -249,7 +249,7 @@ describe("BuildsRunningPage", () => {
     expect(eventSourceInstance.close).toHaveBeenCalled();
   });
 
-  it("sorts stageBuilds by stageOrder on initial load", async () => {
+  it("renders stageBuilds in the order returned by the backend", async () => {
     const mockBuildsResponse = {
       status: 200,
       data: {
@@ -258,8 +258,8 @@ describe("BuildsRunningPage", () => {
         pipelineName: "Pipeline 1",
         currentState: PipelineBuildCurrentStateEnum.Success,
         stageBuilds: [
-          { id: "2", stageName: "Second Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
-          { id: "1", stageName: "First Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Success },
+          { id: "1", stageName: "Alpha Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Success },
+          { id: "2", stageName: "Beta Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
         ]
       }
     };
@@ -275,11 +275,11 @@ describe("BuildsRunningPage", () => {
     await screen.findByText("Pipeline 1");
 
     const stageButtons = await screen.findAllByRole("button", { name: /Stage/ });
-    expect(stageButtons[0]).toHaveTextContent("First Stage");
-    expect(stageButtons[1]).toHaveTextContent("Second Stage");
+    expect(stageButtons[0]).toHaveTextContent("Alpha Stage");
+    expect(stageButtons[1]).toHaveTextContent("Beta Stage");
   });
 
-  it("sorts stageBuilds by stageOrder when receiving SSE message", async () => {
+  it("renders stageBuilds from SSE in the order returned by the backend", async () => {
     const mockBuildResponse = {
       status: 200,
       data: {
@@ -311,8 +311,8 @@ describe("BuildsRunningPage", () => {
       data: JSON.stringify({
         currentState: PipelineBuildCurrentStateEnum.Success,
         stageBuilds: [
-          { id: "2", stageName: "Beta Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
           { id: "1", stageName: "Alpha Stage", stageOrder: 0, currentState: StageBuildCurrentStateEnum.Success },
+          { id: "2", stageName: "Beta Stage", stageOrder: 1, currentState: StageBuildCurrentStateEnum.Success },
         ]
       })
     } as MessageEvent);
