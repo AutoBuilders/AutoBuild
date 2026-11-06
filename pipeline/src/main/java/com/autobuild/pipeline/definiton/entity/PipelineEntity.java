@@ -31,11 +31,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {
+@Table(name = "pipeline",uniqueConstraints = {
     @UniqueConstraint(name = "UK_PIPELINE_NAME", columnNames = { "name" })
 })
 @Check(name = "CHK_PIPELINE_NAME", constraints = "name != '' ")
-public class Pipeline {
+public class PipelineEntity {
     @Id
     @Column(name = "id", nullable = false)
     private UUID id;
@@ -51,5 +51,5 @@ public class Pipeline {
         joinColumns = @JoinColumn(name = "pipeline_id"),
         inverseJoinColumns = @JoinColumn(name = "stage_id")
     )
-    private List<Stage> stages; // TODO: need to take an abstract implementation of stage
+    private List<StageEntity> stages; // TODO: need to take an abstract implementation of stage
 }

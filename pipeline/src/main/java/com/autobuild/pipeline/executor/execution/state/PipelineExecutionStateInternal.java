@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum PipelineExecutionState {
+public enum PipelineExecutionStateInternal {
     WAITING("Pipeline is waiting to be executed."),
     RUNNING("Pipeline execution has started."),
     SUCCESS("Pipeline execution has finished and it succeeded."),
