@@ -15,6 +15,8 @@ import com.autobuild.pipeline.definiton.dto.mapper.PipelineMapper;
 import com.autobuild.pipeline.definiton.dto.mapper.StageMapper;
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.definiton.dto.Pipeline;
+import com.autobuild.pipeline.definiton.dto.Stage;
 import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
@@ -45,16 +47,14 @@ public class PipelineService {
     @Autowired
     private StageMapper stageMapper;
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline getPipelineById(final String pipelineId)
+    public Pipeline getPipelineById(final String pipelineId)
             throws InvalidIdException, IOException {
         validatePipelineId(pipelineId);
         try {
             PipelineEntity pipeline = getPipelineFromId(pipelineId);
             Map<UUID, String> stageContents = fileService.readScriptFiles(pipeline);
-            com.autobuild.pipeline.definiton.dto.Pipeline pipelineDTO = mapper.entityToDto(pipeline);
-            // pipelineDTO.getStages()
-            //         .forEach(stage -> stage.setCommand(stageContents.get(stage.getId())));
-            com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = pipelineDTO.toBuilder()
+            Pipeline pipelineDTO = mapper.entityToDto(pipeline);
+            Pipeline pipelineWithCommands = pipelineDTO.toBuilder()
     .clearStages()
     .addAllStages(
         pipelineDTO.getStagesList().stream()
@@ -71,32 +71,32 @@ public class PipelineService {
         }
     }
 
-    public List<com.autobuild.pipeline.definiton.dto.Pipeline> getAllPipelines() {
+    public List<Pipeline> getAllPipelines() {
         List<PipelineEntity> pipelines = repository.findAll();
         log.info("Fetched all pipelines, count: {}", pipelines.size());
         return pipelines.stream()
                 .map(pipeline -> {
-                    com.autobuild.pipeline.definiton.dto.Pipeline dto = mapper.entityToDto(pipeline); // converting each fetched pipeline into PiplineDTO
+                    Pipeline dto = mapper.entityToDto(pipeline); // converting each fetched pipeline into PiplineDTO
                     return dto;
                 })
                 .toList();
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline createPipeline(final com.autobuild.pipeline.definiton.dto.Pipeline pipelineDto)
+    public Pipeline createPipeline(final Pipeline pipelineDto)
             throws IOException, DuplicateEntryException, InvalidIdException {
         if (repository.existsByName(pipelineDto.getName())) {
             throw new DuplicateEntryException(
                     "Pipeline with name '" + pipelineDto.getName() + "' already exists");
         }
 
-        for (com.autobuild.pipeline.definiton.dto.Stage stage : pipelineDto.getStagesList()) {
+        for (Stage stage : pipelineDto.getStagesList()) {
             validateScriptType(stage.getScriptType());
         }
 
         // pipelineDto.setId(UUID.randomUUID());
         // pipelineDto.getStages().forEach(stage -> stage.setId(UUID.randomUUID()));
 
-        com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithIds = pipelineDto.toBuilder()
+        Pipeline pipelineWithIds = pipelineDto.toBuilder()
                 .setId(UUID.randomUUID().toString())
                 .clearStages()
                 .addAllStages(pipelineDto.getStagesList().stream()
@@ -124,7 +124,7 @@ public class PipelineService {
         }
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline modifyPipeline(String pipelineId, com.autobuild.pipeline.definiton.dto.Pipeline patchRequest)
+    public Pipeline modifyPipeline(String pipelineId, Pipeline patchRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validatePipelineId(pipelineId);
@@ -153,9 +153,9 @@ public class PipelineService {
         repository.save(pipeline);
 
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
-        com.autobuild.pipeline.definiton.dto.Pipeline response = mapper.entityToDto(pipeline);
+        Pipeline response = mapper.entityToDto(pipeline);
         // response.getStages().forEach(s -> s.setCommand(finalScripts.get(s.getId())));
-        com.autobuild.pipeline.definiton.dto.Pipeline pipelineWithCommands = response.toBuilder()
+        Pipeline pipelineWithCommands = response.toBuilder()
     .clearStages()
     .addAllStages(
         response.getStagesList().stream()
@@ -175,7 +175,7 @@ public class PipelineService {
         }
     }
 
-    private void validateModifyRequest(com.autobuild.pipeline.definiton.dto.Pipeline request) throws InvalidIdException {
+    private void validateModifyRequest(Pipeline request) throws InvalidIdException {
         boolean hasName = request.getName() != null && !request.getName().isBlank();
         boolean hasStages = request.getStagesList() != null && !request.getStagesList().isEmpty();
 
@@ -195,12 +195,12 @@ public class PipelineService {
         }
     }
 
-    private void processStageChanges(PipelineEntity pipeline, List<com.autobuild.pipeline.definiton.dto.Stage> stageRequests)
+    private void processStageChanges(PipelineEntity pipeline, List<Stage> stageRequests)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validateStageRequests(stageRequests);
 
-        for (com.autobuild.pipeline.definiton.dto.Stage req : stageRequests) {
+        for (Stage req : stageRequests) {
             if (isCreateOperation(req)) {
                 createStage(pipeline, req);
             } else if (isDeleteOperation(req)) {
@@ -211,21 +211,21 @@ public class PipelineService {
         }
     }
 
-    private boolean isCreateOperation(com.autobuild.pipeline.definiton.dto.Stage req) {
+    private boolean isCreateOperation(Stage req) {
         return req.getId().isBlank();
     }
 
-    private boolean isDeleteOperation(com.autobuild.pipeline.definiton.dto.Stage req) {
+    private boolean isDeleteOperation(Stage req) {
         return !req.getId().isBlank()
                 && req.getName().isBlank()
                 && req.getScriptType().isBlank()
                 && req.getCommand().isBlank();
     }
 
-    private void createStage(PipelineEntity pipeline, com.autobuild.pipeline.definiton.dto.Stage req)
+    private void createStage(PipelineEntity pipeline, Stage req)
             throws IOException, InvalidIdException {
         validateScriptType(req.getScriptType());
-        com.autobuild.pipeline.definiton.dto.Stage reqWithId = req.toBuilder()
+        Stage reqWithId = req.toBuilder()
     .setId(UUID.randomUUID().toString())
     .build();
         StageEntity entity = stageMapper.dtoToEntity(reqWithId);
@@ -234,7 +234,7 @@ public class PipelineService {
         pipeline.getStages().add(entity);
     }
 
-    private void updateStage(PipelineEntity pipeline, com.autobuild.pipeline.definiton.dto.Stage req)
+    private void updateStage(PipelineEntity pipeline, Stage req)
             throws InvalidIdException, IOException {
 
         StageEntity toUpdate = findStage(pipeline, UUID.fromString(req.getId()));
@@ -252,12 +252,12 @@ public class PipelineService {
         }
     }
 
-    private void validateStageRequests(List<com.autobuild.pipeline.definiton.dto.Stage> requests)
+    private void validateStageRequests(List<Stage> requests)
             throws InvalidIdException, DuplicateEntryException {
 
         Set<UUID> ids = new HashSet<>();
 
-        for (com.autobuild.pipeline.definiton.dto.Stage req : requests) {
+        for (Stage req : requests) {
             if (isCreateOperation(req)) {
                 validateScriptType(req.getScriptType());
                 continue;
@@ -300,7 +300,7 @@ public class PipelineService {
         return optionalPipeline.get();
     }
 
-    private Map<UUID, String> createScriptFiles(com.autobuild.pipeline.definiton.dto.Pipeline pipeline) throws IOException {
+    private Map<UUID, String> createScriptFiles(Pipeline pipeline) throws IOException {
         try {
             return fileService.createScriptFiles(pipeline);
         } catch (IOException e) {
@@ -309,7 +309,7 @@ public class PipelineService {
         }
     }
 
-    public com.autobuild.pipeline.definiton.dto.Pipeline replacePipeline(String pipelineId, com.autobuild.pipeline.definiton.dto.Pipeline putRequest)
+    public Pipeline replacePipeline(String pipelineId, Pipeline putRequest)
             throws InvalidIdException, IOException, DuplicateEntryException {
 
         validatePipelineId(pipelineId);
@@ -332,9 +332,9 @@ public class PipelineService {
         pipeline.getStages().clear();
 
         // Create new stages from request
-        for (com.autobuild.pipeline.definiton.dto.Stage stageDTO : putRequest.getStagesList()) {
+        for (Stage stageDTO : putRequest.getStagesList()) {
             validateScriptType(stageDTO.getScriptType());
-            com.autobuild.pipeline.definiton.dto.Stage stageWithId = stageDTO.toBuilder()
+            Stage stageWithId = stageDTO.toBuilder()
     .setId(UUID.randomUUID().toString())
     .build();
 
@@ -347,8 +347,8 @@ public class PipelineService {
         repository.save(pipeline);
 
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
-        com.autobuild.pipeline.definiton.dto.Pipeline response = mapper.entityToDto(pipeline);
-        com.autobuild.pipeline.definiton.dto.Pipeline responseWithCommands = response.toBuilder()
+        Pipeline response = mapper.entityToDto(pipeline);
+        Pipeline responseWithCommands = response.toBuilder()
     .clearStages()
     .addAllStages(
         response.getStagesList().stream()
