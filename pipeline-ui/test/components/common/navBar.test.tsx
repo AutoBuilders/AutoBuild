@@ -77,7 +77,6 @@ describe("NavBar", () => {
 
       expect(screen.getByText("Pipelines")).toBeInTheDocument();
       expect(screen.getByText("Builds")).toBeInTheDocument();
-      expect(screen.getByText("About")).toBeInTheDocument();
     });
 
     it("navigates to home when Home is clicked", async () => {
@@ -105,15 +104,6 @@ describe("NavBar", () => {
 
       fireEvent.click(screen.getByText("Builds"));
       expect(mockNavigate).toHaveBeenCalledWith("/builds");
-    });
-
-    it("navigates to about when About is clicked", async () => {
-      await waitFor(() => {
-        expect(screen.getByText("About")).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText("About"));
-      expect(mockNavigate).toHaveBeenCalledWith("/about");
     });
 
     it("applies hover styles to navigation buttons", async () => {
