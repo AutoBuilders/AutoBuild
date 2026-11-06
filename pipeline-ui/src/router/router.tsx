@@ -6,7 +6,6 @@ import BuildsRunningPage from "../pages/BuildsPage/BuildsRunningPage";
 import BuildsListPage from "../pages/BuildsPage/BuildsListPage";
 import RegisterPage from "../pages/RegistrationPage";
 import ProtectedRoute from "../pages/ProtectedRoute";
-import About from "../pages/About/About";
 
 export const router = createBrowserRouter([
   //protected routes
@@ -50,13 +49,6 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/about",
-    element: (
-        <About />
-    ),
-  },
-
   // Auth Routes
   // { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
