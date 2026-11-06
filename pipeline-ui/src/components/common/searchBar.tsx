@@ -8,7 +8,7 @@ type SearchBarProps = {
 };
 
 export function SearchBar({ value, page, onChange }: SearchBarProps) {
-  let searchText = "search " + page+ "...";
+  const searchText = "search " + page+ "...";
   return (
     <div className="relative w-[350px]">
       <Input

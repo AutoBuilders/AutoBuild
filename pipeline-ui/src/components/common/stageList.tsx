@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { Stage, StageBuild } from "../../gen/api";
 import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages, BuildStageCard } from "./stageListComponents";
 
@@ -37,7 +37,7 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // drag-to-reorder
-  const dragIdx = useRef<number | null>(null);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
   // drag-to-add new
@@ -65,12 +65,12 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
       command: "",
     };
     onStagesChange!([...stages!, newStage].map((s, i) => ({ ...s, order: i + 1 })));
-    setExpandedId((newStage as any).id);
+    setExpandedId(newStage.id as string);
   }
 
   // Reorder handlers
   function handleStageDragStart(idx: number) {
-    dragIdx.current = idx;
+    setDragIdx(idx);
   }
 
   // When dragging over a stage, we set the dragOverIdx to the index of that stage.
@@ -82,13 +82,13 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
 
   // When the drag ends, we check if the dragged stage was moved to a new position. If so, we reorder the stages and call onStagesChange with the new order.
   function handleStageDragEnd() {
-    if (dragIdx.current !== null && dragOverIdx !== null && dragIdx.current !== dragOverIdx) {
+    if (dragIdx !== null && dragOverIdx !== null && dragIdx !== dragOverIdx) {
       const next = [...stages!];
-      const [moved] = next.splice(dragIdx.current, 1);
+      const [moved] = next.splice(dragIdx, 1);
       next.splice(dragOverIdx, 0, moved);
       onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
     }
-    dragIdx.current = null;
+    setDragIdx(null);
     setDragOverIdx(null);
   }
 
@@ -110,7 +110,7 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
       const next = [...stages!];
       next.splice(newDropIdx, 0, newStage);
       onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
-      setExpandedId((newStage as any).id);
+      setExpandedId(newStage.id as string);
     }
     setIsDraggingNew(false);
     setNewDropIdx(null);
@@ -134,7 +134,7 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
     const next = [...stages!];
     next.splice(insertIdx, 0, newStage);
     onStagesChange!(next.map((s, i) => ({ ...s, order: i + 1 })));
-    setExpandedId((newStage as any).id);
+    setExpandedId(newStage.id as string);
     setIsDraggingNew(false);
     setNewDropIdx(null);
   }
@@ -192,7 +192,7 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
                   stage={stage}
                   order={idx + 1}
                   expanded={expandedId === stage.id}
-                  dragOver={dragOverIdx === idx && dragIdx.current !== null && dragIdx.current !== idx}
+                  dragOver={dragOverIdx === idx && dragIdx !== null && dragIdx !== idx}
                   onToggle={() => toggleExpand(stage.id as string)}
                   onChange={updateStage}
                   onDelete={() => deleteStage(stage.id as string)}
