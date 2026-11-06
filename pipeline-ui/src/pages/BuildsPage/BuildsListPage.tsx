@@ -6,6 +6,7 @@ import NavBar from "../../components/common/navBar";
 import type { PipelineBuild } from "../../gen";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../components/ui/table";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 /**
  * This page includes the Builds List page.
@@ -43,8 +44,9 @@ export default function BuildsListPage() {
   return (
     <>
       <NavBar></NavBar>
-      <div className="main-container min-h-screen justify-center display-flex">
-        <div className="container p-20 text-center">
+      <div className="min-h-screen flex justify-center">
+        <div className="w-full max-w-[80%] p-20 text-center">
+          <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Builds" }]} />
           <h1 className="text-2xl font-bold text-left">MY BUILDS</h1>
           <h3 className="text-md font-light text-left">Find the finished/in-progress builds here</h3>
 

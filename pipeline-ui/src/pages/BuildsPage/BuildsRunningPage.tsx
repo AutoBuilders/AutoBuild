@@ -9,6 +9,7 @@ import { BuildStatusBanner } from "../../components/common/stageListComponents";
 import { Trash } from "lucide-react";
 import { booleanFlags } from "../../flags/booleanFlags";
 import { PipelineBuildCurrentStateEnum, StageBuildCurrentStateEnum, type PipelineBuild } from "../../gen";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 export default function BuildsRunningPage() {
   const { id } = useParams();
@@ -163,12 +164,7 @@ export default function BuildsRunningPage() {
 
       <div className="min-h-screen bg-[#F5F5F5] px-16 py-10 pb-24">
         {/* Back link */}
-        <button
-          onClick={() => navigate("/builds")}
-          className="flex items-center gap-1 text-sm text-[#71717A] hover:text-zinc-900 transition-colors mb-5"
-        >
-          ← My Builds
-        </button>
+        <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Builds", route: "/builds" }, { label: build.pipelineName ?? "Build" }]} />
 
         {/* Header row */}
         <div className="flex items-start justify-between mb-2">

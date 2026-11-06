@@ -9,6 +9,7 @@ import { pipelineApiInstance, pipelineBuildApiInstance } from "../../services/pi
 
 import { Play, Pencil } from "lucide-react";
 import NavBar from "../../components/common/navBar";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 /**
  *  This page includes the Pipeline Details page.
@@ -170,12 +171,7 @@ export default function PipelineDetailPage() {
             <span className="text-sm text-[#71717A]">Changes are not saved yet</span>
           </div>
         ) : (
-          <button
-            onClick={() => navigate("/pipelines")}
-            className="flex items-center gap-1 text-sm text-[#71717A] hover:text-[#18181B] transition-colors mb-5"
-          >
-            ← My Pipelines
-          </button>
+          <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Pipelines", route: "/pipelines" }, { label: pipeline.name }]} />
         )}
 
         {/* Header row */}

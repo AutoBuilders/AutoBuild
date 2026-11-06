@@ -2,9 +2,10 @@ import { Button } from "../../components/ui/button";
 import { Workflow, Settings } from "lucide-react";
 import NavBar from "../../components/common/navBar";
 import { useNavigate } from "react-router-dom";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { idp } from "../../config/authConfig";
 import type { UserInfo } from "../../types/user.types";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -26,8 +27,9 @@ function LandingPage() {
   return (
     <>
       <NavBar></NavBar>
-      <div className="main-container min-h-screen justify-center display-flex">
-        <div className="container p-20">s
+      <div className="min-h-screen flex justify-center">
+        <div className="w-full max-w-[80%] p-20">
+          <Breadcrumb crumbs={[{ label: "" }]} />
           <h1 className="text-3xl font-semibold text-left">Hello {user?.username}!</h1>
           <p className="text-xl font-light text-gray-600 mb-10 text-left">What are we working on today?</p>
           
@@ -39,8 +41,8 @@ function LandingPage() {
           {/* PIPELINES TILE */}
           <Button
             variant="tile"
-            size="lg"
-            className="w-64 h-40 flex flex-col items-center justify-center gap-3"
+            size="tile"
+            className="hover:shadow-blue-200"
             onClick={() => navigate("/pipelines")}
           >
             <Workflow className="w-10 h-10 text-blue-500" />

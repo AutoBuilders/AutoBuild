@@ -3,10 +3,10 @@ import { SearchBar } from "../../components/common/searchBar";
 import { Button } from "../../components/ui/button";
 import { pipelineApiInstance } from "../../services/pipelines.api";
 import type {Pipeline} from '../../gen/api';
-import "./PipelinePage.css";
 import NavBar from "../../components/common/navBar";
 import { useNavigate } from "react-router-dom";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../components/ui/table";
+import Breadcrumb from "../../components/common/breadcrumb";
 
 /**
  * This page includes the Pipelines List page.
@@ -47,8 +47,9 @@ export default function PipelinePage() {
   return (
     <>
       <NavBar></NavBar>
-      <div className="main-container min-h-screen justify-center display-flex">
-        <div className="container p-20 text-center">
+      <div className="min-h-screen flex justify-center">
+        <div className="w-full max-w-[80%] p-20 text-center">
+          <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Pipelines" }]} />
           <h1 className="text-2xl font-bold text-left">MY PIPELINES</h1>
           <h3 className="text-md font-light text-left">Manage your CI/CD Pipelines</h3>
 
