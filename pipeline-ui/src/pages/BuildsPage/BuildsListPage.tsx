@@ -4,6 +4,7 @@ import { pipelineBuildApiInstance } from "../../services/pipelines.api";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/common/navBar";
 import type { PipelineBuild } from "../../gen";
+import { PipelineBuildCurrentStateEnum } from "../../gen";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../../components/ui/table";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import Breadcrumb from "../../components/common/breadcrumb";
@@ -75,9 +76,9 @@ export default function BuildsListPage() {
                     <TableCell className="font-semibold text-left">{p.pipelineName}</TableCell>
 
                     <TableCell>
-                      {p.currentState === "SUCCESS" && <CheckCircle className="text-green-500" />}
-                      {p.currentState === "FAILED" && <XCircle className="text-red-500" />}
-                      {p.currentState === "RUNNING" && (
+                      {p.currentState === PipelineBuildCurrentStateEnum.Success && <CheckCircle className="text-green-500" />}
+                      {p.currentState === PipelineBuildCurrentStateEnum.Failed && <XCircle className="text-red-500" />}
+                      {p.currentState === PipelineBuildCurrentStateEnum.Running && (
                         <Loader2 className="animate-spin text-blue-500" />
                       )}
                     </TableCell>

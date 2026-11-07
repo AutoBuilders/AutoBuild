@@ -1,14 +1,12 @@
-import { Button } from "../../components/ui/button";
 import { Workflow, Settings } from "lucide-react";
 import NavBar from "../../components/common/navBar";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { idp } from "../../config/authConfig";
 import type { UserInfo } from "../../types/user.types";
 import Breadcrumb from "../../components/common/breadcrumb";
+import Tile from "../../components/common/tile";
 
 function LandingPage() {
-  const navigate = useNavigate();
   const [user, setUser] = useState<UserInfo>();
 
   useEffect(() => {
@@ -39,26 +37,15 @@ function LandingPage() {
 
         <div className="flex flex-row gap-6">
           {/* PIPELINES TILE */}
-          <Button
-            variant="tile"
-            size="tile"
-            className="hover:shadow-blue-200"
-            onClick={() => navigate("/pipelines")}
-          >
-            <Workflow className="w-10 h-10 text-blue-500" />
-            <span className="text-xl font-semibold">Pipelines</span>
-          </Button>
+          <Tile title="Pipelines" route="/pipelines" className="hover:shadow-blue-200" >
+            <Workflow className="w-10 h-10 text-blue-500 transition-transform duration-200 group-hover:scale-110" />
+          </Tile>
+          
+          {/* BUILDS TILE */}
+          <Tile title="Builds" route="/builds" className="hover:shadow-green-200" >
+             <Settings className="w-10 h-10 text-green-500 transition-transform duration-200 group-hover:scale-110" />
+          </Tile>
 
-            {/* BUILDS TILE */}
-            <Button
-              variant="tile"
-              size="tile"
-              className="hover:shadow-green-200"
-              onClick={() => navigate("/builds")}
-            >
-              <Settings className="w-10 h-10 text-green-500 transition-transform duration-200 group-hover:scale-110" />
-              <span className="text-xl font-semibold text-zinc-800">Builds</span>
-            </Button>
           </div>
         </div>
       </div>

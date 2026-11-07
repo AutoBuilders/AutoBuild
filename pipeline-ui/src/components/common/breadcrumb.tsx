@@ -5,6 +5,10 @@ import { ChevronRight } from "lucide-react";
  * Breadcrumb component for navigation.
  * @param crumbs - An array of breadcrumb objects, each containing a label and an optional route.
  * The last crumb in the array is considered the current page and does not have a route.
+ * To use it, just import the Breadcrumb component and pass an array of crumbs to it. For example:
+ * give the crumbs prop an array of objects, each with a label and an optional route. The last crumb in the array is considered the current page and does not have a route.
+ * Example usage:
+ * <Breadcrumb crumbs={[{ label: "Home", route: "/" }, { label: "Pipelines" }]} />
  * TODO: The current UI design is a little weird and shows breadcrumbs all over the place, but this is a temporary solution until we have a better design in the future.
  */
 
@@ -23,7 +27,7 @@ export default function Breadcrumb({ crumbs }: { crumbs: Crumb[] }) {
         return (
           <span key={idx} className="flex items-center gap-1">
             {idx > 0 && <ChevronRight size={13} className="text-zinc-300" />}
-            {isLast || !crumb.route ? (
+            {isLast ? (
               <span className="text-zinc-500 font-medium">{crumb.label}</span>
             ) : (
               <button

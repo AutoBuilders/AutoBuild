@@ -40,15 +40,6 @@ export default function NavBar() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // if (loading) {
-  //   return (
-  //     <div className="fixed inset-0 flex items-center justify-center bg-[#0F0F11] text-white z-50">
-  //       <Settings className="animate-spin" size={48} />
-  //       <p className="ml-4 text-xl tracking-wide">Loading...</p>
-  //     </div>
-  //   );
-  // }
-
   return (
     <nav
       className="
@@ -77,10 +68,6 @@ export default function NavBar() {
       {/* CENTER — Navigation */}
       <div className="flex items-center justify-center gap-8 text-lg">
         <NavButton label="Home" route="/" />
-        {/* <NavButton label="Pipelines" route="/pipelines" />
-        <NavButton label="Builds" route="/builds" />
-        <NavButton label="Projects" route="/" /> */}
-        <NavButton label="About" route="/about" />
       </div>
 
       {/* RIGHT — Profile Menu */}
