@@ -1,6 +1,11 @@
-import { CheckCircle, XCircle, Loader } from "lucide-react";
-import type { Stage, StageBuild, StageBuildCurrentStateEnum as StageBuildStateType } from "../../gen/api";
-import { StageBuildCurrentStateEnum, PipelineBuildCurrentStateEnum, type PipelineBuildCurrentStateEnum as PipelineBuildStateType } from "../../gen/api";
+import type { Stage } from "../../../gen/api";
+import {
+    Grip,
+    ChevronRight,
+    Plus,
+    Trash2,
+    GitBranch
+} from "lucide-react";
 
 /**
  * This file contains the components used in the StageList component, which displays a list of stages in a pipeline or build. 
@@ -8,64 +13,13 @@ import { StageBuildCurrentStateEnum, PipelineBuildCurrentStateEnum, type Pipelin
  * floating add box, empty state, and build-specific components.
  */
 
-// ── Icons ─────────────────────────────────────────────────────────────────────
-
-export function IconGrip() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="5" r="1" /><circle cx="15" cy="5" r="1" />
-      <circle cx="9" cy="12" r="1" /><circle cx="15" cy="12" r="1" />
-      <circle cx="9" cy="19" r="1" /><circle cx="15" cy="19" r="1" />
-    </svg>
-  );
-}
-
-export function IconChevronRight() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  );
-}
-
-export function IconPlus() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
-
-export function IconTrash() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-    </svg>
-  );
-}
-
-export function IconGitBranch() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="6" y1="3" x2="6" y2="15" />
-      <circle cx="18" cy="6" r="3" />
-      <circle cx="6" cy="18" r="3" />
-      <path d="M18 9a9 9 0 0 1-9 9" />
-    </svg>
-  );
-}
-
 // ── Connector ─────────────────────────────────────────────────────────────────
 
 export function Connector({ faded }: { faded?: boolean }) {
   return (
     <div className={`flex items-center shrink-0 pt-10 transition-opacity ${faded ? "opacity-20" : ""}`}>
       <div className="w-5 h-px bg-[#D4D4D8]" />
-      <span className="text-[#C4C4C4]"><IconChevronRight /></span>
+      <span className="text-[#C4C4C4]"><ChevronRight size={11} strokeWidth={2.5} /></span>
     </div>
   );
 }
@@ -114,7 +68,7 @@ export function StageCard({ stage, order, expanded, onToggle }: {
             {String(order).padStart(2, "0")}
           </span>
           <span className={`text-[#A1A1AA] transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
-            <IconChevronRight />
+            <ChevronRight size={11} strokeWidth={2.5} />
           </span>
         </div>
         <p className="text-sm font-medium text-[#18181B] leading-snug truncate">{stage.name}</p>
@@ -185,13 +139,13 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
       >
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <span className="text-[#C4C4C4]"><IconGrip /></span>
+            <span className="text-[#C4C4C4]"><Grip size={12} /></span>
             <span className="font-mono text-xs text-[#A1A1AA]">
               {String(order).padStart(2, "0")}
             </span>
           </div>
           <span className={`text-[#A1A1AA] transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}>
-            <IconChevronRight />
+            <ChevronRight size={11} strokeWidth={2.5} />
           </span>
         </div>
         <p className="text-sm font-medium text-[#18181B] leading-snug truncate">
@@ -258,7 +212,8 @@ export function EditableStageCard({ stage, order, expanded, dragOver, onToggle, 
             data-testid="StageDelete"
             className="flex items-center gap-1.5 text-xs text-[#DC2626] hover:text-[#B91C1C] transition-colors pt-0.5"
           >
-            <IconTrash />
+            <Trash2 size={12} />
+
             Remove stage
           </button>
         </div>
@@ -287,7 +242,7 @@ export function FloatingAddBox({ onDragStart, onDragEnd, onClick }: {
         shadow-md hover:border-[#18181B] hover:shadow-lg transition-all gap-1 select-none group"
       title="Click to add a stage, or drag to insert at a specific position"
     >
-      <span className="text-[#A1A1AA] group-hover:text-[#18181B] transition-colors"><IconPlus /></span>
+      <span className="text-[#A1A1AA] group-hover:text-[#18181B] transition-colors"><Plus size={13} strokeWidth={2.5} /></span>
       <span className="text-xs font-medium text-[#71717A] group-hover:text-[#18181B] transition-colors">New Stage</span>
       <span className="text-xs text-[#A1A1AA]">click or drag</span>
     </div>
@@ -302,111 +257,11 @@ export function EmptyStages({ canEdit, dragTarget }: { canEdit: boolean; dragTar
     <div className={`flex flex-col items-center justify-center py-14 gap-2.5 rounded-lg border border-dashed transition-all
       ${dragTarget ? "border-blue-400 bg-blue-50" : "border-[#E4E4E7]"}`}
     >
-      <span className="text-[#A1A1AA]"><IconGitBranch /></span>
+      <span className="text-[#A1A1AA]"><GitBranch size={24} strokeWidth={1.5} /></span>
       <p className="text-sm font-medium text-[#18181B]">No stages configured</p>
       <p className="text-sm text-[#71717A]">
         {canEdit ? 'Drag the "New Stage" box into this area.' : "Edit this pipeline to add stages."}
       </p>
     </div>
   );
-}
-
-// ── Build-specific components ─────────────────────────────────────────────────
-
-// State icon for a build stage — only used in build context.
-export function BuildStateIcon({ state }: { state: StageBuildStateType | undefined }) {
-  switch (state) {
-    case StageBuildCurrentStateEnum.Success:
-      return <CheckCircle className="text-green-600 w-4 h-4" aria-label="success-circle-stage" />;
-    case StageBuildCurrentStateEnum.Failed:
-      return <XCircle className="text-red-600 w-4 h-4" />;
-    case StageBuildCurrentStateEnum.Running:
-      return <Loader className="text-yellow-500 animate-spin w-4 h-4" />;
-    case StageBuildCurrentStateEnum.Waiting:
-      return <Loader className="text-blue-500 animate-spin w-4 h-4" />;
-    case StageBuildCurrentStateEnum.Stopped:
-      return <XCircle className="text-zinc-400 w-4 h-4" />;
-    default:
-      return <span className="w-4 h-4 inline-block" />;
-  }
-}
-
-// Border colour for a selected build stage card based on its state.
-function buildCardBorderClass(state: StageBuildStateType | undefined, expanded: boolean): string {
-  if (!expanded) return "border-zinc-200 hover:border-zinc-400";
-  switch (state) {
-    case StageBuildCurrentStateEnum.Success: return "border-green-500 shadow-sm";
-    case StageBuildCurrentStateEnum.Failed:  return "border-red-500 shadow-sm";
-    case StageBuildCurrentStateEnum.Running: return "border-yellow-400 shadow-sm";
-    case StageBuildCurrentStateEnum.Waiting: return "border-blue-400 shadow-sm";
-    default: return "border-zinc-400 shadow-sm";
-  }
-}
-
-// Card for a single build stage — mirrors StageCard structure but uses StageBuild data
-// and shows status icon + inline logs instead of commands.
-export function BuildStageCard({ stage, order, expanded, onToggle, logs }: {
-  stage: StageBuild;
-  order: number;
-  expanded: boolean;
-  onToggle: () => void;
-  logs: string;
-}) {
-  return (
-    <button
-      onClick={onToggle}
-      className={`shrink-0 text-left rounded-lg border bg-white transition-all duration-150 ${buildCardBorderClass(stage.currentState, expanded)} ${expanded ? "w-72" : "w-48"}`}
-    >
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <span className="font-mono text-xs text-zinc-400">
-            {String(order).padStart(2, "0")}
-          </span>
-          <BuildStateIcon state={stage.currentState} />
-        </div>
-        <p className="text-sm font-medium text-zinc-900 leading-snug truncate">{stage.stageName}</p>
-        <span className="inline-block mt-2 font-mono text-xs text-zinc-500 bg-zinc-100 rounded px-1.5 py-0.5 uppercase">
-          BASH
-        </span>
-      </div>
-
-      {expanded && (
-        <div className="border-t border-zinc-100 px-4 pb-4 pt-3 text-left">
-          <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 mb-2">Logs</p>
-          <pre className="font-mono text-xs text-zinc-800 bg-zinc-50 rounded p-2.5 whitespace-pre-wrap break-words leading-relaxed max-h-64 overflow-y-auto">
-            {logs || <span className="text-zinc-400">No logs yet.</span>}
-          </pre>
-        </div>
-      )}
-    </button>
-  );
-}
-
-// Banner shown at the top of the builds running page indicating the overall build status.
-// Returns null for SUCCESS and other final/neutral states — only shown for RUNNING and FAILED.
-export function BuildStatusBanner({ state, currentStageName }: {
-  state: PipelineBuildStateType | undefined;
-  currentStageName?: string;
-}) {
-  if (state === PipelineBuildCurrentStateEnum.Running) {
-    return (
-      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm mb-6">
-        <Loader className="animate-spin w-4 h-4 shrink-0" />
-        <span>
-          Build is running{currentStageName ? ` · ${currentStageName} in progress` : ""}
-        </span>
-      </div>
-    );
-  }
-  if (state === PipelineBuildCurrentStateEnum.Failed) {
-    return (
-      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm mb-6">
-        <XCircle className="w-4 h-4 shrink-0" />
-        <span>
-          Build failed{currentStageName ? ` at stage ${currentStageName}` : ""}
-        </span>
-      </div>
-    );
-  }
-  return null;
 }

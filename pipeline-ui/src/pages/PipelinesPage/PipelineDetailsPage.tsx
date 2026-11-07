@@ -49,7 +49,12 @@ export default function PipelineDetailPage() {
 
       // If the id is "0", it means we are creating a new pipeline, so we set up a new pipeline object and enter edit mode.
       if (id === "0") {
-        const newPipeline: Pipeline = { id: crypto.randomUUID(), name: "New Pipeline", stages: [] };
+        const newPipeline: Pipeline = { 
+          id: crypto.randomUUID(), 
+          name: "New Pipeline", 
+          stages: [
+            { id: crypto.randomUUID(), name: "New Stage", scriptType: "bash", command: "", stageOrder: 0 }
+          ] };
         setEditablePipeline(newPipeline);
         setPipeline(newPipeline);
         setIsEditing(true);
@@ -92,6 +97,7 @@ export default function PipelineDetailPage() {
   // Handler for the "Delete" button click
   async function handleDelete() {
     const { status } = await pipelineApiInstance.deletePipeline(id as string);
+    // TODO : handle error properly
     if (status === 204) navigate("/pipelines");
   }
 

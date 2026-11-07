@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import LandingPage from "../pages/LandingPage/LandingPage";
-import PipelinePage from "../pages/PipelineListPage/PipelinesListPage";
-import PipelineDetailsPage from "../pages/PipelineDetailsPage/PipelineDetailsPage";
+import PipelinePage from "../pages/PipelinesPage/PipelinesListPage";
+import PipelineDetailsPage from "../pages/PipelinesPage/PipelineDetailsPage";
 import BuildsRunningPage from "../pages/BuildsPage/BuildsRunningPage";
 import BuildsListPage from "../pages/BuildsPage/BuildsListPage";
 import RegisterPage from "../pages/RegistrationPage";

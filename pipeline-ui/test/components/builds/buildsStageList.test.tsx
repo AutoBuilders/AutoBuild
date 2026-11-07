@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { BuildStageCard } from "../../../src/components/common/stageListComponents";
+import { BuildStageCard } from "../../../src/components/common/stageListComponents/buildStageListComponents";
 import type { StageBuild } from "../../../src/gen/api";
 
 describe("BuildStageCard", () => {

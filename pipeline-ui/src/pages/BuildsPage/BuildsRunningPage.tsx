@@ -5,7 +5,7 @@ import { getLiveBuildUpdates, pipelineBuildApiInstance, stageBuildApiInstance } 
 import NavBar from "../../components/common/navBar";
 import PipelineHeader from "../../components/pipelines/pipelineHeader";
 import StageList from "../../components/common/stageList";
-import { BuildStatusBanner } from "../../components/common/stageListComponents";
+import { BuildStatusBanner } from "../../components/common/stageListComponents/buildStageListComponents";
 import { Trash } from "lucide-react";
 import { booleanFlags } from "../../flags/booleanFlags";
 import { PipelineBuildCurrentStateEnum, StageBuildCurrentStateEnum, type PipelineBuild } from "../../gen";

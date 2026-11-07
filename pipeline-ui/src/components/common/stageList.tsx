@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Stage, StageBuild } from "../../gen/api";
-import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages, BuildStageCard } from "./stageListComponents";
+import { Connector, DropZone, StageCard, EditableStageCard, FloatingAddBox, EmptyStages } from "./stageListComponents/pipelineStageListComponents";
+import { BuildStageCard } from "./stageListComponents/buildStageListComponents";
 
 
 /**
@@ -176,6 +177,7 @@ export default function StageList({ stages, canEdit, onStagesChange, buildStages
     );
   }
 
+  // default pipeline mode — render EditableStageCards or StageCards depending on canEdit
   return (
     <>
       <div className="flex items-start overflow-x-auto pb-4">

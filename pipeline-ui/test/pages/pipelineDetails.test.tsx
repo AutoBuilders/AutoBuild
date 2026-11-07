@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 
-import PipelineDetails from "../../src/pages/PipelineDetailsPage/PipelineDetailsPage";
+import PipelineDetails from "../../src/pages/PipelinesPage/PipelineDetailsPage";
 
 import { PipelineBuildCurrentStateEnum} from "../../src/gen";
 
@@ -288,11 +288,8 @@ describe("PipelineDetailsPage", () => {
     mockParams.id = "0";
 
     /*
-    Ideally we would not send empty stages, but for now we will just check that the save function
-    is called with the correct name and an empty stages array
-    To not make the test longer, we will just check that the save function
-    is called with the correct name and an empty stages array for now,
-    and we can add more detailed tests for stage creation in other tests
+    Check that createPipeline is called with the correct name and the default
+    stage that is always created when entering create mode.
     */
     const mockResponse = {
       status: 201,
@@ -314,10 +311,14 @@ describe("PipelineDetailsPage", () => {
     });
 
     await waitFor(() => {
-      expect(pipelineApiInstance.createPipeline).toHaveBeenCalledWith({
-        name: "New Pipeline",
-        stages: [],
-      });
+      expect(pipelineApiInstance.createPipeline).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "New Pipeline",
+          stages: expect.arrayContaining([
+            expect.objectContaining({ name: "New Stage", stageOrder: 0 }),
+          ]),
+        })
+      );
     });
   });
 
@@ -382,7 +383,12 @@ describe("PipelineDetailsPage", () => {
       expect(pipelineApiInstance.createPipeline).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "New Pipeline",
-          stages: [],
+          stages: [{
+            name: "New Stage",
+            scriptType: "bash",
+            command: "",
+            stageOrder: 0
+          }],
         })
       );
     });
