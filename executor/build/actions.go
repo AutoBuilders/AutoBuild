@@ -46,7 +46,12 @@ func Start(ctx context.Context, client *dagger.Client, pipelineDTO dto.PipelineD
 		fmt.Println("Stage build output", output)
 
 		stageBuild.CurrentState = dto.StageSuccess
+	}
 
+	if !anyStageBuildFailed {
+		pipelineBuildDTO.CurrentState = dto.PipelineSuccess
+	} else {
+		pipelineBuildDTO.CurrentState = dto.PipelineFailed
 	}
 
 	Notify(pipelineBuildDTO)
