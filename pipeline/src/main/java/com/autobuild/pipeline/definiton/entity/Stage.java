@@ -46,4 +46,11 @@ public class Stage {
     @NotEmpty
     @Column(name = "path", nullable = false)
     private String path;
+
+    @Column(name = "stage_order", nullable = false)
+    private int stageOrder;
+
+    public Stage(UUID id, String name, String scriptType, String path) {
+        this(id, name, scriptType, path, 0);
+    }
 }

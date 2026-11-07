@@ -131,21 +131,18 @@ export default function PipelineDetailPage() {
     }
   }
 
-  function removeOrderFromStages(stages: Stage[]): Stage[] {
-    return stages.map((stage) => ({
-      name: stage.name,
-      scriptType: stage.scriptType,
-      command: stage.command,
-    }));
-  }
-
   // Save changes and exit edit mode
   async function handleSave() {
     if (isCreateMode) {
       setIsCreateMode(false);
       const pipelineToSave = {
         name: editablePipeline!.name,
-        stages: removeOrderFromStages(editablePipeline!.stages),
+        stages: editablePipeline!.stages.map((stage, i) => ({
+            name: stage.name,
+            scriptType: stage.scriptType,
+            command: stage.command,
+            stageOrder: i,
+          })),
       } as unknown as Pipeline;
       
       const {status, data} = await pipelineApiInstance.createPipeline(pipelineToSave);

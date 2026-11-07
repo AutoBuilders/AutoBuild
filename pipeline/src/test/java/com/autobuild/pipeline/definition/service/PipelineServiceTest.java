@@ -183,8 +183,8 @@ public class PipelineServiceTest {
         PipelineDTO dto = new PipelineDTO();
         dto.setName("pipe-two");
         dto.setStages(List.of(
-                new StageDTO(null, "build", "bash", "echo build"),
-                new StageDTO(null, "Build", "bash", "echo build2"))); // same name case-insensitive
+                new StageDTO(null, "build", "bash", "echo build", 0),
+                new StageDTO(null, "Build", "bash", "echo build2", 1))); // same name case-insensitive
         doReturn(false).when(repository).existsByName("pipe-two");
         doAnswer(inv -> {
             Pipeline p = inv.getArgument(0);
@@ -340,8 +340,8 @@ public class PipelineServiceTest {
         PipelineDTO dto = new PipelineDTO();
         dto.setName("pipe-one");
         dto.setStages(List.of(
-                new StageDTO(null, "build", "bash", "echo build"),
-                new StageDTO(null, "test", "bash", "echo test")));
+                new StageDTO(null, "build", "bash", "echo build", 0),
+                new StageDTO(null, "test", "bash", "echo test", 1)));
         doReturn(false).when(repository).existsByName("pipe-one");
         doAnswer(inv -> {
             Pipeline p = inv.getArgument(0);
@@ -361,6 +361,27 @@ public class PipelineServiceTest {
         dto.setName("existing");
         doReturn(true).when(repository).existsByName("existing");
         assertThrows(DuplicateEntryException.class, () -> service.createPipeline(dto));
+    }
+
+    @Test
+    public void testCreatePipelineRejectsDuplicateStageOrder() {
+        PipelineDTO dto = new PipelineDTO();
+        dto.setName("pipe");
+        dto.setStages(List.of(
+                new StageDTO(null, "build", "bash", "echo build", 0),
+                new StageDTO(null, "test", "bash", "echo test", 0)));
+        doReturn(false).when(repository).existsByName("pipe");
+        assertThrows(DuplicateEntryException.class, () -> service.createPipeline(dto));
+    }
+
+    @Test
+    public void testCreatePipelineRejectsNegativeStageOrder() {
+        PipelineDTO dto = new PipelineDTO();
+        dto.setName("pipe");
+        dto.setStages(List.of(
+                new StageDTO(null, "build", "bash", "echo build", -1)));
+        doReturn(false).when(repository).existsByName("pipe");
+        assertThrows(InvalidIdException.class, () -> service.createPipeline(dto));
     }
 
     @Test

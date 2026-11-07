@@ -42,11 +42,19 @@ public class StageBuild {
     @Column(name = "stage_build_current_state", nullable = false)
     private StageExecutionState currentState;
 
+    @Column(name = "stage_order", nullable = false)
+    private int stageOrder;
+
     @Column(name = "log_path", nullable = false)
     private String logPath;
 
     public StageBuild(Stage stage) {
         this.stage = stage;
+        this.stageOrder = stage.getStageOrder();
+    }
+
+    public StageBuild(UUID id, Stage stage, StageExecutionState currentState, String logPath) {
+        this(id, stage, currentState, stage.getStageOrder(), logPath);
     }
 
     @PrePersist
