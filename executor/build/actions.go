@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"uuid"
 
 	"dagger.io/dagger"
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
 )
 
+// TODO: Don't hardcode dagger client.. abstract it behind interface
 func Start(ctx context.Context, client *dagger.Client, pipelineDTO dto.PipelineDTO) (dto.PipelineBuildDTO, bool) {
 	container, pipelineBuildDTO, anyStageBuildFailed := initBuild(client, pipelineDTO)
 
@@ -84,6 +86,7 @@ func ParsePayload(r *http.Request, w http.ResponseWriter) (dto.PipelineDTO, bool
 
 func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
 	pipelineBuildDTO := dto.PipelineBuildDTO{
+		Id:           uuid.NewV7(),
 		PipelineId:   pipelineDTO.Id,
 		CurrentState: dto.PipelineWaiting,
 		StageBuilds:  []dto.StageBuildDTO{},
@@ -91,6 +94,7 @@ func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
 
 	for _, stageDTO := range pipelineDTO.Stages {
 		stageBuildDTO := dto.StageBuildDTO{
+			Id:           uuid.NewV7(),
 			StageId:      stageDTO.Id,
 			CurrentState: dto.StageWaiting,
 		}
