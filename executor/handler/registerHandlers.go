@@ -1,8 +1,12 @@
 package handler
 
-import "net/http"
+import (
+	"net/http"
 
-func RegisterHandlers(mux *http.ServeMux) {
-	mux.HandleFunc(executePipelineHttpMethod + " " + executePipelineUrl, handleExecutePipeline)
+	"github.com/AutoBuilders/AutoBuild/executor/repository"
+)
+
+func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildRepository) {
+	mux.HandleFunc(executePipelineHttpMethod+" "+executePipelineUrl, handleExecutePipeline(repo))
 }
 

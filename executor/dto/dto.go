@@ -34,6 +34,8 @@ type StageDTO struct {
 	ScriptType string `json:"scriptType"`
 
 	Command string `json:"command"`
+
+	StageOrder int `json:"stageOrder"`
 }
 
 type PipelineDTO struct {
