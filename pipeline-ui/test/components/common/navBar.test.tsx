@@ -84,16 +84,6 @@ describe("NavBar", () => {
       fireEvent.click(screen.getByText("Home"));
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
-
-
-    // it("applies hover styles to navigation buttons", async () => {
-    //   await waitFor(() => {
-    //     expect(screen.getByText("Home")).toBeInTheDocument();
-    //   });
-
-    //   const homeButton = screen.getByText("Home");
-    //   expect(homeButton).toHaveClass("hover:bg-white/10");
-    // });
   });
 
   describe("User Profile - Fetching User Data", () => {
