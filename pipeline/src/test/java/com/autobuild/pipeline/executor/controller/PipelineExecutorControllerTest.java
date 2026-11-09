@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.service.PipelineExecutorService;
 import com.autobuild.pipeline.testutility.DummyData;
@@ -42,7 +42,7 @@ public class PipelineExecutorControllerTest {
 
     @Test
     public void testExecutePipeline() throws IOException {
-        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller.executePipeline(executeRequest);
+        ResponseEntity<PipelineBuild> response = controller.executePipeline(executeRequest);
 
         assertNotNull(response);
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());

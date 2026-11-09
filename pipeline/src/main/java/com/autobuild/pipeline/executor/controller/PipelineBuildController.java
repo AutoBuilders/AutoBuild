@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.autobuild.pipeline.executor.service.PipelineBuildService;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

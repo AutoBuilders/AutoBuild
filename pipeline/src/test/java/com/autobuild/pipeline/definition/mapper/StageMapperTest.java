@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 import com.autobuild.pipeline.definiton.dto.mapper.StageMapper;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.testutility.DummyData;

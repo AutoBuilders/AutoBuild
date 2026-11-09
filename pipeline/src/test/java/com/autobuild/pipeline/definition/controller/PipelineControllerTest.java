@@ -24,8 +24,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.autobuild.pipeline.configuration.FeatureFlagService;
 import com.autobuild.pipeline.definiton.controller.PipelineController;
-import com.autobuild.pipeline.definiton.dto.Pipeline;
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.service.PipelineService;

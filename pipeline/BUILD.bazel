@@ -5,7 +5,7 @@ load("@rules_shell//shell:sh_test.bzl", "sh_test")
 _SRCS = glob(
     ["src/**", "pom.xml", "checkstyle.xml"],
     exclude = ["target/**"],
-)
+) + glob(["../apis/protobuf/**"])
 
 # Runs the full Maven test suite.
 # Run with: bazel test //pipeline:test

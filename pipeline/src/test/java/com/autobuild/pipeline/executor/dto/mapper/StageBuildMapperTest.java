@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import com.autobuild.pipeline.executor.dto.StageBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
 import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 

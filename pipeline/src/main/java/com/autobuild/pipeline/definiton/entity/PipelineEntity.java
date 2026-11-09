@@ -31,7 +31,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "pipeline",uniqueConstraints = {
+@Table(name = "pipeline", uniqueConstraints = {
     @UniqueConstraint(name = "UK_PIPELINE_NAME", columnNames = { "name" })
 })
 @Check(name = "CHK_PIPELINE_NAME", constraints = "name != '' ")

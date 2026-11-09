@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package definition.v1;
 
-option java_package = "com.autobuild.pipeline.definiton.dto";
+option java_package = "com.autobuild.pipeline.definiton.gen.dto";
 option java_multiple_files = true;
 
 // option go_package = "";

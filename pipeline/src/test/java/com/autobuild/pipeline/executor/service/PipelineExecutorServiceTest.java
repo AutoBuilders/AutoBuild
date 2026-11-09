@@ -22,7 +22,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;

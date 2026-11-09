@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import com.autobuild.pipeline.definiton.entity.StageEntity;
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 
 /**
  * Used to map Stage Entity to Stage DTO.

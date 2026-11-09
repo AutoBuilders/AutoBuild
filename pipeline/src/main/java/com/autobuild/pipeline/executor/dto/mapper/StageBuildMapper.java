@@ -3,21 +3,19 @@ package com.autobuild.pipeline.executor.dto.mapper;
 import org.springframework.stereotype.Component;
 
 import com.autobuild.pipeline.definiton.dto.mapper.Mapper;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 import com.autobuild.pipeline.executor.entity.StageBuildEntity;
-import com.autobuild.pipeline.executor.dto.StageBuild;
-import com.autobuild.pipeline.executor.dto.StageExecutionState;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageExecutionState;
 
 /**
  * Used to map StageBuild to StageBuildDTO and vice versa.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Component
 public class StageBuildMapper implements Mapper<
-        StageBuild,
-        StageBuildEntity> {
+        StageBuild, StageBuildEntity> {
 
     @Override
     public StageBuildEntity dtoToEntity(
@@ -33,22 +31,28 @@ public class StageBuildMapper implements Mapper<
         }
 
         return StageBuild.newBuilder()
-            .setId(entity.getId().toString())
-            .setStageId(entity.getStage().getId().toString())
-            .setStageName(entity.getStage().getName())
-            .setCurrentState(toProtoState(entity.getCurrentState()))
-            .build();
+                .setId(entity.getId().toString())
+                .setStageId(entity.getStage().getId().toString())
+                .setStageName(entity.getStage().getName())
+                .setCurrentState(toProtoState(entity.getCurrentState()))
+                .build();
     }
 
     private StageExecutionState toProtoState(
-            StageExecutionStateInternal state) {
+            StageEntityExecutionState state) {
         switch (state) {
-            case WAITING: return StageExecutionState.STAGE_WAITING;
-            case RUNNING: return StageExecutionState.STAGE_RUNNING;
-            case SUCCESS: return StageExecutionState.STAGE_SUCCESS;
-            case FAILED:  return StageExecutionState.STAGE_FAILED;
-            case STOPPED: return StageExecutionState.STAGE_STOPPED;
-            default: throw new IllegalArgumentException("Unknown state: " + state);
+            case WAITING:
+                return StageExecutionState.STAGE_WAITING;
+            case RUNNING:
+                return StageExecutionState.STAGE_RUNNING;
+            case SUCCESS:
+                return StageExecutionState.STAGE_SUCCESS;
+            case FAILED:
+                return StageExecutionState.STAGE_FAILED;
+            case STOPPED:
+                return StageExecutionState.STAGE_STOPPED;
+            default:
+                throw new IllegalArgumentException("Unknown state: " + state);
         }
     }
 }

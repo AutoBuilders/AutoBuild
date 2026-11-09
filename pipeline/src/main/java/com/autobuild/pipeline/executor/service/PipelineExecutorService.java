@@ -12,7 +12,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
@@ -93,13 +93,13 @@ public class PipelineExecutorService {
     // TODO: abstract this logic
     private PipelineBuildEntity createBuild(final PipelineEntity pipeline) {
         List<StageBuildEntity> stageBuilds = pipeline.getStages()
-        .stream()
-        .map(stage -> {
-            StageBuildEntity stageBuild = new StageBuildEntity(stage);
-            stageBuild.setId(UUID.randomUUID());
+                .stream()
+                .map(stage -> {
+                    StageBuildEntity stageBuild = new StageBuildEntity(stage);
+                    stageBuild.setId(UUID.randomUUID());
 
-            return stageBuild;
-        }).toList();
+                    return stageBuild;
+                }).toList();
 
         PipelineBuildEntity pipelineBuild = new PipelineBuildEntity(pipeline, stageBuilds);
         pipelineBuild.setId(UUID.randomUUID());
