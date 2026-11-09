@@ -1,6 +1,6 @@
 package dto
 
-import "uuid"
+import "github.com/google/uuid"
 
 type StageBuildDTO struct {
 	Id uuid.UUID `json:"id"`
@@ -8,6 +8,8 @@ type StageBuildDTO struct {
 	StageId uuid.UUID `json:"stageId"`
 
 	StageName string `json:"stageName"`
+
+	StageOrder int `json:"stageOrder"`
 
 	CurrentState StageExecutionState `json:"stageExecutionState"`
 }

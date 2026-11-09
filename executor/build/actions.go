@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"uuid"
+	"github.com/google/uuid"
 
 	"dagger.io/dagger"
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
@@ -85,16 +85,18 @@ func ParsePayload(r *http.Request, w http.ResponseWriter) (dto.PipelineDTO, bool
 }
 
 func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
+	pipelineBuildId, _ := uuid.NewV7()
 	pipelineBuildDTO := dto.PipelineBuildDTO{
-		Id:           uuid.NewV7(),
+		Id:           pipelineBuildId,
 		PipelineId:   pipelineDTO.Id,
 		CurrentState: dto.PipelineWaiting,
 		StageBuilds:  []dto.StageBuildDTO{},
 	}
 
 	for _, stageDTO := range pipelineDTO.Stages {
+		stageBuildId, _ := uuid.NewV7()
 		stageBuildDTO := dto.StageBuildDTO{
-			Id:           uuid.NewV7(),
+			Id:           stageBuildId,
 			StageId:      stageDTO.Id,
 			CurrentState: dto.StageWaiting,
 		}
