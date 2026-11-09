@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login as loginApi } from "../services/auth.api";
+// import { login as loginApi } from "../services/auth.api";
 import { useAuth } from "../auth/authContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -17,8 +17,9 @@ export default function LoginPage() {
     e.preventDefault();
     /* eslint-disable @typescript-eslint/no-explicit-any */
     try {
-      const { token } = await loginApi(username, password);
-      login(token);
+      // const { token } = await loginApi(username, password);
+      // this approach needs to change once we implement our proper auth with idp login page
+      login();
       navigate("/");
     } catch (err: any) {
       console.error(err);

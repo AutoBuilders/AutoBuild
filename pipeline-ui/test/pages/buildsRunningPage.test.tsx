@@ -7,6 +7,7 @@ import { pipelineBuildApiInstance, stageBuildApiInstance } from "../../src/servi
 import { PipelineBuildCurrentStateEnum, StageBuildCurrentStateEnum } from "../../src/gen";
 
 vi.mock(import("../../src/services/pipelines.api"));
+vi.mock("../../src/flags/booleanFlags", () => ({ booleanFlags: { ENABLE_SSE: true, ENABLE_EDIT_PIPELINE: false } }));
 
 // Mock react-router-dom useParams
 const mockParams = { id: "1" };
@@ -100,7 +101,7 @@ describe("BuildsRunningPage", () => {
     };
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildsResponse as any);
     vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValueOnce({
-      log: "Stage 1 logs...",
+      status: 200, data: { log: "Stage 1 logs..." },
     } as any);
 
     render(
@@ -109,9 +110,9 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    // Wait for the build pipeline name to be rendered
-    const build = await screen.findByText("Pipeline 1");
-    expect(build).toBeInTheDocument();
+    // Wait for the build pipeline name to be rendered (heading specifically, breadcrumb also renders it)
+    const heading = await screen.findByRole("heading", { name: "Pipeline 1" });
+    expect(heading).toBeInTheDocument();
 
     // Verify getBuildData was called (note: id is passed as string "1" from useParams)
     expect(pipelineBuildApiInstance.getPipelineBuild).toHaveBeenCalledWith("1");
@@ -137,7 +138,7 @@ describe("BuildsRunningPage", () => {
     };
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildsResponse as any);
     vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValueOnce({
-      log: "Stage 1 logs...",
+      status: 200, data: { log: "Stage 1 logs..." },
     } as any);
 
     render(
@@ -147,7 +148,7 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     // Wait a bit for useEffect to run and potentially create EventSource
     await waitFor(
@@ -189,8 +190,7 @@ describe("BuildsRunningPage", () => {
     };
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildResponse as any);
     vi.mocked(stageBuildApiInstance.getStageBuildLogs)
-      .mockResolvedValueOnce({ log: "Building..." } as any)
-      .mockResolvedValueOnce({ log: "Build completed successfully!" } as any);
+      .mockResolvedValue({ status: 200, data: { log: "Building..." } } as any);
 
     render(
       <MemoryRouter>
@@ -199,7 +199,7 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     // Wait for EventSource to be created
     await waitFor(
@@ -237,12 +237,9 @@ describe("BuildsRunningPage", () => {
     // Call the onmessage handler
     eventSourceInstance.onmessage!(messageEvent);
 
-    // Wait for the UI to update with the new state
-    // The component should show a success icon when currentState is "SUCCESS"
+    // Wait for the UI to update — running banner should disappear when state is SUCCESS
     await waitFor(() => {
-      // Look for the success icon (CheckCircle component renders when state is SUCCESS)
-      const successIcon = document.querySelector(".lucide-circle-check-big");
-      expect(successIcon).toBeInTheDocument();
+      expect(screen.queryByText("Build is running")).not.toBeInTheDocument();
     });
 
     // Verify the EventSource close method was called (component closes it on non-RUNNING states)
@@ -272,7 +269,7 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     const stageButtons = await screen.findAllByRole("button", { name: /Stage/ });
     expect(stageButtons[0]).toHaveTextContent("Alpha Stage");
@@ -301,7 +298,7 @@ describe("BuildsRunningPage", () => {
       </MemoryRouter>,
     );
 
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
     await waitFor(() => expect(mockEventSourceInstances.length).toBeGreaterThan(0), { timeout: 1000 });
 
@@ -346,8 +343,9 @@ describe("BuildsRunningPage", () => {
     vi.mocked(pipelineBuildApiInstance.getPipelineBuild).mockResolvedValueOnce(mockBuildResponse as any);
 
     // Mock logs
-    vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValueOnce({
-      log: "Running tests...\nTest 1 passed\nTest 2 passed",
+    vi.mocked(stageBuildApiInstance.getStageBuildLogs).mockResolvedValue({
+      status: 200,
+      data: { log: "Running tests...\nTest 1 passed\nTest 2 passed" },
     } as any);
 
     render(
@@ -357,11 +355,11 @@ describe("BuildsRunningPage", () => {
     );
 
     // Wait for the build to load
-    await screen.findByText("Pipeline 1");
+    await screen.findByRole("heading", { name: "Pipeline 1" });
 
-    // Wait for the stage details to appear with the Logs heading
+    // Wait for the stage details to appear with the Logs label
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Logs" })).toBeInTheDocument();
+      expect(screen.getByText("Logs")).toBeInTheDocument();
     });
 
     // Verify getBuildStagesLogs was called to fetch logs

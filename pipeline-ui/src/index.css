@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* ── shadcn base tokens (do not remove) ────────────────────────────── */
     --background: 0 0% 100%;
     --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
@@ -28,9 +29,50 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
+
+    /* ── App semantic tokens ────────────────────────────────────────────── */
+
+    /* Page backgrounds
+       page-base   : off-white used by detail/running pages (bg-[#F5F5F5])
+       page-surface: pure white used by list page tables and cards           */
+    --page-base:    0 0% 96%;       /* #F5F5F5  */
+    --page-surface: 0 0% 100%;     /* #FFFFFF  */
+
+    /* Text hierarchy
+       text-primary  : almost-black headings   (#18181B / zinc-900)
+       text-secondary: mid-grey body copy      (#52525B / zinc-600)
+       text-muted    : light-grey labels/meta  (#71717A / zinc-500)
+       text-subtle   : disabled / placeholder  (#A1A1AA / zinc-400)        */
+    --text-primary:   240 5.9% 10%;   /* zinc-900  */
+    --text-secondary: 240 3.7% 32%;   /* zinc-600  */
+    --text-muted:     240 3.8% 46%;   /* zinc-500  */
+    --text-subtle:    240 5%   64%;   /* zinc-400  */
+
+    /* Divider */
+    --divider: 240 5.9% 90%;          /* #E4E4E7 / zinc-200 */
+
+    /* Page layout
+       page-px : horizontal padding for detail pages  (px-16)
+       page-py : vertical padding for detail pages    (py-10)
+       list-p  : padding for list/landing pages       (p-20)
+       list-max: max-width cap for list pages                               */
+    --page-px: 4rem;    /* 64px  */
+    --page-py: 2.5rem;  /* 40px  */
+    --list-p:  5rem;    /* 80px  */
+    --list-max: 80%;
+
+    /* Typography scale (page-level headings only)
+       heading-xl : detail page titles  (text-3xl)
+       heading-lg : list page titles    (text-2xl)
+       heading-sm : section labels      (text-xs uppercase tracking-widest) */
+    --heading-xl: 1.875rem;  /* text-3xl */
+    --heading-lg: 1.5rem;    /* text-2xl */
+    --heading-sm: 0.75rem;   /* text-xs  */
   }
+
   .dark {
+    /* ── shadcn base tokens (dark) ─────────────────────────────────────── */
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
     --card: 20 14.3% 4.1%;
@@ -54,7 +96,18 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
+
+    /* ── App semantic tokens (dark overrides) ───────────────────────────── */
+    --page-base:    240 10% 10%;
+    --page-surface: 240 10% 13%;
+
+    --text-primary:   0 0% 98%;
+    --text-secondary: 240 5% 75%;
+    --text-muted:     240 5% 55%;
+    --text-subtle:    240 5% 40%;
+
+    --divider: 240 5% 20%;
   }
 }
 
@@ -67,14 +120,69 @@
   }
 }
 
+/* ── App component classes ──────────────────────────────────────────────────
+   Use these @apply classes in pages instead of raw Tailwind strings.
+   This is the single source of truth for shared layout and typography.      */
+@layer components {
+
+  /* Page wrappers */
+  .page-detail {
+    @apply min-h-screen px-16 py-10 pb-24;
+    background-color: hsl(var(--page-base));
+  }
+  .page-list {
+    @apply min-h-screen flex justify-center;
+  }
+  .page-list-inner {
+    @apply w-full p-20;
+    max-width: var(--list-max);
+  }
+
+  /* Headings */
+  .heading-xl {
+    @apply font-semibold leading-tight tracking-tight;
+    font-size: var(--heading-xl);
+    color: hsl(var(--text-primary));
+  }
+  .heading-lg {
+    @apply font-bold;
+    font-size: var(--heading-lg);
+    color: hsl(var(--text-primary));
+  }
+  .heading-section {
+    @apply text-xs font-medium uppercase tracking-widest;
+    color: hsl(var(--text-muted));
+  }
+
+  /* Body text */
+  .text-body {
+    color: hsl(var(--text-secondary));
+  }
+  .text-meta {
+    @apply text-sm;
+    color: hsl(var(--text-muted));
+  }
+
+  /* Divider */
+  .divider {
+    @apply w-full h-px mb-6;
+    background-color: hsl(var(--divider));
+  }
+
+  /* Surface card (tables, white cards) */
+  .surface {
+    @apply rounded-xl shadow-sm;
+    background-color: hsl(var(--page-surface));
+    border: 1px solid hsl(var(--divider));
+  }
+}
+
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Animated gradient background used by the About page. Defined here because
-   CSS keyframe animations cannot be expressed as Tailwind utilities. */
 @layer utilities {
   .animate-gradient {
     background-size: 400% 400%;

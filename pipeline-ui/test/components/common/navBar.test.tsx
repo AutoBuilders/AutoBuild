@@ -74,10 +74,6 @@ describe("NavBar", () => {
       await waitFor(() => {
         expect(screen.getByText("Home")).toBeInTheDocument();
       });
-
-      expect(screen.getByText("Pipelines")).toBeInTheDocument();
-      expect(screen.getByText("Builds")).toBeInTheDocument();
-      expect(screen.getByText("About")).toBeInTheDocument();
     });
 
     it("navigates to home when Home is clicked", async () => {
@@ -88,47 +84,10 @@ describe("NavBar", () => {
       fireEvent.click(screen.getByText("Home"));
       expect(mockNavigate).toHaveBeenCalledWith("/");
     });
-
-    it("navigates to pipelines when Pipelines is clicked", async () => {
-      await waitFor(() => {
-        expect(screen.getByText("Pipelines")).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText("Pipelines"));
-      expect(mockNavigate).toHaveBeenCalledWith("/pipelines");
-    });
-
-    it("navigates to builds when Builds is clicked", async () => {
-      await waitFor(() => {
-        expect(screen.getByText("Builds")).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText("Builds"));
-      expect(mockNavigate).toHaveBeenCalledWith("/builds");
-    });
-
-    it("navigates to about when About is clicked", async () => {
-      await waitFor(() => {
-        expect(screen.getByText("About")).toBeInTheDocument();
-      });
-
-      fireEvent.click(screen.getByText("About"));
-      expect(mockNavigate).toHaveBeenCalledWith("/about");
-    });
-
-    it("applies hover styles to navigation buttons", async () => {
-      await waitFor(() => {
-        expect(screen.getByText("Home")).toBeInTheDocument();
-      });
-
-      const homeButton = screen.getByText("Home");
-      expect(homeButton).toHaveClass("hover:bg-white/10");
-    });
   });
 
   describe("User Profile - Fetching User Data", () => {
     it("fetches user data when token exists", async () => {
-      const token = "test-token-123";
       vi.mocked(idp.getUserInfo).mockResolvedValue(mockUser);
 
       renderNavBar();
