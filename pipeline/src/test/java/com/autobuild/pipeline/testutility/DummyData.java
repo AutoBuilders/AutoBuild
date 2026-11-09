@@ -3,17 +3,19 @@ package com.autobuild.pipeline.testutility;
 import java.util.List;
 import java.util.UUID;
 
-import com.autobuild.pipeline.definiton.dto.Pipeline;
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
-import com.autobuild.pipeline.executor.dto.StageBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
+import com.autobuild.pipeline.executor.gen.dto.PipelineExecutionState;
+import com.autobuild.pipeline.executor.gen.dto.StageExecutionState;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.entity.StageBuildEntity;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 
 public class DummyData {
 
@@ -53,15 +55,15 @@ public class DummyData {
     }
 
     public static StageBuildEntity getStageBuild() {
-        return new StageBuildEntity(UUID.randomUUID(), DummyData.getStage(), StageExecutionStateInternal.WAITING, "./dummyFolder/");
+        return new StageBuildEntity(UUID.randomUUID(), DummyData.getStage(), StageEntityExecutionState.WAITING, "./dummyFolder/");
     }
 
     public static PipelineBuildEntity getPipelineBuild() {
-        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionStateInternal.WAITING);
+        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineEntityExecutionState.WAITING);
     }
 
     public static PipelineBuildEntity getPipelineBuild(UUID pipelineUuid) {
-        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionStateInternal.WAITING);
+        return new PipelineBuildEntity(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineEntityExecutionState.WAITING);
     }
 
     public static StageBuild getStageBuildDTO() {
@@ -69,7 +71,7 @@ public class DummyData {
             .setId(UUID.randomUUID().toString())
             .setStageId(UUID.randomUUID().toString())
             .setStageName("Dummy Stage")
-            .setCurrentState(com.autobuild.pipeline.executor.dto.StageExecutionState.STAGE_WAITING)
+            .setCurrentState(StageExecutionState.STAGE_WAITING)
             .build();
     }
 
@@ -78,7 +80,7 @@ public class DummyData {
             .setId(UUID.randomUUID().toString())
             .setPipelineId(UUID.randomUUID().toString())
             .setPipelineName("Dummy Pipeline")
-            .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+            .setCurrentState(PipelineExecutionState.PIPELINE_WAITING)
             .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
             .build();
     }
@@ -88,7 +90,7 @@ public class DummyData {
             .setId(UUID.randomUUID().toString())
             .setPipelineId(pipelineId.toString())
             .setPipelineName("Dummy Pipeline")
-            .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+            .setCurrentState(PipelineExecutionState.PIPELINE_WAITING)
             .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
             .build();
     }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,10 +26,9 @@ import lombok.Setter;
 
 /**
  * PipelineBuild entity to hold data/metadata about execution in table.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 //TODO: Add timestamps
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,6 +37,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "pipeline_build")
 public class PipelineBuildEntity {
+
     @Id
     private UUID id;
 
@@ -48,15 +48,15 @@ public class PipelineBuildEntity {
     @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name = "pipeline_stage_builds",
-        joinColumns = @JoinColumn(name = "pipeline_build_id"),
-        inverseJoinColumns = @JoinColumn(name = "stage_build_id")
+            name = "pipeline_stage_builds",
+            joinColumns = @JoinColumn(name = "pipeline_build_id"),
+            inverseJoinColumns = @JoinColumn(name = "stage_build_id")
     )
     private List<StageBuildEntity> stageBuilds;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pipeline_build_current_state", nullable = false)
-    private PipelineExecutionStateInternal currentState;
+    private PipelineEntityExecutionState currentState;
 
     public PipelineBuildEntity(PipelineEntity pipeline, List<StageBuildEntity> stageBuilds) {
         this.pipeline = pipeline;
@@ -66,7 +66,7 @@ public class PipelineBuildEntity {
     @PrePersist
     public void setDefaultState() {
         if (null == this.currentState) {
-            this.currentState = PipelineExecutionStateInternal.WAITING;
+            this.currentState = PipelineEntityExecutionState.WAITING;
         }
     }
 }

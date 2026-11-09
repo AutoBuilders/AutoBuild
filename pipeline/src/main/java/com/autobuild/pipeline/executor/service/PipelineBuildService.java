@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
@@ -20,10 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for Pipeline Build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Slf4j
 @Service
 public class PipelineBuildService {
@@ -69,8 +68,8 @@ public class PipelineBuildService {
         }
 
         PipelineBuildEntity pipelineBuild = optionalPipelineBuild.get();
-        if (pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.RUNNING)
-                || pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.WAITING)) {
+        if (pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.RUNNING)
+                || pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.WAITING)) {
             throw new IllegalStateException("Running or Waiting Pipelines can not be deleted");
         }
 

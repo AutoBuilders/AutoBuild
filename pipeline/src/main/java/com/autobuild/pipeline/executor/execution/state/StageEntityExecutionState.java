@@ -5,13 +5,12 @@ import lombok.Getter;
 
 /**
  * Stage ongoing build (execution) steps.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @AllArgsConstructor
 @Getter
-public enum StageExecutionStateInternal {
+public enum StageEntityExecutionState {
     WAITING("Stage is waiting to be executed."),
     RUNNING("Stage execution has started."),
     SUCCESS("Stage execution has finished and it succeeded."),

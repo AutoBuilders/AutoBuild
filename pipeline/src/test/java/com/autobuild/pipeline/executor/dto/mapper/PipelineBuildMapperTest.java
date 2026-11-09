@@ -13,8 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
-import com.autobuild.pipeline.executor.dto.StageBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.testutility.DummyData;

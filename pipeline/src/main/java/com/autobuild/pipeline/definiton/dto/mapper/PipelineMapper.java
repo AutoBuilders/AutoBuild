@@ -1,11 +1,12 @@
 package com.autobuild.pipeline.definiton.dto.mapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
-import com.autobuild.pipeline.definiton.dto.Pipeline;
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,8 +19,8 @@ import java.util.UUID;
 @Component
 public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
 
-    // @Autowired
-    // private StageMapper stageMapper;
+    @Autowired
+    private StageMapper stageMapper;
 
     @Override
     public PipelineEntity dtoToEntity(Pipeline pipelineProto) {
@@ -29,20 +30,12 @@ public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
 
         List<StageEntity> stages = pipelineProto.getStagesList()
             .stream()
-            .map(stageProto -> {
-              StageEntity s = new StageEntity();
-              if (!stageProto.getId().isBlank()) {
-                s.setId(UUID.fromString(stageProto.getId()));
-              }
-              s.setName(stageProto.getName());
-              s.setScriptType(stageProto.getScriptType());
-              return s;
-            })
+            .map(stageMapper::dtoToEntity)
             .toList();
 
         PipelineEntity pipeline = new PipelineEntity();
         if (!pipelineProto.getId().isBlank()) {
-          pipeline.setId(UUID.fromString(pipelineProto.getId()));
+            pipeline.setId(UUID.fromString(pipelineProto.getId()));
         }
         pipeline.setName(pipelineProto.getName());
         pipeline.setStages(stages);
@@ -57,19 +50,13 @@ public class PipelineMapper implements Mapper<Pipeline, PipelineEntity>{
 
         List<Stage> stagesProto = pipeline.getStages()
             .stream()
-            .map(stage -> Stage.newBuilder()
-                .setId(stage.getId().toString())
-                .setName(stage.getName())
-                .setScriptType(stage.getScriptType())
-                .build())
+            .map(stageMapper::entityToDto)
             .toList();
 
-        Pipeline pipelineProto = Pipeline.newBuilder()
+        return Pipeline.newBuilder()
             .setId(pipeline.getId().toString())
             .setName(pipeline.getName())
             .addAllStages(stagesProto)
             .build();
-
-        return pipelineProto;
     }
 }

@@ -20,12 +20,13 @@ import org.mockito.MockitoAnnotations;
 
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
 public class PipelineBuildServiceTest {
+
     @Mock
     private PipelineBuildRepository repository;
 
@@ -48,7 +49,7 @@ public class PipelineBuildServiceTest {
         UUID buildId = UUID.randomUUID();
 
         PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild(buildId);
-        pipelineBuild.setCurrentState(PipelineExecutionStateInternal.SUCCESS);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.SUCCESS);
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(any(UUID.class));
 
         pipelineBuildService.deletePipelineBuild(buildId);
@@ -67,7 +68,7 @@ public class PipelineBuildServiceTest {
 
         assertThrows(IllegalStateException.class, () -> pipelineBuildService.deletePipelineBuild(buildId));
 
-        pipelineBuild.setCurrentState(PipelineExecutionStateInternal.WAITING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.WAITING);
 
         assertThrows(IllegalStateException.class, () -> pipelineBuildService.deletePipelineBuild(buildId));
     }

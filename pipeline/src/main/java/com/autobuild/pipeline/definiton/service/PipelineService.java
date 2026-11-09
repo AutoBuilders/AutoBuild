@@ -15,8 +15,8 @@ import com.autobuild.pipeline.definiton.dto.mapper.PipelineMapper;
 import com.autobuild.pipeline.definiton.dto.mapper.StageMapper;
 import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
-import com.autobuild.pipeline.definiton.dto.Pipeline;
-import com.autobuild.pipeline.definiton.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 import com.autobuild.pipeline.definiton.exceptions.DuplicateEntryException;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
@@ -55,15 +55,15 @@ public class PipelineService {
             Map<UUID, String> stageContents = fileService.readScriptFiles(pipeline);
             Pipeline pipelineDTO = mapper.entityToDto(pipeline);
             Pipeline pipelineWithCommands = pipelineDTO.toBuilder()
-    .clearStages()
-    .addAllStages(
-        pipelineDTO.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(stageContents.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+                    .clearStages()
+                    .addAllStages(
+                        pipelineDTO.getStagesList().stream()
+                            .map(s -> s.toBuilder()
+                                .setCommand(stageContents.getOrDefault(UUID.fromString(s.getId()), ""))
+                                .build())
+                            .toList()
+                    )
+                    .build();
             log.info("Pipeline with id {} successfully obtained", pipelineDTO.getId());
             return pipelineWithCommands;
         } catch (IllegalArgumentException e) {
@@ -93,8 +93,6 @@ public class PipelineService {
             validateScriptType(stage.getScriptType());
         }
 
-        // pipelineDto.setId(UUID.randomUUID());
-        // pipelineDto.getStages().forEach(stage -> stage.setId(UUID.randomUUID()));
 
         Pipeline pipelineWithIds = pipelineDto.toBuilder()
                 .setId(UUID.randomUUID().toString())
@@ -154,17 +152,16 @@ public class PipelineService {
 
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
         Pipeline response = mapper.entityToDto(pipeline);
-        // response.getStages().forEach(s -> s.setCommand(finalScripts.get(s.getId())));
         Pipeline pipelineWithCommands = response.toBuilder()
-    .clearStages()
-    .addAllStages(
-        response.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+            .clearStages()
+            .addAllStages(
+                response.getStagesList().stream()
+                    .map(s -> s.toBuilder()
+                        .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
+                        .build())
+                    .toList()
+            )
+            .build();
         log.info("Pipeline with id {} successfully modified", pipelineId);
         return pipelineWithCommands;
     }
@@ -226,8 +223,8 @@ public class PipelineService {
             throws IOException, InvalidIdException {
         validateScriptType(req.getScriptType());
         Stage reqWithId = req.toBuilder()
-    .setId(UUID.randomUUID().toString())
-    .build();
+                .setId(UUID.randomUUID().toString())
+                .build();
         StageEntity entity = stageMapper.dtoToEntity(reqWithId);
         String path = fileService.createStageScriptFile(pipeline, reqWithId);
         entity.setPath(path);
@@ -335,8 +332,8 @@ public class PipelineService {
         for (Stage stageDTO : putRequest.getStagesList()) {
             validateScriptType(stageDTO.getScriptType());
             Stage stageWithId = stageDTO.toBuilder()
-    .setId(UUID.randomUUID().toString())
-    .build();
+                    .setId(UUID.randomUUID().toString())
+                    .build();
 
             String path = fileService.createStageScriptFile(pipeline, stageWithId);
             StageEntity newStage = stageMapper.dtoToEntity(stageWithId);
@@ -349,15 +346,15 @@ public class PipelineService {
         Map<UUID, String> finalScripts = fileService.readScriptFiles(pipeline);
         Pipeline response = mapper.entityToDto(pipeline);
         Pipeline responseWithCommands = response.toBuilder()
-    .clearStages()
-    .addAllStages(
-        response.getStagesList().stream()
-            .map(s -> s.toBuilder()
-                .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
-                .build())
-            .toList()
-    )
-    .build();
+                .clearStages()
+                .addAllStages(
+                    response.getStagesList().stream()
+                        .map(s -> s.toBuilder()
+                            .setCommand(finalScripts.getOrDefault(UUID.fromString(s.getId()), ""))
+                            .build())
+                        .toList()
+                )
+                .build();
         log.info("Pipeline with id {} successfully replaced", pipelineId);
         return responseWithCommands;
     }

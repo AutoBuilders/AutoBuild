@@ -16,7 +16,7 @@ import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObserver;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 
 import jakarta.annotation.PreDestroy;
@@ -26,10 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Service for sending SSE on change of pipeline or it's stages. Implemented as
  * an Observer.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Slf4j
 @Service
 public class PipelineBuildLiveService implements PipelineExecutionObserver {
@@ -72,7 +71,7 @@ public class PipelineBuildLiveService implements PipelineExecutionObserver {
             throw entityNotFoundException;
         }
 
-        if (!optionalPipelineBuild.get().getCurrentState().equals(PipelineExecutionStateInternal.RUNNING)) {
+        if (!optionalPipelineBuild.get().getCurrentState().equals(PipelineEntityExecutionState.RUNNING)) {
             UnsupportedOperationException exception = new UnsupportedOperationException(
                     "Live broadcast is not suppoerted as build is not in running state");
             newSubscriber.completeWithError(exception);
@@ -111,8 +110,8 @@ public class PipelineBuildLiveService implements PipelineExecutionObserver {
                 try {
                     subscriberEmitter.send(SseEmitter.event().data(mapper.entityToDto(pipelineBuild)));
 
-                    if (pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS)
-                            || pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.FAILED)) {
+                    if (pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.SUCCESS)
+                            || pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.FAILED)) {
                         subscriberEmitter.complete();
                         deadEmitters.add(subscriberEmitter);
                     }

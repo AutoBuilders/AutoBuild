@@ -21,8 +21,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.executor.service.PipelineBuildService;
+import com.autobuild.pipeline.executor.gen.dto.PipelineExecutionState;
 import com.autobuild.pipeline.testutility.DummyData;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -47,13 +48,13 @@ public class PipelineBuildControllerTest {
                 .setId(pipelineBuildId.toString())
                 .setPipelineId(UUID.randomUUID().toString())
                 .setPipelineName("Dummy Pipeline")
-                .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+                .setCurrentState(PipelineExecutionState.PIPELINE_WAITING)
                 .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
                 .build();
 
         doReturn(dummyPipelineBuild).when(service).getPipelineBuild(pipelineBuildId);
 
-        ResponseEntity<com.autobuild.pipeline.executor.dto.PipelineBuild> response = controller.getPipelineBuild(pipelineBuildId);
+        ResponseEntity<PipelineBuild> response = controller.getPipelineBuild(pipelineBuildId);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -70,25 +71,25 @@ public class PipelineBuildControllerTest {
 
     @Test
     public void getAllBuildsTest() {
-        List<com.autobuild.pipeline.executor.dto.PipelineBuild> dummyBuilds = List.of(
+        List<PipelineBuild> dummyBuilds = List.of(
                 PipelineBuild.newBuilder()
                         .setId(UUID.randomUUID().toString())
                         .setPipelineId(UUID.randomUUID().toString())
                         .setPipelineName("Dummy Pipeline")
-                        .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_WAITING)
+                        .setCurrentState(PipelineExecutionState.PIPELINE_WAITING)
                         .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
                         .build(),
                 PipelineBuild.newBuilder()
                         .setId(UUID.randomUUID().toString())
                         .setPipelineId(UUID.randomUUID().toString())
                         .setPipelineName("Dummy Pipeline")
-                        .setCurrentState(com.autobuild.pipeline.executor.dto.PipelineExecutionState.PIPELINE_SUCCESS)
+                        .setCurrentState(PipelineExecutionState.PIPELINE_SUCCESS)
                         .addAllStageBuilds(List.of(DummyData.getStageBuildDTO()))
                         .build());
 
         doReturn(dummyBuilds).when(service).getAllBuilds();
 
-        ResponseEntity<List<com.autobuild.pipeline.executor.dto.PipelineBuild>> response = controller.getAllBuilds();
+        ResponseEntity<List<PipelineBuild>> response = controller.getAllBuilds();
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());

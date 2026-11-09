@@ -20,12 +20,13 @@ import org.mockito.MockitoAnnotations;
 
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 import com.autobuild.pipeline.executor.job.PipelineExecutor;
 import com.autobuild.pipeline.testutility.DummyData;
 
 public class PipelineExecutorImplTest {
+
     @Mock
     private PipelineExecutionObservable pipelineExecutionObservable;
 
@@ -33,7 +34,7 @@ public class PipelineExecutorImplTest {
     private PipelineExecutor pipelineExecutor = new PipelineExecutorImpl();
 
     private PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
-    
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -53,8 +54,8 @@ public class PipelineExecutorImplTest {
 
             verify(mockProcessBuilderInstance, times(1)).redirectOutput(any(Redirect.class));
             verify(mockProcessBuilderInstance, times(1)).redirectErrorStream(true);
-            
-            assertTrue(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS)).toList().size() == 0);
+
+            assertTrue(pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageEntityExecutionState.SUCCESS)).toList().size() == 0);
         }
     }
 
@@ -72,8 +73,8 @@ public class PipelineExecutorImplTest {
 
             verify(mockProcessBuilderInstance, times(1)).redirectOutput(any(Redirect.class));
             verify(mockProcessBuilderInstance, times(1)).redirectErrorStream(true);
-            
-            assertFalse(pipelineBuild.getCurrentState().equals(PipelineExecutionStateInternal.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageExecutionStateInternal.SUCCESS)).toList().size() == 0);
+
+            assertFalse(pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.SUCCESS) && pipelineBuild.getStageBuilds().stream().filter(stageBuild -> !stageBuild.getCurrentState().equals(StageEntityExecutionState.SUCCESS)).toList().size() == 0);
         }
     }
 

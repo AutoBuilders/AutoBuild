@@ -23,13 +23,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEvent
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
 
 import jakarta.persistence.EntityNotFoundException;
 
 public class PipelineBuildLiveServiceTest {
+
     @Mock
     private PipelineBuildRepository repository;
 
@@ -53,7 +54,7 @@ public class PipelineBuildLiveServiceTest {
 
         PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionStateInternal.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 
@@ -101,7 +102,7 @@ public class PipelineBuildLiveServiceTest {
 
         PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionStateInternal.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 
@@ -120,7 +121,7 @@ public class PipelineBuildLiveServiceTest {
 
         PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionStateInternal.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 

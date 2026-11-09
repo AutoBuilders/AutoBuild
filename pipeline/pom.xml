@@ -276,6 +276,9 @@
                 <protoc kind="binary-maven">
                   <version>${protobuf.version}</version>
                 </protoc>
+                <sourceDirectories>
+                  <sourceDirectory>${project.basedir}/../apis/protobuf</sourceDirectory>
+                </sourceDirectories>
               </configuration>
               <executions>
                 <execution>

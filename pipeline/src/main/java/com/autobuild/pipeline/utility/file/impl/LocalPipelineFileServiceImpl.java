@@ -21,8 +21,8 @@ import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.entity.StageBuildEntity;
-import com.autobuild.pipeline.definiton.dto.Stage;
-import com.autobuild.pipeline.definiton.dto.Pipeline;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 import com.autobuild.pipeline.utility.file.extension.Extensions;
 

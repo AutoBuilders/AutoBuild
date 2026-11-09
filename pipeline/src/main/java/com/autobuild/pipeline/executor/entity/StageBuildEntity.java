@@ -3,7 +3,7 @@ package com.autobuild.pipeline.executor.entity;
 import java.util.UUID;
 
 import com.autobuild.pipeline.definiton.entity.StageEntity;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionStateInternal;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,10 +21,9 @@ import lombok.Setter;
 
 /**
  * StageBuild entity for holding stage execution metadata/data in table.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 //TODO: Add timestamps
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +32,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "stage_build")
 public class StageBuildEntity {
+
     @Id
     private UUID id;
 
@@ -42,7 +42,7 @@ public class StageBuildEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stage_build_current_state", nullable = false)
-    private StageExecutionStateInternal currentState;
+    private StageEntityExecutionState currentState;
 
 
     @Column(name = "log_path", nullable = false)
@@ -56,7 +56,7 @@ public class StageBuildEntity {
     @PrePersist
     public void setDefaultState() {
         if (null == this.currentState) {
-            this.currentState = StageExecutionStateInternal.WAITING;
+            this.currentState = StageEntityExecutionState.WAITING;
         }
     }
 }
