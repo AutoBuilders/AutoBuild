@@ -29,6 +29,7 @@ public class StageMapper implements Mapper<
         }
         entity.setName(dto.getName());
         entity.setScriptType(dto.getScriptType());
+        entity.setStageOrder(dto.getStageOrder());
         return entity;
     }
 
@@ -42,6 +43,7 @@ public class StageMapper implements Mapper<
             .setId(entity.getId().toString())
             .setName(entity.getName())
             .setScriptType(entity.getScriptType())
+            .setStageOrder(entity.getStageOrder())
             .build();
     }
 }

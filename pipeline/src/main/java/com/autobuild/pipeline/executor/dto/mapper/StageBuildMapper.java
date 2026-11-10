@@ -34,6 +34,7 @@ public class StageBuildMapper implements Mapper<
                 .setId(entity.getId().toString())
                 .setStageId(entity.getStage().getId().toString())
                 .setStageName(entity.getStage().getName())
+                .setStageOrder(entity.getStageOrder())
                 .setCurrentState(toProtoState(entity.getCurrentState()))
                 .build();
     }
