@@ -165,6 +165,29 @@ class ProtobufOpenApiCustomizerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
+    void customise_sortsPropertiesWithinSchemaAlphabetically() {
+        Schema<Object> stageSchema = new Schema<>();
+        stageSchema.setProperties(new LinkedHashMap<>());
+        stageSchema.getProperties().put("stageOrder", new Schema<>());
+        stageSchema.getProperties().put("id", new Schema<>());
+        stageSchema.getProperties().put("name", new Schema<>());
+        stageSchema.getProperties().put("scriptType", new Schema<>());
+
+        openApi.setComponents(new Components());
+        openApi.getComponents().setSchemas(new HashMap<>());
+        openApi.getComponents().getSchemas().put("Stage", stageSchema);
+
+        customizer.customise(openApi);
+
+        List<String> propKeys = new ArrayList<>(openApi.getComponents().getSchemas().get("Stage").getProperties().keySet());
+        assertEquals("id", propKeys.get(0));
+        assertEquals("name", propKeys.get(1));
+        assertEquals("scriptType", propKeys.get(2));
+        assertEquals("stageOrder", propKeys.get(3));
+    }
+
+    @Test
     void customise_handlesSchemaWithNullProperties() {
         openApi.setComponents(new Components());
         openApi.getComponents().setSchemas(new HashMap<>());
