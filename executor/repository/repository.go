@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/AutoBuilders/AutoBuild/executor/entity"
+	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -31,4 +32,20 @@ func InitDB(dsn string) *gorm.DB {
 
 func (r *PipelineBuildRepository) Save(pb entity.PipelineBuild) error {
 	return r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&pb).Error
+}
+
+func (r *PipelineBuildRepository) FindByID(id uuid.UUID) (entity.PipelineBuild, error) {
+	var pb entity.PipelineBuild
+	err := r.db.Preload("StageBuilds").First(&pb, "id = ?", id).Error
+	return pb, err
+}
+
+func (r *PipelineBuildRepository) FindAll() ([]entity.PipelineBuild, error) {
+	var pbs []entity.PipelineBuild
+	err := r.db.Preload("StageBuilds").Find(&pbs).Error
+	return pbs, err
+}
+
+func (r *PipelineBuildRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&entity.PipelineBuild{}, "id = ?", id).Error
 }

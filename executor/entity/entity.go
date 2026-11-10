@@ -27,6 +27,7 @@ const (
 type StageBuild struct {
 	ID           uuid.UUID           `gorm:"type:uuid;primaryKey"`
 	StageID      uuid.UUID           `gorm:"type:uuid;not null;column:stage_id"`
+	StageName    string              `gorm:"type:varchar(255);not null;column:stage_name"`
 	CurrentState StageExecutionState `gorm:"type:varchar(20);not null;column:stage_build_current_state;default:WAITING"`
 	StageOrder   int                 `gorm:"not null;column:stage_order"`
 	LogPath      string              `gorm:"not null;column:log_path"`
@@ -45,6 +46,7 @@ func (s *StageBuild) BeforeCreate(tx *gorm.DB) error {
 type PipelineBuild struct {
 	ID           uuid.UUID              `gorm:"type:uuid;primaryKey"`
 	PipelineID   uuid.UUID              `gorm:"type:uuid;not null;column:pipeline_id"`
+	PipelineName string                 `gorm:"type:varchar(255);not null;column:pipeline_name"`
 	StageBuilds  []StageBuild           `gorm:"many2many:pipeline_stage_builds;joinForeignKey:PipelineBuildID;joinReferences:StageBuildID"`
 	CurrentState PipelineExecutionState `gorm:"type:varchar(20);not null;column:pipeline_build_current_state;default:WAITING"`
 }
