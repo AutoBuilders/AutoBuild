@@ -260,6 +260,8 @@ components:
       properties:
         id:
           type: string
+        pipelineName:
+          type: string
         currentState:
           type: string
           enum:
@@ -268,8 +270,6 @@ components:
           - SUCCESS
           - FAILED
         pipelineId:
-          type: string
-        pipelineName:
           type: string
         stageBuilds:
           type: array
@@ -300,6 +300,8 @@ components:
       properties:
         id:
           type: string
+        stageName:
+          type: string
         stageOrder:
           type: integer
           format: int32
@@ -311,8 +313,6 @@ components:
           - SUCCESS
           - FAILED
           - STOPPED
-        stageName:
-          type: string
         stageId:
           type: string
   securitySchemes:
