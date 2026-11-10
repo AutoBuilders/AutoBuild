@@ -9,7 +9,7 @@ npm ci
 # Bazel runfiles are symlinks into the source tree. Vite and ESLint resolve
 # modules relative to each file's real path, missing the runfiles node_modules.
 # Dereference all source symlinks so tools resolve from this directory instead.
-find . -type l ! -path './node_modules/*' | while read -r f; do
+find . -maxdepth 5 -type l ! -path './node_modules/*' | while read -r f; do
   cp -Lf "$f" "${f}.deref" && mv "${f}.deref" "$f"
 done
 

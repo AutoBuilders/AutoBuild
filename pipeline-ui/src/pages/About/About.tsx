@@ -1,4 +1,8 @@
 import NavBar from "../../components/common/navBar";
+import { booleanFlags } from "../../flags/booleanFlags";
+
+// We import a boolean flag to enable view of the about page.
+// TODO : Do not include this page in relesae build.
 
 export default function About() {
   const team = [
@@ -10,6 +14,13 @@ export default function About() {
 
   return (
     <>
+      {!booleanFlags.ENABLE_ABOUT_US_PAGE && (
+        <div className="w-full min-h-screen flex justify-center items-center bg-gradient-to-br from-[#e9f0ff] via-white to-[#dbe9ff]">
+          <h1 className="text-3xl font-bold text-[#23406b]">
+            Looks like you're not supposed to be here...
+          </h1>
+        </div>
+      )}
       <NavBar></NavBar>
       <div className="w-full min-h-screen py-10 px-5 text-center font-sans bg-gradient-to-br from-[#e9f0ff] via-white to-[#dbe9ff] animate-gradient">
         {/* Hero */}
