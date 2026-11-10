@@ -5,3 +5,14 @@
 2. From VS Code `Run and Debug` (keybind SHIFT+CMD+D for Mac) select `AutoBuild: Local` and run the backend service in debug mode.
 ![VS Code Execution](./images/vs-code-execution.png)
     Ensure the application is running fine by hitting the endpoints through bruno.
+
+Optional:
+3. To generate Protobuf classes locally (without Docker):
+  From the `pipeline/` directory, run: `mvn compile -s maven-settings.xml`
+  Without `-s maven-settings.xml`, Maven falls back to the SAP repository and fails.
+  (The files are generated at the `generate-sources` and writes the Java files into target/generated-sources/. Then compile picks them up alongside your hand-written code and compiles everything together.)
+4. Recommended VS Code extension for .proto files:
+  **Buf** (`bufbuild.vscode-buf`) — syntax highlighting and linting
+  https://marketplace.visualstudio.com/items?itemName=bufbuild.vscode-buf
+5. To understand Protocol Buffers (the format used for DTO generation):
+   Protocol Buffers Crash Course — https://youtu.be/46O73On0gyI
