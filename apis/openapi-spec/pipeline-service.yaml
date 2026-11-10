@@ -247,15 +247,24 @@ components:
     ByteString:
       type: object
       properties:
-        validUtf8:
-          type: boolean
         empty:
+          type: boolean
+        validUtf8:
           type: boolean
     Declaration:
       type: object
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
+        type:
+          type: string
+        number:
+          type: integer
+          format: int32
+        fullName:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -271,23 +280,14 @@ components:
           $ref: "#/components/schemas/ByteString"
         typeBytes:
           $ref: "#/components/schemas/ByteString"
-        initialized:
-          type: boolean
-        type:
-          type: string
-        number:
-          type: integer
-          format: int32
-        fullName:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -295,6 +295,13 @@ components:
     DeclarationOrBuilder:
       type: object
       properties:
+        type:
+          type: string
+        number:
+          type: integer
+          format: int32
+        fullName:
+          type: string
         repeated:
           type: boolean
         reserved:
@@ -303,25 +310,18 @@ components:
           $ref: "#/components/schemas/ByteString"
         typeBytes:
           $ref: "#/components/schemas/ByteString"
-        type:
-          type: string
-        number:
-          type: integer
-          format: int32
-        fullName:
-          type: string
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     Descriptor:
@@ -361,22 +361,25 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/OneofDescriptor"
+        name:
+          type: string
         realOneofs:
           type: array
           items:
             $ref: "#/components/schemas/OneofDescriptor"
         extendable:
           type: boolean
-        name:
-          type: string
     DescriptorProto:
       type: object
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        fieldCount:
-          type: integer
-          format: int32
+        options:
+          $ref: "#/components/schemas/MessageOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -428,20 +431,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnumDescriptorProtoOrBuilder"
-        extensionRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ExtensionRangeOrBuilder"
         oneofDeclOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/OneofDescriptorProtoOrBuilder"
         optionsOrBuilder:
           $ref: "#/components/schemas/MessageOptionsOrBuilder"
-        reservedRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ReservedRangeOrBuilder"
         reservedRangeList:
           type: array
           items:
@@ -472,20 +467,25 @@ components:
         extensionRangeCount:
           type: integer
           format: int32
-        options:
-          $ref: "#/components/schemas/MessageOptions"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        fieldCount:
+          type: integer
+          format: int32
+        extensionRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExtensionRangeOrBuilder"
+        reservedRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReservedRangeOrBuilder"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -493,9 +493,10 @@ components:
     DescriptorProtoOrBuilder:
       type: object
       properties:
-        fieldCount:
-          type: integer
-          format: int32
+        options:
+          $ref: "#/components/schemas/MessageOptions"
+        name:
+          type: string
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         fieldList:
@@ -536,20 +537,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnumDescriptorProtoOrBuilder"
-        extensionRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ExtensionRangeOrBuilder"
         oneofDeclOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/OneofDescriptorProtoOrBuilder"
         optionsOrBuilder:
           $ref: "#/components/schemas/MessageOptionsOrBuilder"
-        reservedRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ReservedRangeOrBuilder"
         reservedRangeList:
           type: array
           items:
@@ -577,22 +570,29 @@ components:
         extensionRangeCount:
           type: integer
           format: int32
-        options:
-          $ref: "#/components/schemas/MessageOptions"
-        name:
-          type: string
+        fieldCount:
+          type: integer
+          format: int32
+        extensionRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExtensionRangeOrBuilder"
+        reservedRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReservedRangeOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     EditionDefault:
@@ -600,6 +600,10 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
+        value:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -624,18 +628,14 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
-        initialized:
-          type: boolean
-        value:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -643,6 +643,8 @@ components:
     EditionDefaultOrBuilder:
       type: object
       properties:
+        value:
+          type: string
         valueBytes:
           $ref: "#/components/schemas/ByteString"
         edition:
@@ -660,20 +662,18 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
-        value:
-          type: string
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     EnumDescriptor:
@@ -706,6 +706,12 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/EnumOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
         valueList:
           type: array
           items:
@@ -727,10 +733,6 @@ components:
           format: int32
         optionsOrBuilder:
           $ref: "#/components/schemas/EnumOptionsOrBuilder"
-        reservedRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/EnumReservedRangeOrBuilder"
         valueCount:
           type: integer
           format: int32
@@ -749,20 +751,18 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnumValueDescriptorProtoOrBuilder"
-        options:
-          $ref: "#/components/schemas/EnumOptions"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        reservedRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnumReservedRangeOrBuilder"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -770,6 +770,10 @@ components:
     EnumDescriptorProtoOrBuilder:
       type: object
       properties:
+        options:
+          $ref: "#/components/schemas/EnumOptions"
+        name:
+          type: string
         valueList:
           type: array
           items:
@@ -784,10 +788,6 @@ components:
           format: int32
         optionsOrBuilder:
           $ref: "#/components/schemas/EnumOptionsOrBuilder"
-        reservedRangeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/EnumReservedRangeOrBuilder"
         valueCount:
           type: integer
           format: int32
@@ -803,22 +803,22 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EnumValueDescriptorProtoOrBuilder"
-        options:
-          $ref: "#/components/schemas/EnumOptions"
-        name:
-          type: string
+        reservedRangeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/EnumReservedRangeOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     EnumOptions:
@@ -826,9 +826,7 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -837,7 +835,17 @@ components:
           $ref: "#/components/schemas/EnumOptions"
         parserForType:
           $ref: "#/components/schemas/ParserEnumOptions"
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
         allowAlias:
+          type: boolean
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
           type: boolean
         uninterpretedOptionCount:
           type: integer
@@ -845,30 +853,22 @@ components:
         deprecatedLegacyJsonFieldConflicts:
           type: boolean
           deprecated: true
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        initialized:
-          type: boolean
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
             type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -876,11 +876,17 @@ components:
     EnumOptionsOrBuilder:
       type: object
       properties:
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
+        allowAlias:
+          type: boolean
         features:
           $ref: "#/components/schemas/FeatureSet"
         deprecated:
-          type: boolean
-        allowAlias:
           type: boolean
         uninterpretedOptionCount:
           type: integer
@@ -888,28 +894,22 @@ components:
         deprecatedLegacyJsonFieldConflicts:
           type: boolean
           deprecated: true
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     EnumReservedRange:
@@ -917,12 +917,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        start:
-          type: integer
-          format: int32
-        end:
-          type: integer
-          format: int32
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -930,16 +926,20 @@ components:
           $ref: "#/components/schemas/EnumReservedRange"
         parserForType:
           $ref: "#/components/schemas/ParserEnumReservedRange"
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        start:
+          type: integer
+          format: int32
+        end:
+          type: integer
+          format: int32
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -953,18 +953,18 @@ components:
         end:
           type: integer
           format: int32
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     EnumValueDescriptor:
@@ -994,6 +994,15 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/EnumValueOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
+        number:
+          type: integer
+          format: int32
         serializedSize:
           type: integer
           format: int32
@@ -1005,23 +1014,14 @@ components:
           $ref: "#/components/schemas/ParserEnumValueDescriptorProto"
         optionsOrBuilder:
           $ref: "#/components/schemas/EnumValueOptionsOrBuilder"
-        options:
-          $ref: "#/components/schemas/EnumValueOptions"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        number:
-          type: integer
-          format: int32
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -1029,10 +1029,6 @@ components:
     EnumValueDescriptorProtoOrBuilder:
       type: object
       properties:
-        nameBytes:
-          $ref: "#/components/schemas/ByteString"
-        optionsOrBuilder:
-          $ref: "#/components/schemas/EnumValueOptionsOrBuilder"
         options:
           $ref: "#/components/schemas/EnumValueOptions"
         name:
@@ -1040,18 +1036,22 @@ components:
         number:
           type: integer
           format: int32
+        nameBytes:
+          $ref: "#/components/schemas/ByteString"
+        optionsOrBuilder:
+          $ref: "#/components/schemas/EnumValueOptionsOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     EnumValueOptions:
@@ -1059,9 +1059,7 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -1070,46 +1068,18 @@ components:
           $ref: "#/components/schemas/EnumValueOptions"
         parserForType:
           $ref: "#/components/schemas/ParserEnumValueOptions"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         debugRedact:
           type: boolean
         featureSupport:
           $ref: "#/components/schemas/FeatureSupport"
         featureSupportOrBuilder:
           $ref: "#/components/schemas/FeatureSupportOrBuilder"
-        initialized:
-          type: boolean
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        allFieldsRaw:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
-    EnumValueOptionsOrBuilder:
-      type: object
-      properties:
         features:
           $ref: "#/components/schemas/FeatureSet"
         deprecated:
@@ -1117,34 +1087,64 @@ components:
         uninterpretedOptionCount:
           type: integer
           format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
+        allFieldsRaw:
+          type: object
+          additionalProperties:
+            type: object
+        memoizedSerializedSize:
+          type: integer
+          format: int32
+          writeOnly: true
+    EnumValueOptionsOrBuilder:
+      type: object
+      properties:
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         debugRedact:
           type: boolean
         featureSupport:
           $ref: "#/components/schemas/FeatureSupport"
         featureSupportOrBuilder:
           $ref: "#/components/schemas/FeatureSupportOrBuilder"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
+          type: boolean
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     ExtensionRange:
@@ -1152,12 +1152,10 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        start:
-          type: integer
-          format: int32
-        end:
-          type: integer
-          format: int32
+        options:
+          $ref: "#/components/schemas/ExtensionRangeOptions"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -1167,18 +1165,20 @@ components:
           $ref: "#/components/schemas/ParserExtensionRange"
         optionsOrBuilder:
           $ref: "#/components/schemas/ExtensionRangeOptionsOrBuilder"
-        options:
-          $ref: "#/components/schemas/ExtensionRangeOptions"
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        start:
+          type: integer
+          format: int32
+        end:
+          type: integer
+          format: int32
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -1188,8 +1188,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -1197,19 +1197,12 @@ components:
           $ref: "#/components/schemas/ExtensionRangeOptions"
         parserForType:
           $ref: "#/components/schemas/ParserExtensionRangeOptions"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         declarationList:
           type: array
           items:
@@ -1217,29 +1210,36 @@ components:
         declarationCount:
           type: integer
           format: int32
-        declarationOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/DeclarationOrBuilder"
         verification:
           type: string
           enum:
           - DECLARATION
           - UNVERIFIED
-        initialized:
-          type: boolean
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        declarationOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclarationOrBuilder"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
             type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -1247,21 +1247,12 @@ components:
     ExtensionRangeOptionsOrBuilder:
       type: object
       properties:
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         declarationList:
           type: array
           items:
@@ -1269,54 +1260,63 @@ components:
         declarationCount:
           type: integer
           format: int32
-        declarationOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/DeclarationOrBuilder"
         verification:
           type: string
           enum:
           - DECLARATION
           - UNVERIFIED
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        declarationOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclarationOrBuilder"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     ExtensionRangeOrBuilder:
       type: object
       properties:
+        options:
+          $ref: "#/components/schemas/ExtensionRangeOptions"
+        optionsOrBuilder:
+          $ref: "#/components/schemas/ExtensionRangeOptionsOrBuilder"
         start:
           type: integer
           format: int32
         end:
           type: integer
           format: int32
-        optionsOrBuilder:
-          $ref: "#/components/schemas/ExtensionRangeOptionsOrBuilder"
-        options:
-          $ref: "#/components/schemas/ExtensionRangeOptions"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     FeatureSet:
@@ -1324,6 +1324,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -1331,12 +1333,6 @@ components:
           $ref: "#/components/schemas/FeatureSet"
         parserForType:
           $ref: "#/components/schemas/ParserFeatureSet"
-        enumType:
-          type: string
-          enum:
-          - ENUM_TYPE_UNKNOWN
-          - OPEN
-          - CLOSED
         messageEncoding:
           type: string
           enum:
@@ -1368,16 +1364,20 @@ components:
           - JSON_FORMAT_UNKNOWN
           - ALLOW
           - LEGACY_BEST_EFFORT
-        initialized:
-          type: boolean
-        initializationErrorString:
+        enumType:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+          enum:
+          - ENUM_TYPE_UNKNOWN
+          - OPEN
+          - CLOSED
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
@@ -1389,12 +1389,6 @@ components:
     FeatureSetOrBuilder:
       type: object
       properties:
-        enumType:
-          type: string
-          enum:
-          - ENUM_TYPE_UNKNOWN
-          - OPEN
-          - CLOSED
         messageEncoding:
           type: string
           enum:
@@ -1426,18 +1420,24 @@ components:
           - JSON_FORMAT_UNKNOWN
           - ALLOW
           - LEGACY_BEST_EFFORT
+        enumType:
+          type: string
+          enum:
+          - ENUM_TYPE_UNKNOWN
+          - OPEN
+          - CLOSED
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     FeatureSupport:
@@ -1445,6 +1445,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -1452,8 +1454,6 @@ components:
           $ref: "#/components/schemas/FeatureSupport"
         parserForType:
           $ref: "#/components/schemas/ParserFeatureSupport"
-        deprecationWarning:
-          type: string
         editionIntroduced:
           type: string
           enum:
@@ -1484,6 +1484,8 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
+        deprecationWarning:
+          type: string
         deprecationWarningBytes:
           $ref: "#/components/schemas/ByteString"
         editionRemoved:
@@ -1501,16 +1503,14 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -1518,8 +1518,6 @@ components:
     FeatureSupportOrBuilder:
       type: object
       properties:
-        deprecationWarning:
-          type: string
         editionIntroduced:
           type: string
           enum:
@@ -1550,6 +1548,8 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
+        deprecationWarning:
+          type: string
         deprecationWarningBytes:
           $ref: "#/components/schemas/ByteString"
         editionRemoved:
@@ -1567,18 +1567,18 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     FieldDescriptor:
@@ -1631,13 +1631,24 @@ components:
           $ref: "#/components/schemas/EnumDescriptor"
         defaultValue:
           type: object
-        repeated:
-          type: boolean
-        mapField:
-          type: boolean
-        optional:
-          type: boolean
-        required:
+        javaType:
+          type: string
+          enum:
+          - INT
+          - LONG
+          - FLOAT
+          - DOUBLE
+          - BOOLEAN
+          - STRING
+          - BYTE_STRING
+          - ENUM
+          - MESSAGE
+        name:
+          type: string
+        number:
+          type: integer
+          format: int32
+        extension:
           type: boolean
         liteType:
           type: string
@@ -1660,8 +1671,6 @@ components:
           - SFIXED64
           - SINT32
           - SINT64
-        packable:
-          type: boolean
         liteJavaType:
           type: string
           enum:
@@ -1674,34 +1683,65 @@ components:
           - BYTE_STRING
           - ENUM
           - MESSAGE
-        packed:
-          type: boolean
         realContainingOneof:
           $ref: "#/components/schemas/OneofDescriptor"
-        extension:
+        optional:
           type: boolean
-        javaType:
-          type: string
-          enum:
-          - INT
-          - LONG
-          - FLOAT
-          - DOUBLE
-          - BOOLEAN
-          - STRING
-          - BYTE_STRING
-          - ENUM
-          - MESSAGE
-        name:
-          type: string
-        number:
-          type: integer
-          format: int32
+        required:
+          type: boolean
+        repeated:
+          type: boolean
+        mapField:
+          type: boolean
+        packable:
+          type: boolean
+        packed:
+          type: boolean
     FieldDescriptorProto:
       type: object
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/FieldOptions"
+        initialized:
+          type: boolean
+        label:
+          type: string
+          enum:
+          - LABEL_OPTIONAL
+          - LABEL_REPEATED
+          - LABEL_REQUIRED
+        name:
+          type: string
+        typeName:
+          type: string
+        type:
+          type: string
+          enum:
+          - TYPE_DOUBLE
+          - TYPE_FLOAT
+          - TYPE_INT64
+          - TYPE_UINT64
+          - TYPE_INT32
+          - TYPE_FIXED64
+          - TYPE_FIXED32
+          - TYPE_BOOL
+          - TYPE_STRING
+          - TYPE_GROUP
+          - TYPE_MESSAGE
+          - TYPE_BYTES
+          - TYPE_UINT32
+          - TYPE_ENUM
+          - TYPE_SFIXED32
+          - TYPE_SFIXED64
+          - TYPE_SINT32
+          - TYPE_SINT64
+        defaultValue:
+          type: string
+        number:
+          type: integer
+          format: int32
         serializedSize:
           type: integer
           format: int32
@@ -1711,6 +1751,8 @@ components:
           $ref: "#/components/schemas/ByteString"
         parserForType:
           $ref: "#/components/schemas/ParserFieldDescriptorProto"
+        optionsOrBuilder:
+          $ref: "#/components/schemas/FieldOptionsOrBuilder"
         jsonName:
           type: string
         proto3Optional:
@@ -1720,8 +1762,6 @@ components:
           format: int32
         extendee:
           type: string
-        optionsOrBuilder:
-          $ref: "#/components/schemas/FieldOptionsOrBuilder"
         typeNameBytes:
           $ref: "#/components/schemas/ByteString"
         extendeeBytes:
@@ -1730,54 +1770,14 @@ components:
           $ref: "#/components/schemas/ByteString"
         jsonNameBytes:
           $ref: "#/components/schemas/ByteString"
-        options:
-          $ref: "#/components/schemas/FieldOptions"
-        initialized:
-          type: boolean
-        label:
-          type: string
-          enum:
-          - LABEL_OPTIONAL
-          - LABEL_REPEATED
-          - LABEL_REQUIRED
-        name:
-          type: string
-        typeName:
-          type: string
-        type:
-          type: string
-          enum:
-          - TYPE_DOUBLE
-          - TYPE_FLOAT
-          - TYPE_INT64
-          - TYPE_UINT64
-          - TYPE_INT32
-          - TYPE_FIXED64
-          - TYPE_FIXED32
-          - TYPE_BOOL
-          - TYPE_STRING
-          - TYPE_GROUP
-          - TYPE_MESSAGE
-          - TYPE_BYTES
-          - TYPE_UINT32
-          - TYPE_ENUM
-          - TYPE_SFIXED32
-          - TYPE_SFIXED64
-          - TYPE_SINT32
-          - TYPE_SINT64
-        defaultValue:
-          type: string
-        number:
-          type: integer
-          format: int32
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -1785,27 +1785,6 @@ components:
     FieldDescriptorProtoOrBuilder:
       type: object
       properties:
-        nameBytes:
-          $ref: "#/components/schemas/ByteString"
-        jsonName:
-          type: string
-        proto3Optional:
-          type: boolean
-        oneofIndex:
-          type: integer
-          format: int32
-        extendee:
-          type: string
-        optionsOrBuilder:
-          $ref: "#/components/schemas/FieldOptionsOrBuilder"
-        typeNameBytes:
-          $ref: "#/components/schemas/ByteString"
-        extendeeBytes:
-          $ref: "#/components/schemas/ByteString"
-        defaultValueBytes:
-          $ref: "#/components/schemas/ByteString"
-        jsonNameBytes:
-          $ref: "#/components/schemas/ByteString"
         options:
           $ref: "#/components/schemas/FieldOptions"
         label:
@@ -1844,18 +1823,39 @@ components:
         number:
           type: integer
           format: int32
+        nameBytes:
+          $ref: "#/components/schemas/ByteString"
+        optionsOrBuilder:
+          $ref: "#/components/schemas/FieldOptionsOrBuilder"
+        jsonName:
+          type: string
+        proto3Optional:
+          type: boolean
+        oneofIndex:
+          type: integer
+          format: int32
+        extendee:
+          type: string
+        typeNameBytes:
+          $ref: "#/components/schemas/ByteString"
+        extendeeBytes:
+          $ref: "#/components/schemas/ByteString"
+        defaultValueBytes:
+          $ref: "#/components/schemas/ByteString"
+        jsonNameBytes:
+          $ref: "#/components/schemas/ByteString"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     FieldOptions:
@@ -1863,16 +1863,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
-        retention:
-          type: string
-          enum:
-          - RETENTION_UNKNOWN
-          - RETENTION_RUNTIME
-          - RETENTION_SOURCE
         serializedSize:
           type: integer
           format: int32
@@ -1880,38 +1872,13 @@ components:
           $ref: "#/components/schemas/FieldOptions"
         parserForType:
           $ref: "#/components/schemas/ParserFieldOptions"
-        packed:
-          type: boolean
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        ctype:
-          type: string
-          enum:
-          - STRING
-          - CORD
-          - STRING_PIECE
-        jstype:
-          type: string
-          enum:
-          - JS_NORMAL
-          - JS_STRING
-          - JS_NUMBER
-        lazy:
-          type: boolean
         unverifiedLazy:
-          type: boolean
-        weak:
           type: boolean
         debugRedact:
           type: boolean
@@ -1940,35 +1907,10 @@ components:
         editionDefaultsCount:
           type: integer
           format: int32
-        editionDefaultsOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/EditionDefaultOrBuilder"
         featureSupport:
           $ref: "#/components/schemas/FeatureSupport"
         featureSupportOrBuilder:
           $ref: "#/components/schemas/FeatureSupportOrBuilder"
-        initialized:
-          type: boolean
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        allFieldsRaw:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
-    FieldOptionsOrBuilder:
-      type: object
-      properties:
         features:
           $ref: "#/components/schemas/FeatureSet"
         deprecated:
@@ -1979,21 +1921,19 @@ components:
           - RETENTION_UNKNOWN
           - RETENTION_RUNTIME
           - RETENTION_SOURCE
-        packed:
-          type: boolean
+        editionDefaultsOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/EditionDefaultOrBuilder"
         uninterpretedOptionCount:
           type: integer
           format: int32
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        packed:
+          type: boolean
         ctype:
           type: string
           enum:
@@ -2008,9 +1948,34 @@ components:
           - JS_NUMBER
         lazy:
           type: boolean
-        unverifiedLazy:
-          type: boolean
         weak:
+          type: boolean
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
+        allFieldsRaw:
+          type: object
+          additionalProperties:
+            type: object
+        memoizedSerializedSize:
+          type: integer
+          format: int32
+          writeOnly: true
+    FieldOptionsOrBuilder:
+      type: object
+      properties:
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
+        unverifiedLazy:
           type: boolean
         debugRedact:
           type: boolean
@@ -2039,26 +2004,61 @@ components:
         editionDefaultsCount:
           type: integer
           format: int32
-        editionDefaultsOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/EditionDefaultOrBuilder"
         featureSupport:
           $ref: "#/components/schemas/FeatureSupport"
         featureSupportOrBuilder:
           $ref: "#/components/schemas/FeatureSupportOrBuilder"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
+          type: boolean
+        retention:
+          type: string
+          enum:
+          - RETENTION_UNKNOWN
+          - RETENTION_RUNTIME
+          - RETENTION_SOURCE
+        editionDefaultsOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/EditionDefaultOrBuilder"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        packed:
+          type: boolean
+        ctype:
+          type: string
+          enum:
+          - STRING
+          - CORD
+          - STRING_PIECE
+        jstype:
+          type: string
+          enum:
+          - JS_NORMAL
+          - JS_STRING
+          - JS_NUMBER
+        lazy:
+          type: boolean
+        weak:
+          type: boolean
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     FileDescriptor:
@@ -2106,6 +2106,14 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/FileOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
+        package:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -2115,52 +2123,6 @@ components:
           $ref: "#/components/schemas/ByteString"
         parserForType:
           $ref: "#/components/schemas/ParserFileDescriptorProto"
-        sourceCodeInfo:
-          $ref: "#/components/schemas/SourceCodeInfo"
-        dependencyList:
-          type: array
-          items:
-            type: string
-          properties:
-            empty:
-              type: boolean
-        publicDependencyList:
-          type: array
-          items:
-            type: integer
-            format: int32
-        weakDependencyList:
-          type: array
-          items:
-            type: integer
-            format: int32
-        messageTypeList:
-          type: array
-          items:
-            $ref: "#/components/schemas/DescriptorProto"
-        serviceList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ServiceDescriptorProto"
-        weakDependencyCount:
-          type: integer
-          format: int32
-        packageBytes:
-          $ref: "#/components/schemas/ByteString"
-        messageTypeOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/DescriptorProtoOrBuilder"
-        serviceOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/ServiceDescriptorProtoOrBuilder"
-        sourceCodeInfoOrBuilder:
-          $ref: "#/components/schemas/SourceCodeInfoOrBuilder"
-        syntaxBytes:
-          $ref: "#/components/schemas/ByteString"
-        syntax:
-          type: string
         publicDependencyCount:
           type: integer
           format: int32
@@ -2197,6 +2159,50 @@ components:
         extensionCount:
           type: integer
           format: int32
+        dependencyList:
+          type: array
+          items:
+            type: string
+          properties:
+            empty:
+              type: boolean
+        publicDependencyList:
+          type: array
+          items:
+            type: integer
+            format: int32
+        sourceCodeInfo:
+          $ref: "#/components/schemas/SourceCodeInfo"
+        weakDependencyList:
+          type: array
+          items:
+            type: integer
+            format: int32
+        messageTypeList:
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptorProto"
+        serviceList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceDescriptorProto"
+        weakDependencyCount:
+          type: integer
+          format: int32
+        packageBytes:
+          $ref: "#/components/schemas/ByteString"
+        serviceOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceDescriptorProtoOrBuilder"
+        sourceCodeInfoOrBuilder:
+          $ref: "#/components/schemas/SourceCodeInfoOrBuilder"
+        syntaxBytes:
+          $ref: "#/components/schemas/ByteString"
+        messageTypeOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/DescriptorProtoOrBuilder"
         edition:
           type: string
           enum:
@@ -2212,22 +2218,16 @@ components:
           - EDITION_99998_TEST_ONLY
           - EDITION_99999_TEST_ONLY
           - EDITION_MAX
-        options:
-          $ref: "#/components/schemas/FileOptions"
-        initialized:
-          type: boolean
-        name:
+        syntax:
           type: string
-        package:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -2237,9 +2237,7 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -2248,12 +2246,25 @@ components:
           $ref: "#/components/schemas/FileOptions"
         parserForType:
           $ref: "#/components/schemas/ParserFileOptions"
-        javaGenerateEqualsAndHash:
+        javaStringCheckUtf8:
           type: boolean
-          deprecated: true
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
+        javaPackage:
+          type: string
+        javaOuterClassname:
+          type: string
+        javaMultipleFiles:
+          type: boolean
         goPackage:
           type: string
         ccGenericServices:
+          type: boolean
+        javaGenericServices:
           type: boolean
         pyGenericServices:
           type: boolean
@@ -2271,31 +2282,8 @@ components:
           type: string
         phpMetadataNamespace:
           type: string
-        javaGenericServices:
-          type: boolean
-        javaStringCheckUtf8:
-          type: boolean
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        javaPackage:
-          type: string
-        javaOuterClassname:
-          type: string
         rubyPackage:
           type: string
-        javaMultipleFiles:
-          type: boolean
         javaPackageBytes:
           $ref: "#/components/schemas/ByteString"
         javaOuterClassnameBytes:
@@ -2318,20 +2306,32 @@ components:
           $ref: "#/components/schemas/ByteString"
         phpNamespaceBytes:
           $ref: "#/components/schemas/ByteString"
-        phpMetadataNamespaceBytes:
-          $ref: "#/components/schemas/ByteString"
         rubyPackageBytes:
           $ref: "#/components/schemas/ByteString"
-        initialized:
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
           type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        javaGenerateEqualsAndHash:
+          type: boolean
+          deprecated: true
+        phpMetadataNamespaceBytes:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
@@ -2343,16 +2343,25 @@ components:
     FileOptionsOrBuilder:
       type: object
       properties:
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        javaStringCheckUtf8:
           type: boolean
-        javaGenerateEqualsAndHash:
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
+        javaPackage:
+          type: string
+        javaOuterClassname:
+          type: string
+        javaMultipleFiles:
           type: boolean
-          deprecated: true
         goPackage:
           type: string
         ccGenericServices:
+          type: boolean
+        javaGenericServices:
           type: boolean
         pyGenericServices:
           type: boolean
@@ -2370,31 +2379,8 @@ components:
           type: string
         phpMetadataNamespace:
           type: string
-        javaGenericServices:
-          type: boolean
-        javaStringCheckUtf8:
-          type: boolean
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        javaPackage:
-          type: string
-        javaOuterClassname:
-          type: string
         rubyPackage:
           type: string
-        javaMultipleFiles:
-          type: boolean
         javaPackageBytes:
           $ref: "#/components/schemas/ByteString"
         javaOuterClassnameBytes:
@@ -2417,22 +2403,36 @@ components:
           $ref: "#/components/schemas/ByteString"
         phpNamespaceBytes:
           $ref: "#/components/schemas/ByteString"
-        phpMetadataNamespaceBytes:
-          $ref: "#/components/schemas/ByteString"
         rubyPackageBytes:
+          $ref: "#/components/schemas/ByteString"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
+          type: boolean
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        javaGenerateEqualsAndHash:
+          type: boolean
+          deprecated: true
+        phpMetadataNamespaceBytes:
           $ref: "#/components/schemas/ByteString"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     Location:
@@ -2440,6 +2440,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -2447,28 +2449,28 @@ components:
           $ref: "#/components/schemas/Location"
         parserForType:
           $ref: "#/components/schemas/ParserLocation"
-        leadingComments:
-          type: string
-        pathCount:
-          type: integer
-          format: int32
         pathList:
           type: array
           items:
             type: integer
             format: int32
-        leadingCommentsBytes:
-          $ref: "#/components/schemas/ByteString"
         spanList:
           type: array
           items:
             type: integer
             format: int32
+        leadingComments:
+          type: string
+        trailingComments:
+          type: string
+        pathCount:
+          type: integer
+          format: int32
         spanCount:
           type: integer
           format: int32
-        trailingComments:
-          type: string
+        leadingCommentsBytes:
+          $ref: "#/components/schemas/ByteString"
         trailingCommentsBytes:
           $ref: "#/components/schemas/ByteString"
         leadingDetachedCommentsList:
@@ -2481,16 +2483,14 @@ components:
         leadingDetachedCommentsCount:
           type: integer
           format: int32
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -2498,28 +2498,28 @@ components:
     LocationOrBuilder:
       type: object
       properties:
-        leadingComments:
-          type: string
-        pathCount:
-          type: integer
-          format: int32
         pathList:
           type: array
           items:
             type: integer
             format: int32
-        leadingCommentsBytes:
-          $ref: "#/components/schemas/ByteString"
         spanList:
           type: array
           items:
             type: integer
             format: int32
+        leadingComments:
+          type: string
+        trailingComments:
+          type: string
+        pathCount:
+          type: integer
+          format: int32
         spanCount:
           type: integer
           format: int32
-        trailingComments:
-          type: string
+        leadingCommentsBytes:
+          $ref: "#/components/schemas/ByteString"
         trailingCommentsBytes:
           $ref: "#/components/schemas/ByteString"
         leadingDetachedCommentsList:
@@ -2529,18 +2529,18 @@ components:
         leadingDetachedCommentsCount:
           type: integer
           format: int32
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     Message:
@@ -2551,20 +2551,20 @@ components:
         serializedSize:
           type: integer
           format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/MessageLite"
         initialized:
           type: boolean
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        defaultInstanceForType:
+          $ref: "#/components/schemas/MessageLite"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
     MessageLite:
       type: object
       properties:
@@ -2573,18 +2573,16 @@ components:
           format: int32
         parserForType:
           $ref: "#/components/schemas/ParserMessageLite"
-        defaultInstanceForType:
-          $ref: "#/components/schemas/MessageLite"
         initialized:
           type: boolean
+        defaultInstanceForType:
+          $ref: "#/components/schemas/MessageLite"
     MessageOptions:
       type: object
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -2593,9 +2591,19 @@ components:
           $ref: "#/components/schemas/MessageOptions"
         parserForType:
           $ref: "#/components/schemas/ParserMessageOptions"
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
         mapEntry:
           type: boolean
         messageSetWireFormat:
+          type: boolean
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
           type: boolean
         uninterpretedOptionCount:
           type: integer
@@ -2605,26 +2613,18 @@ components:
         deprecatedLegacyJsonFieldConflicts:
           type: boolean
           deprecated: true
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
@@ -2636,13 +2636,19 @@ components:
     MessageOptionsOrBuilder:
       type: object
       properties:
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
-          type: boolean
+        uninterpretedOptionList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOption"
+        featuresOrBuilder:
+          $ref: "#/components/schemas/FeatureSetOrBuilder"
         mapEntry:
           type: boolean
         messageSetWireFormat:
+          type: boolean
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
           type: boolean
         uninterpretedOptionCount:
           type: integer
@@ -2652,28 +2658,22 @@ components:
         deprecatedLegacyJsonFieldConflicts:
           type: boolean
           deprecated: true
-        uninterpretedOptionList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOption"
-        featuresOrBuilder:
-          $ref: "#/components/schemas/FeatureSetOrBuilder"
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     MethodDescriptor:
@@ -2697,20 +2697,22 @@ components:
           $ref: "#/components/schemas/Descriptor"
         outputType:
           $ref: "#/components/schemas/Descriptor"
+        name:
+          type: string
         clientStreaming:
           type: boolean
         serverStreaming:
           type: boolean
-        name:
-          type: string
     MethodDescriptorProto:
       type: object
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        outputType:
-          type: string
-        inputType:
+        options:
+          $ref: "#/components/schemas/MethodOptions"
+        initialized:
+          type: boolean
+        name:
           type: string
         serializedSize:
           type: integer
@@ -2723,28 +2725,26 @@ components:
           $ref: "#/components/schemas/ParserMethodDescriptorProto"
         optionsOrBuilder:
           $ref: "#/components/schemas/MethodOptionsOrBuilder"
-        inputTypeBytes:
-          $ref: "#/components/schemas/ByteString"
         outputTypeBytes:
           $ref: "#/components/schemas/ByteString"
-        clientStreaming:
-          type: boolean
+        inputTypeBytes:
+          $ref: "#/components/schemas/ByteString"
         serverStreaming:
           type: boolean
-        options:
-          $ref: "#/components/schemas/MethodOptions"
-        initialized:
+        clientStreaming:
           type: boolean
-        name:
+        outputType:
           type: string
-        initializationErrorString:
+        inputType:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -2752,38 +2752,38 @@ components:
     MethodDescriptorProtoOrBuilder:
       type: object
       properties:
-        outputType:
-          type: string
-        inputType:
+        options:
+          $ref: "#/components/schemas/MethodOptions"
+        name:
           type: string
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         optionsOrBuilder:
           $ref: "#/components/schemas/MethodOptionsOrBuilder"
-        inputTypeBytes:
-          $ref: "#/components/schemas/ByteString"
         outputTypeBytes:
           $ref: "#/components/schemas/ByteString"
-        clientStreaming:
-          type: boolean
+        inputTypeBytes:
+          $ref: "#/components/schemas/ByteString"
         serverStreaming:
           type: boolean
-        options:
-          $ref: "#/components/schemas/MethodOptions"
-        name:
+        clientStreaming:
+          type: boolean
+        outputType:
           type: string
+        inputType:
+          type: string
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     MethodOptions:
@@ -2791,9 +2791,7 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -2802,46 +2800,18 @@ components:
           $ref: "#/components/schemas/MethodOptions"
         parserForType:
           $ref: "#/components/schemas/ParserMethodOptions"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         idempotencyLevel:
           type: string
           enum:
           - IDEMPOTENCY_UNKNOWN
           - NO_SIDE_EFFECTS
           - IDEMPOTENT
-        initialized:
-          type: boolean
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        allFieldsRaw:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
-    MethodOptionsOrBuilder:
-      type: object
-      properties:
         features:
           $ref: "#/components/schemas/FeatureSet"
         deprecated:
@@ -2849,34 +2819,64 @@ components:
         uninterpretedOptionCount:
           type: integer
           format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
+        allFieldsRaw:
+          type: object
+          additionalProperties:
+            type: object
+        memoizedSerializedSize:
+          type: integer
+          format: int32
+          writeOnly: true
+    MethodOptionsOrBuilder:
+      type: object
+      properties:
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         idempotencyLevel:
           type: string
           enum:
           - IDEMPOTENCY_UNKNOWN
           - NO_SIDE_EFFECTS
           - IDEMPOTENT
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
+          type: boolean
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     NamePart:
@@ -2884,6 +2884,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -2893,20 +2895,18 @@ components:
           $ref: "#/components/schemas/ParserNamePart"
         namePart:
           type: string
-        namePartBytes:
-          $ref: "#/components/schemas/ByteString"
         isExtension:
           type: boolean
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        namePartBytes:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -2916,22 +2916,22 @@ components:
       properties:
         namePart:
           type: string
-        namePartBytes:
-          $ref: "#/components/schemas/ByteString"
         isExtension:
           type: boolean
+        namePartBytes:
+          $ref: "#/components/schemas/ByteString"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     OneofDescriptor:
@@ -2961,6 +2961,12 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/OneofOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -2972,20 +2978,14 @@ components:
           $ref: "#/components/schemas/ParserOneofDescriptorProto"
         optionsOrBuilder:
           $ref: "#/components/schemas/OneofOptionsOrBuilder"
-        options:
-          $ref: "#/components/schemas/OneofOptions"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -2993,26 +2993,26 @@ components:
     OneofDescriptorProtoOrBuilder:
       type: object
       properties:
-        nameBytes:
-          $ref: "#/components/schemas/ByteString"
-        optionsOrBuilder:
-          $ref: "#/components/schemas/OneofOptionsOrBuilder"
         options:
           $ref: "#/components/schemas/OneofOptions"
         name:
           type: string
+        nameBytes:
+          $ref: "#/components/schemas/ByteString"
+        optionsOrBuilder:
+          $ref: "#/components/schemas/OneofOptionsOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     OneofOptions:
@@ -3020,8 +3020,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -3029,33 +3029,33 @@ components:
           $ref: "#/components/schemas/OneofOptions"
         parserForType:
           $ref: "#/components/schemas/ParserOneofOptions"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        initialized:
-          type: boolean
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
             type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3063,33 +3063,33 @@ components:
     OneofOptionsOrBuilder:
       type: object
       properties:
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     Parser:
@@ -3163,10 +3163,12 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        stagesList:
-          type: array
-          items:
-            $ref: "#/components/schemas/Stage"
+        initialized:
+          type: boolean
+        name:
+          type: string
+        id:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -3175,8 +3177,6 @@ components:
           format: int32
         defaultInstanceForType:
           $ref: "#/components/schemas/Pipeline"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         stagesOrBuilderList:
@@ -3185,20 +3185,20 @@ components:
             $ref: "#/components/schemas/StageOrBuilder"
         parserForType:
           $ref: "#/components/schemas/ParserPipeline"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        id:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        stagesList:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stage"
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3208,12 +3208,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        start:
-          type: integer
-          format: int32
-        end:
-          type: integer
-          format: int32
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -3221,16 +3217,20 @@ components:
           $ref: "#/components/schemas/ReservedRange"
         parserForType:
           $ref: "#/components/schemas/ParserReservedRange"
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        start:
+          type: integer
+          format: int32
+        end:
+          type: integer
+          format: int32
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3244,18 +3244,18 @@ components:
         end:
           type: integer
           format: int32
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     ServiceDescriptor:
@@ -3284,6 +3284,12 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        options:
+          $ref: "#/components/schemas/ServiceOptions"
+        initialized:
+          type: boolean
+        name:
+          type: string
         serializedSize:
           type: integer
           format: int32
@@ -3298,28 +3304,22 @@ components:
         methodCount:
           type: integer
           format: int32
-        methodOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/MethodDescriptorProtoOrBuilder"
         methodList:
           type: array
           items:
             $ref: "#/components/schemas/MethodDescriptorProto"
-        options:
-          $ref: "#/components/schemas/ServiceOptions"
-        initialized:
-          type: boolean
-        name:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        methodOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/MethodDescriptorProtoOrBuilder"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3327,6 +3327,10 @@ components:
     ServiceDescriptorProtoOrBuilder:
       type: object
       properties:
+        options:
+          $ref: "#/components/schemas/ServiceOptions"
+        name:
+          type: string
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         optionsOrBuilder:
@@ -3334,30 +3338,26 @@ components:
         methodCount:
           type: integer
           format: int32
-        methodOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/MethodDescriptorProtoOrBuilder"
         methodList:
           type: array
           items:
             $ref: "#/components/schemas/MethodDescriptorProto"
-        options:
-          $ref: "#/components/schemas/ServiceOptions"
-        name:
-          type: string
+        methodOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/MethodDescriptorProtoOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     ServiceOptions:
@@ -3365,9 +3365,7 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        features:
-          $ref: "#/components/schemas/FeatureSet"
-        deprecated:
+        initialized:
           type: boolean
         serializedSize:
           type: integer
@@ -3376,40 +3374,12 @@ components:
           $ref: "#/components/schemas/ServiceOptions"
         parserForType:
           $ref: "#/components/schemas/ParserServiceOptions"
-        uninterpretedOptionCount:
-          type: integer
-          format: int32
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
-        uninterpretedOptionOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
-        initialized:
-          type: boolean
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        allFieldsRaw:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
-    ServiceOptionsOrBuilder:
-      type: object
-      properties:
         features:
           $ref: "#/components/schemas/FeatureSet"
         deprecated:
@@ -3417,28 +3387,58 @@ components:
         uninterpretedOptionCount:
           type: integer
           format: int32
+        uninterpretedOptionOrBuilderList:
+          type: array
+          items:
+            $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
+        allFieldsRaw:
+          type: object
+          additionalProperties:
+            type: object
+        memoizedSerializedSize:
+          type: integer
+          format: int32
+          writeOnly: true
+    ServiceOptionsOrBuilder:
+      type: object
+      properties:
         uninterpretedOptionList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOption"
         featuresOrBuilder:
           $ref: "#/components/schemas/FeatureSetOrBuilder"
+        features:
+          $ref: "#/components/schemas/FeatureSet"
+        deprecated:
+          type: boolean
+        uninterpretedOptionCount:
+          type: integer
+          format: int32
         uninterpretedOptionOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/UninterpretedOptionOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     SourceCodeInfo:
@@ -3446,6 +3446,8 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -3453,27 +3455,25 @@ components:
           $ref: "#/components/schemas/SourceCodeInfo"
         parserForType:
           $ref: "#/components/schemas/ParserSourceCodeInfo"
-        locationCount:
-          type: integer
-          format: int32
         locationList:
           type: array
           items:
             $ref: "#/components/schemas/Location"
+        locationCount:
+          type: integer
+          format: int32
         locationOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/LocationOrBuilder"
-        initialized:
-          type: boolean
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         allFieldsRaw:
           type: object
           additionalProperties:
@@ -3485,29 +3485,29 @@ components:
     SourceCodeInfoOrBuilder:
       type: object
       properties:
-        locationCount:
-          type: integer
-          format: int32
         locationList:
           type: array
           items:
             $ref: "#/components/schemas/Location"
+        locationCount:
+          type: integer
+          format: int32
         locationOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/LocationOrBuilder"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        unknownFields:
+          $ref: "#/components/schemas/UnknownFieldSet"
+        initializationErrorString:
+          type: string
         initialized:
           type: boolean
     Stage:
@@ -3515,20 +3515,17 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        scriptType:
+        initialized:
+          type: boolean
+        name:
           type: string
-        stageOrder:
-          type: integer
-          format: int32
-        command:
+        id:
           type: string
         serializedSize:
           type: integer
           format: int32
         defaultInstanceForType:
           $ref: "#/components/schemas/Stage"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         parserForType:
@@ -3537,20 +3534,23 @@ components:
           $ref: "#/components/schemas/ByteString"
         commandBytes:
           $ref: "#/components/schemas/ByteString"
-        initialized:
-          type: boolean
-        name:
+        command:
           type: string
-        id:
+        scriptType:
           type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        stageOrder:
+          type: integer
+          format: int32
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3558,37 +3558,37 @@ components:
     StageOrBuilder:
       type: object
       properties:
-        scriptType:
+        name:
           type: string
-        stageOrder:
-          type: integer
-          format: int32
-        command:
+        id:
           type: string
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
         nameBytes:
           $ref: "#/components/schemas/ByteString"
         scriptTypeBytes:
           $ref: "#/components/schemas/ByteString"
         commandBytes:
           $ref: "#/components/schemas/ByteString"
-        name:
+        command:
           type: string
-        id:
+        scriptType:
           type: string
+        stageOrder:
+          type: integer
+          format: int32
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     UninterpretedOption:
@@ -3596,11 +3596,11 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        doubleValue:
-          type: number
-          format: double
-        stringValue:
-          $ref: "#/components/schemas/ByteString"
+        initialized:
+          type: boolean
+        nameCount:
+          type: integer
+          format: int32
         serializedSize:
           type: integer
           format: int32
@@ -3630,19 +3630,19 @@ components:
           $ref: "#/components/schemas/ByteString"
         aggregateValueBytes:
           $ref: "#/components/schemas/ByteString"
-        initialized:
-          type: boolean
-        nameCount:
-          type: integer
-          format: int32
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        doubleValue:
+          type: number
+          format: double
+        stringValue:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3650,11 +3650,9 @@ components:
     UninterpretedOptionOrBuilder:
       type: object
       properties:
-        doubleValue:
-          type: number
-          format: double
-        stringValue:
-          $ref: "#/components/schemas/ByteString"
+        nameCount:
+          type: integer
+          format: int32
         nameList:
           type: array
           items:
@@ -3677,26 +3675,32 @@ components:
           $ref: "#/components/schemas/ByteString"
         aggregateValueBytes:
           $ref: "#/components/schemas/ByteString"
-        nameCount:
-          type: integer
-          format: int32
+        doubleValue:
+          type: number
+          format: double
+        stringValue:
+          $ref: "#/components/schemas/ByteString"
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
     UnknownFieldSet:
       type: object
       properties:
+        initialized:
+          type: boolean
+        empty:
+          type: boolean
         serializedSize:
           type: integer
           format: int32
@@ -3707,10 +3711,6 @@ components:
         serializedSizeAsMessageSet:
           type: integer
           format: int32
-        initialized:
-          type: boolean
-        empty:
-          type: boolean
     PipelineExecuteRequest:
       type: object
       properties:
@@ -3728,23 +3728,15 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
-        currentState:
-          type: string
-          enum:
-          - PIPELINE_WAITING
-          - PIPELINE_RUNNING
-          - PIPELINE_SUCCESS
-          - PIPELINE_FAILED
-          - UNRECOGNIZED
-        pipelineId:
+        initialized:
+          type: boolean
+        id:
           type: string
         serializedSize:
           type: integer
           format: int32
         defaultInstanceForType:
           $ref: "#/components/schemas/PipelineBuild"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
         parserForType:
           $ref: "#/components/schemas/ParserPipelineBuild"
         pipelineName:
@@ -3763,22 +3755,30 @@ components:
         currentStateValue:
           type: integer
           format: int32
+        currentState:
+          type: string
+          enum:
+          - PIPELINE_WAITING
+          - PIPELINE_RUNNING
+          - PIPELINE_SUCCESS
+          - PIPELINE_FAILED
+          - UNRECOGNIZED
+        pipelineId:
+          type: string
         stageBuildsOrBuilderList:
           type: array
           items:
             $ref: "#/components/schemas/StageBuildOrBuilder"
-        initialized:
-          type: boolean
-        id:
-          type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3788,6 +3788,22 @@ components:
       properties:
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
+        initialized:
+          type: boolean
+        id:
+          type: string
+        serializedSize:
+          type: integer
+          format: int32
+        defaultInstanceForType:
+          $ref: "#/components/schemas/StageBuild"
+        parserForType:
+          $ref: "#/components/schemas/ParserStageBuild"
+        currentStateValue:
+          type: integer
+          format: int32
+        stageName:
+          type: string
         stageOrder:
           type: integer
           format: int32
@@ -3800,38 +3816,22 @@ components:
           - STAGE_FAILED
           - STAGE_STOPPED
           - UNRECOGNIZED
-        serializedSize:
-          type: integer
-          format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/StageBuild"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
-        parserForType:
-          $ref: "#/components/schemas/ParserStageBuild"
-        currentStateValue:
-          type: integer
-          format: int32
-        stageId:
-          type: string
-        stageName:
-          type: string
-        stageIdBytes:
-          $ref: "#/components/schemas/ByteString"
         stageNameBytes:
           $ref: "#/components/schemas/ByteString"
-        initialized:
-          type: boolean
-        id:
+        stageIdBytes:
+          $ref: "#/components/schemas/ByteString"
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
+        stageId:
           type: string
-        initializationErrorString:
-          type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
         allFields:
           type: object
           additionalProperties:
             type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
+        initializationErrorString:
+          type: string
         memoizedSerializedSize:
           type: integer
           format: int32
@@ -3839,6 +3839,13 @@ components:
     StageBuildOrBuilder:
       type: object
       properties:
+        id:
+          type: string
+        currentStateValue:
+          type: integer
+          format: int32
+        stageName:
+          type: string
         stageOrder:
           type: integer
           format: int32
@@ -3851,33 +3858,26 @@ components:
           - STAGE_FAILED
           - STAGE_STOPPED
           - UNRECOGNIZED
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
-        currentStateValue:
-          type: integer
-          format: int32
-        stageId:
-          type: string
-        stageName:
-          type: string
-        stageIdBytes:
-          $ref: "#/components/schemas/ByteString"
         stageNameBytes:
           $ref: "#/components/schemas/ByteString"
-        id:
+        stageIdBytes:
+          $ref: "#/components/schemas/ByteString"
+        idBytes:
+          $ref: "#/components/schemas/ByteString"
+        stageId:
           type: string
+        allFields:
+          type: object
+          additionalProperties:
+            type: object
+        descriptorForType:
+          $ref: "#/components/schemas/Descriptor"
         unknownFields:
           $ref: "#/components/schemas/UnknownFieldSet"
         defaultInstanceForType:
           $ref: "#/components/schemas/Message"
         initializationErrorString:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
         initialized:
           type: boolean
   securitySchemes:
