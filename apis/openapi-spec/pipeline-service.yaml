@@ -247,108 +247,34 @@ components:
     Pipeline:
       type: object
       properties:
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initialized:
-          type: boolean
         name:
           type: string
         id:
           type: string
-        serializedSize:
-          type: integer
-          format: int32
-        stagesCount:
-          type: integer
-          format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/Pipeline"
-        nameBytes:
-          $ref: "#/components/schemas/ByteString"
-        stagesOrBuilderList:
-          type: array
-          items:
-            $ref: "#/components/schemas/StageOrBuilder"
-        parserForType:
-          $ref: "#/components/schemas/ParserPipeline"
-        stagesList:
+        stages:
           type: array
           items:
             $ref: "#/components/schemas/Stage"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
     PipelineBuild:
       type: object
       properties:
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initialized:
-          type: boolean
         id:
           type: string
-        serializedSize:
-          type: integer
-          format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/PipelineBuild"
-        parserForType:
-          $ref: "#/components/schemas/ParserPipelineBuild"
-        pipelineName:
-          type: string
-        stageBuildsList:
-          type: array
-          items:
-            $ref: "#/components/schemas/StageBuild"
-        stageBuildsCount:
-          type: integer
-          format: int32
-        pipelineIdBytes:
-          $ref: "#/components/schemas/ByteString"
-        pipelineNameBytes:
-          $ref: "#/components/schemas/ByteString"
-        currentStateValue:
-          type: integer
-          format: int32
         currentState:
           type: string
           enum:
-          - PIPELINE_WAITING
-          - PIPELINE_RUNNING
-          - PIPELINE_SUCCESS
-          - PIPELINE_FAILED
-          - UNRECOGNIZED
+          - WAITING
+          - RUNNING
+          - SUCCESS
+          - FAILED
         pipelineId:
           type: string
-        stageBuildsOrBuilderList:
+        pipelineName:
+          type: string
+        stageBuilds:
           type: array
           items:
-            $ref: "#/components/schemas/StageBuildOrBuilder"
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
+            $ref: "#/components/schemas/StageBuild"
     PipelineExecuteRequest:
       type: object
       properties:
@@ -360,101 +286,35 @@ components:
     Stage:
       type: object
       properties:
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initialized:
-          type: boolean
         name:
           type: string
         id:
           type: string
-        serializedSize:
-          type: integer
-          format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/Stage"
-        nameBytes:
-          $ref: "#/components/schemas/ByteString"
-        parserForType:
-          $ref: "#/components/schemas/ParserStage"
-        scriptTypeBytes:
-          $ref: "#/components/schemas/ByteString"
-        commandBytes:
-          $ref: "#/components/schemas/ByteString"
         scriptType:
           type: string
         stageOrder:
           type: integer
           format: int32
-        command:
-          type: string
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
     StageBuild:
       type: object
       properties:
-        unknownFields:
-          $ref: "#/components/schemas/UnknownFieldSet"
-        initialized:
-          type: boolean
         id:
           type: string
-        serializedSize:
-          type: integer
-          format: int32
-        defaultInstanceForType:
-          $ref: "#/components/schemas/StageBuild"
-        parserForType:
-          $ref: "#/components/schemas/ParserStageBuild"
-        currentStateValue:
-          type: integer
-          format: int32
-        stageIdBytes:
-          $ref: "#/components/schemas/ByteString"
-        stageNameBytes:
-          $ref: "#/components/schemas/ByteString"
         stageOrder:
           type: integer
           format: int32
         currentState:
           type: string
           enum:
-          - STAGE_WAITING
-          - STAGE_RUNNING
-          - STAGE_SUCCESS
-          - STAGE_FAILED
-          - STAGE_STOPPED
-          - UNRECOGNIZED
+          - WAITING
+          - RUNNING
+          - SUCCESS
+          - FAILED
+          - STOPPED
         stageName:
           type: string
-        idBytes:
-          $ref: "#/components/schemas/ByteString"
         stageId:
           type: string
-        descriptorForType:
-          $ref: "#/components/schemas/Descriptor"
-        allFields:
-          type: object
-          additionalProperties:
-            type: object
-        initializationErrorString:
-          type: string
-        memoizedSerializedSize:
-          type: integer
-          format: int32
-          writeOnly: true
   securitySchemes:
     bearerAuth:
       type: http
