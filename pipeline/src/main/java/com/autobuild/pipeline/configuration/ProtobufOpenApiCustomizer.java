@@ -108,9 +108,12 @@ public class ProtobufOpenApiCustomizer implements OpenApiCustomizer {
             }
         });
 
-        // Step 5: sort schemas alphabetically for deterministic output across JVM runs
-        Map<String, Schema> sorted = new TreeMap<>(schemas);
-        schemas.clear();
-        schemas.putAll(sorted);
+        // Step 5: sort schemas alphabetically and sort properties within each schema
+        schemas.forEach((name, schema) -> {
+            if (schema.getProperties() != null) {
+                schema.setProperties(new TreeMap<>(schema.getProperties()));
+            }
+        });
+        openApi.getComponents().setSchemas(new TreeMap<>(schemas));
     }
 }

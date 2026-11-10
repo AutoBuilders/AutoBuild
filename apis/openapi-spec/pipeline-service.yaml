@@ -247,9 +247,9 @@ components:
     Pipeline:
       type: object
       properties:
-        name:
-          type: string
         id:
+          type: string
+        name:
           type: string
         stages:
           type: array
@@ -258,10 +258,6 @@ components:
     PipelineBuild:
       type: object
       properties:
-        id:
-          type: string
-        pipelineName:
-          type: string
         currentState:
           type: string
           enum:
@@ -269,7 +265,11 @@ components:
           - RUNNING
           - SUCCESS
           - FAILED
+        id:
+          type: string
         pipelineId:
+          type: string
+        pipelineName:
           type: string
         stageBuilds:
           type: array
@@ -286,9 +286,9 @@ components:
     Stage:
       type: object
       properties:
-        name:
-          type: string
         id:
+          type: string
+        name:
           type: string
         scriptType:
           type: string
@@ -298,13 +298,6 @@ components:
     StageBuild:
       type: object
       properties:
-        id:
-          type: string
-        stageName:
-          type: string
-        stageOrder:
-          type: integer
-          format: int32
         currentState:
           type: string
           enum:
@@ -313,8 +306,15 @@ components:
           - SUCCESS
           - FAILED
           - STOPPED
+        id:
+          type: string
         stageId:
           type: string
+        stageName:
+          type: string
+        stageOrder:
+          type: integer
+          format: int32
   securitySchemes:
     bearerAuth:
       type: http
