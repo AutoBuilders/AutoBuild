@@ -44,9 +44,19 @@ public class StageBuildEntity {
     @Column(name = "stage_build_current_state", nullable = false)
     private StageEntityExecutionState currentState;
 
+    @Column(name = "stage_order", nullable = false)
+    private int stageOrder;
 
     @Column(name = "log_path", nullable = false)
     private String logPath;
+
+    public StageBuildEntity(UUID id, StageEntity stage, StageEntityExecutionState currentState, String logPath) {
+        this.id = id;
+        this.stage = stage;
+        this.currentState = currentState;
+        this.stageOrder = stage.getStageOrder();
+        this.logPath = logPath;
+    }
 
     public StageBuildEntity(StageEntity stage) {
         this.stage = stage;

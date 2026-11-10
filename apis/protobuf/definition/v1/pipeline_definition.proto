@@ -13,6 +13,7 @@ message Stage {
   string name = 2;
   string script_type = 3;
   string command = 4;
+  int32 stage_order = 5;
 }
 
 message Pipeline {

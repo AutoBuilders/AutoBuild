@@ -48,4 +48,15 @@ public class StageEntity {
     @NotEmpty
     @Column(name = "path", nullable = false)
     private String path;
+
+    @Column(name = "stage_order", nullable = false)
+    private int stageOrder;
+
+    public StageEntity(UUID id, String name, String scriptType, String path) {
+        this.id = id;
+        this.name = name;
+        this.scriptType = scriptType;
+        this.path = path;
+        this.stageOrder = 0;
+    }
 }

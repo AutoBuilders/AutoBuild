@@ -1,6 +1,7 @@
 package com.autobuild.pipeline.definiton.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +94,7 @@ public class PipelineService {
             validateScriptType(stage.getScriptType());
         }
 
+        validateStageOrders(pipelineDto.getStagesList());
 
         Pipeline pipelineWithIds = pipelineDto.toBuilder()
                 .setId(UUID.randomUUID().toString())
@@ -206,6 +208,37 @@ public class PipelineService {
                 updateStage(pipeline, req);
             }
         }
+
+        reorderStages(pipeline, stageRequests);
+    }
+
+    private void reorderStages(PipelineEntity pipeline, List<Stage> stageRequests) {
+        List<StageEntity> current = pipeline.getStages();
+
+        List<UUID> requestedIds = stageRequests.stream()
+                .filter(req -> !req.getId().isBlank() && !isDeleteOperation(req))
+                .map(req -> UUID.fromString(req.getId()))
+                .toList();
+
+        List<StageEntity> reordered = new ArrayList<>();
+        for (UUID id : requestedIds) {
+            current.stream()
+                    .filter(s -> s.getId().equals(id))
+                    .findFirst()
+                    .ifPresent(reordered::add);
+        }
+        for (StageEntity s : current) {
+            if (!reordered.contains(s)) {
+                reordered.add(s);
+            }
+        }
+
+        for (int i = 0; i < reordered.size(); i++) {
+            reordered.get(i).setStageOrder(i);
+        }
+
+        current.clear();
+        current.addAll(reordered);
     }
 
     private boolean isCreateOperation(Stage req) {
@@ -224,6 +257,7 @@ public class PipelineService {
         validateScriptType(req.getScriptType());
         Stage reqWithId = req.toBuilder()
                 .setId(UUID.randomUUID().toString())
+                .setStageOrder(pipeline.getStages().size())
                 .build();
         StageEntity entity = stageMapper.dtoToEntity(reqWithId);
         String path = fileService.createStageScriptFile(pipeline, reqWithId);
@@ -270,6 +304,21 @@ public class PipelineService {
 
             if (!ids.add(UUID.fromString(req.getId()))) {
                 throw new DuplicateEntryException("Duplicate stage ID in request: " + req.getId());
+            }
+        }
+    }
+
+    private void validateStageOrders(List<Stage> stages)
+            throws DuplicateEntryException, InvalidIdException {
+        Set<Integer> seen = new HashSet<>();
+        for (Stage stage : stages) {
+            if (stage.getStageOrder() < 0) {
+                throw new InvalidIdException(
+                        "stageOrder must be a non-negative integer: " + stage.getStageOrder());
+            }
+            if (!seen.add(stage.getStageOrder())) {
+                throw new DuplicateEntryException(
+                        "Duplicate stageOrder value: " + stage.getStageOrder());
             }
         }
     }

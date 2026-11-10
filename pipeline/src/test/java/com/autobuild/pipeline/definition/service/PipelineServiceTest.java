@@ -185,8 +185,8 @@ public class PipelineServiceTest {
         Pipeline dto = Pipeline.newBuilder()
             .setName("pipe-two")
             .addAllStages(List.of(
-                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
-                Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo build2").build()))
+                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").setStageOrder(0).build(),
+                Stage.newBuilder().setName("Build").setScriptType("bash").setCommand("echo build2").setStageOrder(1).build()))
             .build();
         doReturn(false).when(repository).existsByName("pipe-two");
         doAnswer(inv -> {
@@ -328,8 +328,8 @@ public class PipelineServiceTest {
         Pipeline dto = Pipeline.newBuilder()
             .setName("pipe-one")
             .addAllStages(List.of(
-                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").build(),
-                Stage.newBuilder().setName("test").setScriptType("bash").setCommand("echo test").build()))
+                Stage.newBuilder().setName("build").setScriptType("bash").setCommand("echo build").setStageOrder(0).build(),
+                Stage.newBuilder().setName("test").setScriptType("bash").setCommand("echo test").setStageOrder(1).build()))
             .build();
         doReturn(false).when(repository).existsByName("pipe-one");
         doAnswer(inv -> {
@@ -514,5 +514,29 @@ public class PipelineServiceTest {
         stage.setName(name);
         stage.setScriptType(scriptType);
         return stage;
+    }
+
+    @Test
+    public void testCreatePipelineRejectsNegativeStageOrder() {
+        Pipeline dto = Pipeline.newBuilder()
+            .setName("bad-pipe")
+            .addAllStages(List.of(
+                Stage.newBuilder().setName("first").setScriptType("bash").setCommand("echo 1").setStageOrder(0).build(),
+                Stage.newBuilder().setName("second").setScriptType("bash").setCommand("echo 2").setStageOrder(-1).build()))
+            .build();
+        doReturn(false).when(repository).existsByName("bad-pipe");
+        assertThrows(InvalidIdException.class, () -> service.createPipeline(dto));
+    }
+
+    @Test
+    public void testCreatePipelineRejectsDuplicateStageOrder() {
+        Pipeline dto = Pipeline.newBuilder()
+            .setName("dup-pipe")
+            .addAllStages(List.of(
+                Stage.newBuilder().setName("first").setScriptType("bash").setCommand("echo 1").setStageOrder(0).build(),
+                Stage.newBuilder().setName("second").setScriptType("bash").setCommand("echo 2").setStageOrder(0).build()))
+            .build();
+        doReturn(false).when(repository).existsByName("dup-pipe");
+        assertThrows(DuplicateEntryException.class, () -> service.createPipeline(dto));
     }
 }

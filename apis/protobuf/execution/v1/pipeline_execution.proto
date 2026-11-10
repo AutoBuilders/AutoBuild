@@ -28,6 +28,7 @@ message StageBuild {
   string stage_id = 2;
   string stage_name = 3;
   StageExecutionState current_state = 4;
+  int32 stage_order = 5;
 }
 
 message PipelineBuild {

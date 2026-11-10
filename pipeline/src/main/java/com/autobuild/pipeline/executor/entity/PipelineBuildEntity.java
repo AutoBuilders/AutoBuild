@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,7 @@ public class PipelineBuildEntity {
             joinColumns = @JoinColumn(name = "pipeline_build_id"),
             inverseJoinColumns = @JoinColumn(name = "stage_build_id")
     )
+    @OrderBy("stageOrder ASC")
     private List<StageBuildEntity> stageBuilds;
 
     @Enumerated(EnumType.STRING)
