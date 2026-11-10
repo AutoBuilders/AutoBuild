@@ -51,3 +51,7 @@ docker compose -p autobuild down
 docker compose down -v
 ```
 > Note: this will delete all persisted volumes including database data, Grafana dashboards, Loki logs, and Prometheus metrics.
+
+## Protobuf
+
+Proto classes are auto-generated during `docker build` — Maven runs the protobuf compiler as part of the build, so no separate step is needed.
