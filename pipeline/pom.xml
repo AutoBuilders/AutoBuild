@@ -209,6 +209,7 @@
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -231,6 +232,9 @@
                 <version>0.8.15</version>
 
                 <configuration>
+                    <excludes>
+                        <exclude>com/autobuild/pipeline/**/gen/**</exclude>
+                    </excludes>
                     <rules>
                         <rule>
                             <element>BUNDLE</element>
