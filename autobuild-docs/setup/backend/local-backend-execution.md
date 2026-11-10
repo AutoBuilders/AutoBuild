@@ -6,8 +6,8 @@
 ![VS Code Execution](./images/vs-code-execution.png)
     Ensure the application is running fine by hitting the endpoints through bruno.
 
-Optional:
-3. To generate Protobuf classes locally (without Docker):
+
+3. [Optional] To generate Protobuf classes locally:
   From the `pipeline/` directory, run: `mvn compile -s maven-settings.xml`
   Without `-s maven-settings.xml`, Maven falls back to repository mentioned at `~/.m2/repository/settings.xml` and might fail if it does not have the necessary dependencies. Mentioning it like that ensures the dependencies are pulled from open maven repository.
   (The files are generated at the `generate-sources` and writes the Java files into target/generated-sources/. Then compile picks them up alongside your hand-written code and compiles everything together.)
