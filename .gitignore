@@ -4,3 +4,6 @@ pipeline_build_logs/*
 
 # Bazel symlinks — point into the local cache, machine-specific
 /bazel-*
+
+# Protobuf generated files
+**/definiton/gen/
