@@ -60,6 +60,7 @@ public class StageBuildEntity {
 
     public StageBuildEntity(StageEntity stage) {
         this.stage = stage;
+        this.stageOrder = stage.getStageOrder();
     }
 
 

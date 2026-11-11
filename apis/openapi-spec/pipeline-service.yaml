@@ -286,6 +286,8 @@ components:
     Stage:
       type: object
       properties:
+        command:
+          type: string
         id:
           type: string
         name:
