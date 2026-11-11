@@ -36,7 +36,7 @@ public class ProtobufOpenApiCustomizer implements OpenApiCustomizer {
     // Only the business fields from the .proto definitions (proto snake_case → Java camelCase).
     private static final Map<String, Set<String>> SCHEMA_ALLOWED_PROPERTIES = Map.of(
             "Pipeline",      Set.of("id", "name", "stagesList"),
-            "Stage",         Set.of("id", "name", "scriptType", "stageOrder"),
+            "Stage",         Set.of("id", "name", "scriptType", "stageOrder", "command"),
             "PipelineBuild", Set.of("id", "pipelineId", "pipelineName", "currentState", "stageBuildsList"),
             "StageBuild",    Set.of("id", "stageId", "stageName", "stageOrder", "currentState")
     );
