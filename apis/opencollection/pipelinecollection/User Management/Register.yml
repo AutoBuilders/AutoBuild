@@ -1,0 +1,17 @@
+info:
+  name: Register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{host}}/{{prefix}}/user/auth/register"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "username": "sam",
+        "email": "sam@gmail.com",
+        "password": "123456"
+      }

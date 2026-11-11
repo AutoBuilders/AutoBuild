@@ -1,0 +1,22 @@
+info:
+  name: put update pipeline
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{host}}/{{prefix}}/pipeline/07fd56b8-117c-435e-8ada-266e64fbc812"
+  auth: inherit
+  body:
+    type: json
+    data: |-
+      {
+        "name": "production_pipeline",
+        "stages": [
+          {
+            "name": "deploy-prod",
+            "scriptType": "bash",
+            "command": "print('Deploying to production')"
+          }
+        ]
+      }

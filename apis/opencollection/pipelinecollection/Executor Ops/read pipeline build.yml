@@ -1,0 +1,8 @@
+info:
+  name: read pipeline build
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{host}}/{{prefix}}/pipeline/build/3d0f3200-54ec-4969-826f-44f902e24727"

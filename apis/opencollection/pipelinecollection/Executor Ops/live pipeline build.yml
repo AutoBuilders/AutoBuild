@@ -1,0 +1,8 @@
+info:
+  name: live pipeline build
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{host}}/{{prefix}}/pipeline/build/sse/subscribe/aafed532-a6a2-4efc-8b18-143e58bb19b8"

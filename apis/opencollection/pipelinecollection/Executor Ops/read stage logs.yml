@@ -1,0 +1,8 @@
+info:
+  name: read stage logs
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{host}}/{{prefix}}/stage/build/logs/2396bf17-c536-4162-8f3c-cd2a4368410d"

@@ -1,0 +1,14 @@
+info:
+  name: update pipeline
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{host}}/{{prefix}}/pipeline/07fd56b8-117c-435e-8ada-266e64fbc812"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "my pipeline1"
+      }
