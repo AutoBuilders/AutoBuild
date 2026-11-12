@@ -1,6 +1,26 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
+  "extends": ["config:recommended"],
+  "schedule": ["on the first day of the month"],
+  "includePaths": ["pipeline/**", "pipeline-ui/**", ".github/**"],
+  "packageRules": [
+    {
+      "description": "Group all pipeline-ui (npm) dependency updates into a single PR",
+      "matchManagers": ["npm"],
+      "groupName": "pipeline-ui dependencies",
+      "groupSlug": "pipeline-ui"
+    },
+    {
+      "description": "Group all pipeline (Maven) dependency updates into a single PR",
+      "matchManagers": ["maven"],
+      "groupName": "pipeline dependencies",
+      "groupSlug": "pipeline"
+    },
+    {
+      "description": "Group GitHub Actions updates into a single PR",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions"
+    }
   ]
 }
