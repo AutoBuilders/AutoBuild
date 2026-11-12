@@ -14,6 +14,13 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 
+/**
+ * Configures protobuf serialization and deserialization for Spring MVC.
+ *
+ * {@link org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter}
+ * is registered read-only so Jackson handles all serialization. The Jackson customizer
+ * strips proto enum prefixes (PIPELINE_RUNNING → RUNNING) to match the OpenAPI spec.
+ */
 @Configuration
 public class ProtobufConfig {
 
