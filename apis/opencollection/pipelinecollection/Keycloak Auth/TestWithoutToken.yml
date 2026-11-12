@@ -6,3 +6,4 @@ info:
 http:
   method: GET
   url: "{{host}}/{{prefix}}/pipeline"
+  auth: none

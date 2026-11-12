@@ -1,3 +1,7 @@
 opencollection: "1.0.0"
 info:
   name: PipelineCollection
+request:
+  auth:
+    type: bearer
+    token: "{{access_token}}"

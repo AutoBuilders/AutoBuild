@@ -6,6 +6,7 @@ info:
 http:
   method: POST
   url: "{{keycloak_url}}/realms/{{keycloak_realm}}/protocol/openid-connect/token"
+  auth: none
   body:
     type: form-urlencoded
     data:

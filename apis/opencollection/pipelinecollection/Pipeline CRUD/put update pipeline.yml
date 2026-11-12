@@ -6,7 +6,6 @@ info:
 http:
   method: PUT
   url: "{{host}}/{{prefix}}/pipeline/07fd56b8-117c-435e-8ada-266e64fbc812"
-  auth: inherit
   body:
     type: json
     data: |-
