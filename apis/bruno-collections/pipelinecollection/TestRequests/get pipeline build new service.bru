@@ -1,0 +1,16 @@
+meta {
+  name: get pipeline build new service
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8081/api/v1/pipeline/build/01a1c691-2578-7dfe-913c-6063c1c70c30
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

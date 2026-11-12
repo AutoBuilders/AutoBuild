@@ -1,5 +1,6 @@
 package com.autobuild.pipeline.testutility;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,11 +49,11 @@ public class DummyData {
     }
 
     public static PipelineBuild getPipelineBuild() {
-        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING);
+        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING, null);
     }
 
     public static PipelineBuild getPipelineBuild(UUID pipelineUuid) {
-        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING);
+        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING, null);
     }
 
     public static StageBuildDTO getStageBuildDTO() {

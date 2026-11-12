@@ -1,5 +1,6 @@
 package com.autobuild.pipeline.executor.dto;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,8 @@ public class PipelineBuildDTO {
     private String pipelineName;
 
     private PipelineExecutionState currentState;
+
+	private Instant startedAt;
     
     private List<StageBuildDTO> stageBuilds;
 }
