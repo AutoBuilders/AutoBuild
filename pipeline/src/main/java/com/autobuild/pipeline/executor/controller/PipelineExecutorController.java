@@ -1,16 +1,16 @@
 package com.autobuild.pipeline.executor.controller;
 
-import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
-import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.service.PipelineExecutorService;
 
@@ -24,8 +24,6 @@ import jakarta.validation.Valid;
 
 /**
  * Controller for executing a pipeline.
- * 
- * @author Suvabrata Chowdhury
  */
 @Tag(name = "Pipeline")
 @SecurityScheme(
@@ -43,12 +41,10 @@ public class PipelineExecutorController {
     @Autowired
     private PipelineExecutorService service;
 
-    @Operation(summary = "Execute a pipeline", responses = @ApiResponse(responseCode = "203"))
+    @Operation(summary = "Execute a pipeline", responses = @ApiResponse(responseCode = "202"))
     @PostMapping(value = "/pipeline", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineBuildDTO> executePipeline(@RequestBody @Valid PipelineExecuteRequest request)
-            throws IOException {
-        PipelineBuildDTO build = service.executePipeline(request);
-
-        return ResponseEntity.accepted().body(build);
+    public ResponseEntity<Map<String, UUID>> executePipeline(@RequestBody @Valid PipelineExecuteRequest request) {
+        UUID buildId = service.executePipeline(request);
+        return ResponseEntity.accepted().body(Map.of("buildId", buildId));
     }
 }

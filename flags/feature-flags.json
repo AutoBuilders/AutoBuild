@@ -8,6 +8,14 @@
         "off": false
       },
       "defaultVariant": "off"
+    },
+    "ENABLE_NEW_ARCHITECTURE": {
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
     }
   }
 }

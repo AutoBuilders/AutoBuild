@@ -10,6 +10,8 @@ import com.autobuild.pipeline.definiton.entity.Stage;
 import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.dto.StageBuildDTO;
+import com.autobuild.pipeline.executor.dto.messaging.PipelineBuildRequestMessage;
+import com.autobuild.pipeline.executor.dto.messaging.StageDefinition;
 import com.autobuild.pipeline.executor.entity.PipelineBuild;
 import com.autobuild.pipeline.executor.entity.StageBuild;
 import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
@@ -65,5 +67,10 @@ public class DummyData {
 
     public static PipelineBuildDTO getPipelineBuildDTO(UUID pipelineId) {
         return new PipelineBuildDTO(UUID.randomUUID(), pipelineId, "Dummy Pipeline", PipelineExecutionState.WAITING, List.of(DummyData.getStageBuildDTO()));
+    }
+
+    public static PipelineBuildRequestMessage getPipelineBuildRequestMessage(UUID pipelineId) {
+        StageDefinition stage = new StageDefinition("dummyStage1", "bash", "./dummyFolder/", 0);
+        return new PipelineBuildRequestMessage(UUID.randomUUID(), pipelineId, "my pipeline", List.of(stage));
     }
 }

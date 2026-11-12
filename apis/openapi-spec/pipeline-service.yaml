@@ -156,12 +156,15 @@ paths:
               $ref: "#/components/schemas/PipelineExecuteRequest"
         required: true
       responses:
-        "203":
-          description: Non-Authoritative Information
+        "202":
+          description: Accepted
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PipelineBuild"
+                type: object
+                additionalProperties:
+                  type: string
+                  format: uuid
       security:
       - bearerAuth: []
   /api/v1/stage/build/logs/{stageBuildId}:

@@ -9,8 +9,6 @@ import com.autobuild.pipeline.executor.entity.PipelineBuild;
 
 /**
  * Repository layer for PipelineBuild.
- * 
- * @author Suvabrata Chowdhury
  */
 
 @Repository
