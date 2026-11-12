@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import com.autobuild.pipeline.definiton.entity.Pipeline;
 import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
 
