@@ -9,7 +9,7 @@
       },
       "defaultVariant": "off"
     },
-    "ENABLE_MESSAGE_QUEUE": {
+    "ENABLE_NEW_ARCHITECTURE": {
       "state": "ENABLED",
       "variants": {
         "on": true,

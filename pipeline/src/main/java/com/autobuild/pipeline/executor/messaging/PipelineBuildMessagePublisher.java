@@ -1,34 +1,16 @@
 package com.autobuild.pipeline.executor.messaging;
 
-import java.util.UUID;
-
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.autobuild.pipeline.configuration.MessagingConfig;
-
-import lombok.extern.slf4j.Slf4j;
+import com.autobuild.pipeline.executor.dto.messaging.PipelineBuildRequestMessage;
 
 /**
- * Publishes pipeline build IDs to the message queue for async execution.
- *
- * @author Suvabrata Chowdhury
+ * Contract for publishing pipeline build request messages to a message queue.
  */
-@Slf4j
-@Service
-public class PipelineBuildMessagePublisher {
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+public interface PipelineBuildMessagePublisher {
 
     /**
-     * Sends a pipeline build ID to the queue.
+     * Publishes a pipeline build request message.
      *
-     * @param buildId the ID of the saved {@code PipelineBuild} to execute
+     * @param message the build request containing the pipeline definition and generated build ID
      */
-    public void publish(UUID buildId) {
-        rabbitTemplate.convertAndSend(MessagingConfig.PIPELINE_BUILD_QUEUE, buildId.toString());
-        log.info("Published build {} to queue '{}'", buildId, MessagingConfig.PIPELINE_BUILD_QUEUE);
-    }
+    void publish(PipelineBuildRequestMessage message);
 }
