@@ -8,6 +8,14 @@
         "off": false
       },
       "defaultVariant": "off"
+    },
+    "ENABLE_MESSAGE_QUEUE": {
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
     }
   }
 }

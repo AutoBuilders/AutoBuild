@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.autobuild.pipeline.configuration.FeatureFlag;
+import com.autobuild.pipeline.configuration.FeatureFlagService;
 import com.autobuild.pipeline.definiton.entity.Pipeline;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
 import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
@@ -20,6 +22,7 @@ import com.autobuild.pipeline.executor.entity.PipelineBuild;
 import com.autobuild.pipeline.executor.entity.StageBuild;
 import com.autobuild.pipeline.executor.job.PipelineExecutor;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
+import com.autobuild.pipeline.executor.messaging.PipelineBuildMessagePublisher;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -52,6 +55,12 @@ public class PipelineExecutorService {
     @Autowired
     private PipelineFileService pipelineFileService;
 
+    @Autowired
+    private FeatureFlagService featureFlagService;
+
+    @Autowired
+    private PipelineBuildMessagePublisher messagePublisher;
+
     @Transactional
     public PipelineBuildDTO executePipeline(PipelineExecuteRequest pipelineRequest) throws IOException {
         UUID pipelineId = pipelineRequest.getPipelineId();
@@ -73,7 +82,11 @@ public class PipelineExecutorService {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                pipelineExecutor.executePipeline(savedBuild);
+                if (featureFlagService.getBooleanValue(FeatureFlag.ENABLE_MESSAGE_QUEUE.getKey())) {
+                    messagePublisher.publish(savedBuild.getId());
+                } else {
+                    pipelineExecutor.executePipeline(savedBuild);
+                }
             }
         });
 
