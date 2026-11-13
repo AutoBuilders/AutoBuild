@@ -23,10 +23,17 @@ export default function BuildsListPage() {
   const [dateFilter, setDateFilter] = useState<DateFilter | null>(null);
 
   useEffect(() => {
-    pipelineBuildApiInstance.getAllBuilds().then(({ status, data }) => {
-      if (status !== 200) console.error("Error fetching builds");
-      else setBuilds(data);
-    });
+    async function fetchData() {
+      const { status, data } = await pipelineBuildApiInstance.getAllBuilds();
+
+      // TODO: handle error properly
+      if (status !== 200) {
+        console.error("Error getting builds");
+      }
+
+      setBuilds(data);
+    }
+    fetchData();
   }, []);
 
   const filtered = builds.filter(
