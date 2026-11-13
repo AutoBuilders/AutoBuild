@@ -2,7 +2,7 @@ package com.autobuild.pipeline.definiton.dto;
 
 import java.util.List;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
@@ -19,13 +19,13 @@ public class PipelineResponse {
 
     @JsonInclude(JsonInclude.Include.ALWAYS)
     @Getter
-    private Pipeline pipeline;
+    private PipelineEntity pipeline;
     
     @Getter
     @Setter
     private List<String> errors;
 
-    public PipelineResponse(Pipeline pipeline) {
+    public PipelineResponse(PipelineEntity pipeline) {
         this.pipeline = pipeline;
     }
 }

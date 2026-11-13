@@ -8,10 +8,10 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
@@ -20,10 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service for Pipeline Build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Slf4j
 @Service
 public class PipelineBuildService {
@@ -37,8 +36,8 @@ public class PipelineBuildService {
     @Autowired
     private PipelineFileService pipelineFileService;
 
-    public PipelineBuildDTO getPipelineBuild(UUID pipelineBuildId) {
-        Optional<PipelineBuild> optionalPipelineBuild = repository.findById(pipelineBuildId);
+    public PipelineBuild getPipelineBuild(UUID pipelineBuildId) {
+        Optional<PipelineBuildEntity> optionalPipelineBuild = repository.findById(pipelineBuildId);
 
         if (optionalPipelineBuild.isEmpty()) {
             EntityNotFoundException entityNotFoundException = new EntityNotFoundException(
@@ -49,28 +48,28 @@ public class PipelineBuildService {
         return mapper.entityToDto(optionalPipelineBuild.get());
     }
 
-    public List<PipelineBuildDTO> getAllBuilds() {
-        List<PipelineBuild> builds = repository.findAll();
+    public List<PipelineBuild> getAllBuilds() {
+        List<PipelineBuildEntity> builds = repository.findAll();
         log.info("Fetched all pipeline builds, count: {}", builds.size());
         return builds.stream()
                 .map(pipeline -> {
-                    PipelineBuildDTO dto = mapper.entityToDto(pipeline);
+                    PipelineBuild dto = mapper.entityToDto(pipeline);
                     return dto;
                 })
                 .toList();
     }
 
     public void deletePipelineBuild(UUID pipelineBuildId) throws IOException {
-        Optional<PipelineBuild> optionalPipelineBuild = repository.findById(pipelineBuildId);
+        Optional<PipelineBuildEntity> optionalPipelineBuild = repository.findById(pipelineBuildId);
 
         if (optionalPipelineBuild.isEmpty()) {
             throw new EntityNotFoundException(
                     "Pipeline Build with id: " + pipelineBuildId + " does not exist");
         }
 
-        PipelineBuild pipelineBuild = optionalPipelineBuild.get();
-        if (pipelineBuild.getCurrentState().equals(PipelineExecutionState.RUNNING)
-                || pipelineBuild.getCurrentState().equals(PipelineExecutionState.WAITING)) {
+        PipelineBuildEntity pipelineBuild = optionalPipelineBuild.get();
+        if (pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.RUNNING)
+                || pipelineBuild.getCurrentState().equals(PipelineEntityExecutionState.WAITING)) {
             throw new IllegalStateException("Running or Waiting Pipelines can not be deleted");
         }
 

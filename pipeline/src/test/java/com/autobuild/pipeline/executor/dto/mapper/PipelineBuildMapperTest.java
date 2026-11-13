@@ -1,58 +1,50 @@
 package com.autobuild.pipeline.executor.dto.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 public class PipelineBuildMapperTest {
+
     @Mock
-    private ModelMapper mapper;
+    private StageBuildMapper stageBuildMapper;
 
     @InjectMocks
     private PipelineBuildMapper pipelineBuildMapper;
 
-
-    private ArgumentCaptor<PipelineBuild> pipelineBuildCaptor;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-
-        pipelineBuildCaptor = ArgumentCaptor.forClass(PipelineBuild.class);
     }
 
     @Test
     public void entityToDtoTest() {
-        PipelineBuild dummyBuild = DummyData.getPipelineBuild();
-        PipelineBuildDTO dummyBuildDTO = DummyData.getPipelineBuildDTO();
+        PipelineBuildEntity dummyBuild = DummyData.getPipelineBuild();
+        StageBuild dummyStageBuild = DummyData.getStageBuildDTO();
 
-        doReturn(dummyBuildDTO).when(mapper).map(any(PipelineBuild.class), eq(PipelineBuildDTO.class));
-        
-        PipelineBuildDTO mappedDto = pipelineBuildMapper.entityToDto(dummyBuild);
+        doReturn(dummyStageBuild).when(stageBuildMapper).entityToDto(any(StageBuildEntity.class));
 
-        assertEquals(dummyBuildDTO, mappedDto);
+        PipelineBuild result = pipelineBuildMapper.entityToDto(dummyBuild);
 
-        verify(mapper, times(1)).map(pipelineBuildCaptor.capture(), eq(PipelineBuildDTO.class));
-
-        assertNotNull(pipelineBuildCaptor.getValue());
-        assertEquals(dummyBuild, pipelineBuildCaptor.getValue());
+        assertEquals(dummyBuild.getId().toString(), result.getId());
+        assertEquals(dummyBuild.getPipeline().getId().toString(), result.getPipelineId());
+        assertEquals(dummyBuild.getPipeline().getName(), result.getPipelineName());
+        verify(stageBuildMapper, times(dummyBuild.getStageBuilds().size())).entityToDto(any(StageBuildEntity.class));
     }
 
     @Test

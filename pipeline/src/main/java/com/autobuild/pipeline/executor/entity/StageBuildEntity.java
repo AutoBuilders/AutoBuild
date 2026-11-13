@@ -2,11 +2,12 @@ package com.autobuild.pipeline.executor.entity;
 
 import java.util.UUID;
 
-import com.autobuild.pipeline.definiton.entity.Stage;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionState;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -20,27 +21,28 @@ import lombok.Setter;
 
 /**
  * StageBuild entity for holding stage execution metadata/data in table.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 //TODO: Add timestamps
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class StageBuild {
+@Table(name = "stage_build")
+public class StageBuildEntity {
+
     @Id
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "stage_id", referencedColumnName = "id", nullable = false)
-    private Stage stage;
+    private StageEntity stage;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stage_build_current_state", nullable = false)
-    private StageExecutionState currentState;
+    private StageEntityExecutionState currentState;
 
     @Column(name = "stage_order", nullable = false)
     private int stageOrder;
@@ -48,19 +50,24 @@ public class StageBuild {
     @Column(name = "log_path", nullable = false)
     private String logPath;
 
-    public StageBuild(Stage stage) {
+    public StageBuildEntity(UUID id, StageEntity stage, StageEntityExecutionState currentState, String logPath) {
+        this.id = id;
+        this.stage = stage;
+        this.currentState = currentState;
+        this.stageOrder = stage.getStageOrder();
+        this.logPath = logPath;
+    }
+
+    public StageBuildEntity(StageEntity stage) {
         this.stage = stage;
         this.stageOrder = stage.getStageOrder();
     }
 
-    public StageBuild(UUID id, Stage stage, StageExecutionState currentState, String logPath) {
-        this(id, stage, currentState, stage.getStageOrder(), logPath);
-    }
 
     @PrePersist
     public void setDefaultState() {
         if (null == this.currentState) {
-            this.currentState = StageExecutionState.WAITING;
+            this.currentState = StageEntityExecutionState.WAITING;
         }
     }
 }

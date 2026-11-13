@@ -249,35 +249,32 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         name:
           type: string
         stages:
           type: array
           items:
             $ref: "#/components/schemas/Stage"
-      required:
-      - name
-      - stages
-    Stage:
+    PipelineBuild:
       type: object
       properties:
+        currentState:
+          type: string
+          enum:
+          - WAITING
+          - RUNNING
+          - SUCCESS
+          - FAILED
         id:
           type: string
-          format: uuid
-        name:
+        pipelineId:
           type: string
-        scriptType:
+        pipelineName:
           type: string
-        command:
-          type: string
-        stageOrder:
-          type: integer
-          format: int32
-      required:
-      - command
-      - name
-      - scriptType
+        stageBuilds:
+          type: array
+          items:
+            $ref: "#/components/schemas/StageBuild"
     PipelineExecuteRequest:
       type: object
       properties:
@@ -286,42 +283,23 @@ components:
           format: uuid
       required:
       - pipelineId
-    PipelineBuild:
+    Stage:
       type: object
       properties:
+        command:
+          type: string
         id:
           type: string
-          format: uuid
-        pipelineId:
+        name:
           type: string
-          format: uuid
-        pipelineName:
-          type: string
-        currentState:
-          type: string
-          enum:
-          - WAITING
-          - RUNNING
-          - SUCCESS
-          - FAILED
-        stageBuilds:
-          type: array
-          items:
-            $ref: "#/components/schemas/StageBuild"
-    StageBuild:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        stageId:
-          type: string
-          format: uuid
-        stageName:
+        scriptType:
           type: string
         stageOrder:
           type: integer
           format: int32
+    StageBuild:
+      type: object
+      properties:
         currentState:
           type: string
           enum:
@@ -330,6 +308,15 @@ components:
           - SUCCESS
           - FAILED
           - STOPPED
+        id:
+          type: string
+        stageId:
+          type: string
+        stageName:
+          type: string
+        stageOrder:
+          type: integer
+          format: int32
   securitySchemes:
     bearerAuth:
       type: http

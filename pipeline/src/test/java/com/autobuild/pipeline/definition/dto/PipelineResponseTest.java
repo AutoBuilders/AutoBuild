@@ -12,8 +12,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import com.autobuild.pipeline.definiton.dto.PipelineResponse;
-import com.autobuild.pipeline.definiton.entity.Pipeline;
-import com.autobuild.pipeline.definiton.entity.Stage;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
 
 public class PipelineResponseTest {
     
@@ -26,7 +26,7 @@ public class PipelineResponseTest {
 
     @Test
     public void testConstructorWithPipeline() {
-        Pipeline pipeline = new Pipeline();
+        PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("test-pipeline");
         
@@ -55,21 +55,21 @@ public class PipelineResponseTest {
 
     @Test
     public void testPipelineWithStages() {
-        Pipeline pipeline = new Pipeline();
+        PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("complex-pipeline");
         
-        Stage stage1 = new Stage();
+        StageEntity stage1 = new StageEntity();
         stage1.setId(UUID.randomUUID());
         stage1.setName("build");
         stage1.setScriptType("bash");
         
-        Stage stage2 = new Stage();
+        StageEntity stage2 = new StageEntity();
         stage2.setId(UUID.randomUUID());
         stage2.setName("test");
         stage2.setScriptType("python");
         
-        List<Stage> stages = new ArrayList<>();
+        List<StageEntity> stages = new ArrayList<>();
         stages.add(stage1);
         stages.add(stage2);
         pipeline.setStages(stages);
@@ -84,7 +84,7 @@ public class PipelineResponseTest {
 
     @Test
     public void testResponseWithPipelineAndErrors() {
-        Pipeline pipeline = new Pipeline();
+        PipelineEntity pipeline = new PipelineEntity();
         pipeline.setId(UUID.randomUUID());
         pipeline.setName("test-pipeline");
         

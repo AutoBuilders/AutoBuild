@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package execution.v1;
+
+option java_package = "com.autobuild.pipeline.executor.gen.dto";
+option java_multiple_files = true;
+
+// option go_package = "";
+// go_multiple_files doesn't exist - Go always generates one file per proto file.
+
+enum PipelineExecutionState {
+  PIPELINE_WAITING = 0; // Pipeline is waiting to be executed.
+  PIPELINE_RUNNING = 1; // Pipeline execution has started.
+  PIPELINE_SUCCESS = 2; // Pipeline execution has finished and it succeeded.
+  PIPELINE_FAILED = 3;  // Pipeline execution has finished and it failed.
+}
+
+enum StageExecutionState {
+  STAGE_WAITING = 0; // Stage is waiting to be executed.
+  STAGE_RUNNING = 1; // Stage execution has started.
+  STAGE_SUCCESS = 2; // Stage execution has finished and it succeeded.
+  STAGE_FAILED = 3;  // Stage execution has finished and it failed.
+  STAGE_STOPPED = 4; // Stage execution stopped.
+}
+
+message StageBuild {
+  string id = 1;
+  string stage_id = 2;
+  string stage_name = 3;
+  StageExecutionState current_state = 4;
+  int32 stage_order = 5;
+}
+
+message PipelineBuild {
+  string id = 1;
+  string pipeline_id = 2;
+  string pipeline_name = 3;
+  PipelineExecutionState current_state = 4;
+  repeated StageBuild stage_builds = 5;
+}
+
+// A single line of output from a running stage, streamed back as it is produced.
+message StageLog {
+  string stage_build_id = 1;
+  string line = 2;
+}

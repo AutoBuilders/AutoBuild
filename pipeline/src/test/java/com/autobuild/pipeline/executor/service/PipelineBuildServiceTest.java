@@ -19,13 +19,14 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
 public class PipelineBuildServiceTest {
+
     @Mock
     private PipelineBuildRepository repository;
 
@@ -47,8 +48,8 @@ public class PipelineBuildServiceTest {
     public void deletePipelineBuildTest() throws IOException {
         UUID buildId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild(buildId);
-        pipelineBuild.setCurrentState(PipelineExecutionState.SUCCESS);
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild(buildId);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.SUCCESS);
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(any(UUID.class));
 
         pipelineBuildService.deletePipelineBuild(buildId);
@@ -62,12 +63,12 @@ public class PipelineBuildServiceTest {
     public void deletePipelineBuildIllegalStateTest() throws IOException {
         UUID buildId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild(buildId);
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild(buildId);
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(any(UUID.class));
 
         assertThrows(IllegalStateException.class, () -> pipelineBuildService.deletePipelineBuild(buildId));
 
-        pipelineBuild.setCurrentState(PipelineExecutionState.WAITING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.WAITING);
 
         assertThrows(IllegalStateException.class, () -> pipelineBuildService.deletePipelineBuild(buildId));
     }
@@ -79,6 +80,6 @@ public class PipelineBuildServiceTest {
 
         pipelineBuildService.getAllBuilds();
 
-        verify(mapper, times(2)).entityToDto(any(PipelineBuild.class));
+        verify(mapper, times(2)).entityToDto(any(PipelineBuildEntity.class));
     }
 }

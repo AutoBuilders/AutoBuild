@@ -20,12 +20,12 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.job.PipelineExecutor;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
@@ -51,8 +51,6 @@ public class PipelineExecutorServiceTest {
     @InjectMocks
     private PipelineExecutorService pipelineExecutorService;
 
-    private PipelineBuildDTO pipelineBuildDTO = DummyData.getPipelineBuildDTO();
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -62,24 +60,24 @@ public class PipelineExecutorServiceTest {
     public void executePipelineTest() throws IOException {
         UUID pipelineId = UUID.randomUUID();
 
-        Pipeline pipeline = DummyData.getPipeline(pipelineId);
+        PipelineEntity pipeline = DummyData.getPipeline(pipelineId);
 
         PipelineExecuteRequest pipelineExecuteRequest = new PipelineExecuteRequest(pipelineId);
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild(pipelineId);
-        PipelineBuildDTO pipelineBuildDTO = DummyData.getPipelineBuildDTO(pipelineId);
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild(pipelineId);
+        PipelineBuild pipelineBuildDTO = DummyData.getPipelineBuildDTO(pipelineId);
 
         doReturn(Optional.of(pipeline)).when(pipelineRepository).findById(any(UUID.class));
-        doReturn(pipelineBuild).when(pipelineBuildRepository).save(any(PipelineBuild.class));
+        doReturn(pipelineBuild).when(pipelineBuildRepository).save(any(PipelineBuildEntity.class));
         doReturn(pipelineBuildDTO).when(pipelineBuildMapper).entityToDto(pipelineBuild);
 
         try (MockedStatic<TransactionSynchronizationManager> transactionSynMockedStatic = mockStatic(
                 TransactionSynchronizationManager.class)) {
-            PipelineBuildDTO resultantDTO = pipelineExecutorService.executePipeline(pipelineExecuteRequest);
+            PipelineBuild resultantDTO = pipelineExecutorService.executePipeline(pipelineExecuteRequest);
 
-            assertEquals(pipelineExecuteRequest.getPipelineId(), resultantDTO.getPipelineId());
+            assertEquals(pipelineExecuteRequest.getPipelineId().toString(), resultantDTO.getPipelineId());
 
             verify(pipelineRepository, times(1)).findById(eq(pipelineId));
-            verify(pipelineBuildRepository, times(1)).save(any(PipelineBuild.class));
+            verify(pipelineBuildRepository, times(1)).save(any(PipelineBuildEntity.class));
 
         }
     }

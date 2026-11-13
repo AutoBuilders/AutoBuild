@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.definiton.repository.PipelineRepository;
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.executor.job.PipelineExecutor;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
@@ -53,21 +53,21 @@ public class PipelineExecutorService {
     private PipelineFileService pipelineFileService;
 
     @Transactional
-    public PipelineBuildDTO executePipeline(PipelineExecuteRequest pipelineRequest) throws IOException {
+    public PipelineBuild executePipeline(PipelineExecuteRequest pipelineRequest) throws IOException {
         UUID pipelineId = pipelineRequest.getPipelineId();
 
-        Optional<Pipeline> optionalPipeline = pipelineRepository.findById(pipelineId);
+        Optional<PipelineEntity> optionalPipeline = pipelineRepository.findById(pipelineId);
 
         if (optionalPipeline.isEmpty()) {
             throw new EntityNotFoundException("Pipeline with id " + pipelineId + " not found");
         }
 
-        Pipeline pipeline = optionalPipeline.get();
-        PipelineBuild pipelineBuild = createBuild(pipeline);
+        PipelineEntity pipeline = optionalPipeline.get();
+        PipelineBuildEntity pipelineBuild = createBuild(pipeline);
 
         createEmptyLogFiles(pipelineBuild);
 
-        PipelineBuild savedBuild = buildRepository.save(pipelineBuild);
+        PipelineBuildEntity savedBuild = buildRepository.save(pipelineBuild);
 
         // Strictly run executing pipeline after build is commited
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -80,8 +80,8 @@ public class PipelineExecutorService {
         return mapper.entityToDto(savedBuild);
     }
 
-    private void createEmptyLogFiles(PipelineBuild pipelineBuild) throws IOException {
-        for (StageBuild stageBuild : pipelineBuild.getStageBuilds()) {
+    private void createEmptyLogFiles(PipelineBuildEntity pipelineBuild) throws IOException {
+        for (StageBuildEntity stageBuild : pipelineBuild.getStageBuilds()) {
             try {
                 stageBuild.setLogPath(pipelineFileService.createLogFile(pipelineBuild.getId(), stageBuild.getId()));
             } catch (IOException e) {
@@ -91,17 +91,17 @@ public class PipelineExecutorService {
     }
 
     // TODO: abstract this logic
-    private PipelineBuild createBuild(final Pipeline pipeline) {
-        List<StageBuild> stageBuilds = pipeline.getStages()
-                                                .stream()
-                                                .map(stage -> {
-                                                    StageBuild stageBuild = new StageBuild(stage);
-                                                    stageBuild.setId(UUID.randomUUID());
+    private PipelineBuildEntity createBuild(final PipelineEntity pipeline) {
+        List<StageBuildEntity> stageBuilds = pipeline.getStages()
+                .stream()
+                .map(stage -> {
+                    StageBuildEntity stageBuild = new StageBuildEntity(stage);
+                    stageBuild.setId(UUID.randomUUID());
 
-                                                    return stageBuild;
-                                                }).toList();
+                    return stageBuild;
+                }).toList();
 
-        PipelineBuild pipelineBuild = new PipelineBuild(pipeline, stageBuilds);
+        PipelineBuildEntity pipelineBuild = new PipelineBuildEntity(pipeline, stageBuilds);
         pipelineBuild.setId(UUID.randomUUID());
 
         return pipelineBuild;

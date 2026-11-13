@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.executor.repository.StageBuildRepository;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 
@@ -30,7 +30,7 @@ public class StageBuildService {
     private StageBuildRepository repository;
 
     public Map<String, String> getStageBuildLogs(UUID stageBuildId) throws IOException {
-        Optional<StageBuild> optionalStageBuild = repository.findById(stageBuildId);
+        Optional<StageBuildEntity> optionalStageBuild = repository.findById(stageBuildId);
 
         if (optionalStageBuild.isEmpty()) {
             throw new EntityNotFoundException(

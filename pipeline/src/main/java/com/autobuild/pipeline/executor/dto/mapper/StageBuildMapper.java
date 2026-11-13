@@ -1,37 +1,59 @@
 package com.autobuild.pipeline.executor.dto.mapper;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.autobuild.pipeline.definiton.dto.mapper.Mapper;
-import com.autobuild.pipeline.executor.dto.StageBuildDTO;
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
+import com.autobuild.pipeline.executor.gen.dto.StageBuild;
+import com.autobuild.pipeline.executor.gen.dto.StageExecutionState;
 
 /**
  * Used to map StageBuild to StageBuildDTO and vice versa.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Component
-public class StageBuildMapper implements Mapper<StageBuildDTO, StageBuild>{
-
-    @Autowired
-    private ModelMapper modelMapper;
+public class StageBuildMapper implements Mapper<
+        StageBuild, StageBuildEntity> {
 
     @Override
-    public StageBuild dtoToEntity(StageBuildDTO stageBuildDTO) {
+    public StageBuildEntity dtoToEntity(
+            StageBuild dto) {
         throw new UnsupportedOperationException("DTO is not persistable");
     }
 
     @Override
-    public StageBuildDTO entityToDto(StageBuild stageBuild) {
-        if (null == stageBuild) {
+    public StageBuild entityToDto(
+            StageBuildEntity entity) {
+        if (entity == null) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return this.modelMapper.map(stageBuild, StageBuildDTO.class);
+        return StageBuild.newBuilder()
+                .setId(entity.getId().toString())
+                .setStageId(entity.getStage().getId().toString())
+                .setStageName(entity.getStage().getName())
+                .setStageOrder(entity.getStageOrder())
+                .setCurrentState(toProtoState(entity.getCurrentState()))
+                .build();
     }
-    
+
+    private StageExecutionState toProtoState(
+            StageEntityExecutionState state) {
+        switch (state) {
+            case WAITING:
+                return StageExecutionState.STAGE_WAITING;
+            case RUNNING:
+                return StageExecutionState.STAGE_RUNNING;
+            case SUCCESS:
+                return StageExecutionState.STAGE_SUCCESS;
+            case FAILED:
+                return StageExecutionState.STAGE_FAILED;
+            case STOPPED:
+                return StageExecutionState.STAGE_STOPPED;
+            default:
+                throw new IllegalArgumentException("Unknown state: " + state);
+        }
+    }
 }

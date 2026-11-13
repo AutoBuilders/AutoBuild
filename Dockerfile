@@ -1,10 +1,11 @@
 #
 # Build stage
 #
-FROM maven:3.8.3-openjdk-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /home/app
 COPY pipeline/pom.xml .
 COPY pipeline/src ./src
+COPY apis/protobuf /home/apis/protobuf
 RUN mvn clean package -DskipTests -Pmonitoring
 
 #
