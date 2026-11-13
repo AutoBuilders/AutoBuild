@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/AutoBuilders/AutoBuild/executor/config"
 	"github.com/AutoBuilders/AutoBuild/executor/handler"
@@ -13,8 +14,7 @@ import (
 func main() {
 	config.LoadProfile()
 
-	db := repository.InitDB("autobuild.db")
-	repo := repository.NewPipelineBuildRepository(db)
+	repo := repository.NewPipelineBuildRepository(os.Getenv("EXECUTOR_DB_DSN"))
 
 	mux := http.NewServeMux()
 

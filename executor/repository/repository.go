@@ -13,11 +13,12 @@ type PipelineBuildRepository struct {
 	db *gorm.DB
 }
 
-func NewPipelineBuildRepository(db *gorm.DB) *PipelineBuildRepository {
+func NewPipelineBuildRepository(dsn string) *PipelineBuildRepository {
+	db := initDB(dsn)
 	return &PipelineBuildRepository{db: db}
 }
 
-func InitDB(dsn string) *gorm.DB {
+func initDB(dsn string) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
