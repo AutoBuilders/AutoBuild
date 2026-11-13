@@ -1,6 +1,9 @@
 spring:
   application:
     name: pipeline
+  graphql:
+    graphiql:
+      enabled: true
 
 logging:
   pattern:
