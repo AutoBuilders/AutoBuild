@@ -150,6 +150,12 @@
 			<version>0.0.2</version>
 		</dependency>
 
+		<!-- GraphQL -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-graphql</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>

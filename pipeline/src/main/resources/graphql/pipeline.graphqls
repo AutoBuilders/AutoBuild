@@ -1,0 +1,18 @@
+type Query {
+    getPipelineById(pipelineId: ID!): Pipeline
+    getAllPipelines: [Pipeline!]!
+}
+
+type Pipeline {
+    id: ID
+    name: String!
+    stages: [Stage!]!
+}
+
+type Stage {
+    id: ID
+    name: String!
+    scriptType: String!
+    command: String
+    stageOrder: Int!
+}
