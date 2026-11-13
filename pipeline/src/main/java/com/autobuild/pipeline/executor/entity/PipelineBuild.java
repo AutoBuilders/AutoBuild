@@ -1,5 +1,6 @@
 package com.autobuild.pipeline.executor.entity;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,6 +59,9 @@ public class PipelineBuild {
     @Column(name = "pipeline_build_current_state", nullable = false)
     private PipelineExecutionState currentState;
 
+    @Column(name = "start_at", nullable = false)
+    private Instant startedAt;
+	
     public PipelineBuild(Pipeline pipeline, List<StageBuild> stageBuilds) {
         this.pipeline = pipeline;
         this.stageBuilds = stageBuilds;
@@ -68,5 +72,6 @@ public class PipelineBuild {
         if (null == this.currentState) {
             this.currentState = PipelineExecutionState.WAITING;
         }
+		this.startedAt = Instant.now();
     }
 }

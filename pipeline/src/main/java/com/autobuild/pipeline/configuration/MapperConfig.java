@@ -104,6 +104,7 @@ public class MapperConfig {
         typeMapper.addMapping(pipelineBuild -> pipelineBuild.getPipeline().getName(),
                 PipelineBuildDTO::setPipelineName);
         typeMapper.addMapping(PipelineBuild::getCurrentState, PipelineBuildDTO::setCurrentState);
+        typeMapper.addMapping(PipelineBuild::getStartedAt, PipelineBuildDTO::setStartedAt);
     }
 
     private void setPipelineBuildDTOEntityMapping(ModelMapper mapper) {

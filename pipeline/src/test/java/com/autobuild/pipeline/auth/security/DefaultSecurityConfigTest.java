@@ -26,6 +26,7 @@ public class DefaultSecurityConfigTest {
         doReturn(mockHttpSecurity).when(mockHttpSecurity).csrf(any());
         doReturn(mockHttpSecurity).when(mockHttpSecurity).cors(any());
         doReturn(mockHttpSecurity).when(mockHttpSecurity).authorizeHttpRequests(any());
+        doReturn(mockHttpSecurity).when(mockHttpSecurity).headers(any());
         doReturn(mockHttpSecurity).when(mockHttpSecurity).httpBasic(any());
         doReturn(mockHttpSecurity).when(mockHttpSecurity).formLogin(any());
     }
@@ -36,6 +37,7 @@ public class DefaultSecurityConfigTest {
         
         verify(mockHttpSecurity,times(1)).csrf(any());
         verify(mockHttpSecurity,times(1)).authorizeHttpRequests(any());
+        verify(mockHttpSecurity,times(1)).headers(any());
         verify(mockHttpSecurity,times(1)).httpBasic(any());
         verify(mockHttpSecurity,times(1)).formLogin(any());
     }

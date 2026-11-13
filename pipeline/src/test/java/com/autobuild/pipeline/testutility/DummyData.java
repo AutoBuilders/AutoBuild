@@ -1,5 +1,6 @@
 package com.autobuild.pipeline.testutility;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,11 +49,11 @@ public class DummyData {
     }
 
     public static PipelineBuild getPipelineBuild() {
-        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING);
+        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING, null);
     }
 
     public static PipelineBuild getPipelineBuild(UUID pipelineUuid) {
-        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING);
+        return new PipelineBuild(UUID.randomUUID(), DummyData.getPipeline(pipelineUuid), List.of(DummyData.getStageBuild()), PipelineExecutionState.WAITING, null);
     }
 
     public static StageBuildDTO getStageBuildDTO() {
@@ -60,10 +61,10 @@ public class DummyData {
     }
 
     public static PipelineBuildDTO getPipelineBuildDTO() {
-        return new PipelineBuildDTO(UUID.randomUUID(), UUID.randomUUID(), "Dummy Pipeline", PipelineExecutionState.WAITING, List.of(DummyData.getStageBuildDTO()));
+        return new PipelineBuildDTO(UUID.randomUUID(), UUID.randomUUID(), "Dummy Pipeline", PipelineExecutionState.WAITING, null, List.of(DummyData.getStageBuildDTO()));
     }
 
     public static PipelineBuildDTO getPipelineBuildDTO(UUID pipelineId) {
-        return new PipelineBuildDTO(UUID.randomUUID(), pipelineId, "Dummy Pipeline", PipelineExecutionState.WAITING, List.of(DummyData.getStageBuildDTO()));
+        return new PipelineBuildDTO(UUID.randomUUID(), pipelineId, "Dummy Pipeline", PipelineExecutionState.WAITING, null, List.of(DummyData.getStageBuildDTO()));
     }
 }

@@ -304,6 +304,9 @@ components:
           - RUNNING
           - SUCCESS
           - FAILED
+        startedAt:
+          type: string
+          format: date-time
         stageBuilds:
           type: array
           items:
