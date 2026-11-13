@@ -1,12 +1,9 @@
-meta {
+info:
   name: Test Without Token (Should Fail)
   type: http
   seq: 2
-}
 
-get {
-  url: {{host}}/{{prefix}}/pipeline
-  body: none
+http:
+  method: GET
+  url: "{{host}}/{{prefix}}/pipeline"
   auth: none
-}
-

@@ -1,0 +1,8 @@
+info:
+  name: delete pipeline
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{host}}/{{prefix}}/pipeline/970d5406-bdd1-4bb2-ba76-eb3efc7fc7cf"

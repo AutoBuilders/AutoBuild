@@ -1,0 +1,20 @@
+info:
+  name: Get Token
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{keycloak_url}}/realms/{{keycloak_realm}}/protocol/openid-connect/token"
+  auth: none
+  body:
+    type: form-urlencoded
+    data:
+      - name: client_id
+        value: "{{keycloak_client_id}}"
+      - name: username
+        value: "{{username}}"
+      - name: password
+        value: "{{password}}"
+      - name: grant_type
+        value: password
