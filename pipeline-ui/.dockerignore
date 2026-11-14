@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.env.*
+test/
+*.md
+.git
+BUILD.bazel
+run_tests.sh
+.idea
+.vscode
