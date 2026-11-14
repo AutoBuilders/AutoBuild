@@ -53,10 +53,6 @@ public class StageEntity {
     private int stageOrder;
 
     public StageEntity(UUID id, String name, String scriptType, String path) {
-        this.id = id;
-        this.name = name;
-        this.scriptType = scriptType;
-        this.path = path;
-        this.stageOrder = 0;
+        this(id, name, scriptType, path, 0);
     }
 }
