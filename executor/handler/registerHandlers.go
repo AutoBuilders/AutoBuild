@@ -9,8 +9,10 @@ import (
 func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildRepository) {
 	mux.HandleFunc(executePipelineHttpMethod+" "+executePipelineUrl, handleExecutePipeline(repo))
 
-	mux.HandleFunc(getPipelineBuildHttpMethod+" "+getPipelineBuildUrl, handleGetPipelineBuild(repo))
-	mux.HandleFunc(getAllPipelineBuildsHttpMethod+" "+getAllPipelineBuildsUrl, handleGetAllPipelineBuilds(repo))
-	mux.HandleFunc(deletePipelineBuildHttpMethod+" "+deletePipelineBuildUrl, handleDeletePipelineBuild(repo))
+	pipelineBuildHandler := NewPipelineBuildHandler(repo)
+
+	mux.HandleFunc("GET /api/v1/pipeline/build/{pipelineBuildId}", pipelineBuildHandler.HandleGetPipelineBuild)
+	mux.HandleFunc("GET /api/v1/pipeline/build/{$}", pipelineBuildHandler.HandleGetAllPipelineBuilds)
+	mux.HandleFunc("DELETE /api/v1/pipeline/build/{pipelineBuildId}", pipelineBuildHandler.HandleDeletePipelineBuild)
 }
 
