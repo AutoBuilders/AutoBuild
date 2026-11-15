@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+    <protobuf.version>4.29.3</protobuf.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -156,6 +157,18 @@
 			<artifactId>spring-boot-starter-graphql</artifactId>
 		</dependency>
 
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+
 	</dependencies>
 
 	<build>
@@ -202,6 +215,7 @@
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>
+          <excludeGeneratedSources>true</excludeGeneratedSources>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -224,6 +238,9 @@
                 <version>0.8.15</version>
 
                 <configuration>
+                    <excludes>
+                        <exclude>com/autobuild/pipeline/**/gen/**</exclude>
+                    </excludes>
                     <rules>
                         <rule>
                             <element>BUNDLE</element>
@@ -261,8 +278,31 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <configuration>
+                            <skip>${skipTests}</skip>
+                        </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+              <groupId>io.github.ascopes</groupId>
+              <artifactId>protobuf-maven-plugin</artifactId>
+              <version>5.1.11</version>
+              <configuration>
+                <protoc kind="binary-maven">
+                  <version>${protobuf.version}</version>
+                </protoc>
+                <sourceDirectories>
+                  <sourceDirectory>${project.basedir}/../apis/protobuf</sourceDirectory>
+                </sourceDirectories>
+              </configuration>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>generate</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
 		</plugins>
 	</build>

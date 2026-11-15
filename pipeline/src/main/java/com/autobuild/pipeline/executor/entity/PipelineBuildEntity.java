@@ -4,12 +4,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
@@ -27,42 +28,43 @@ import lombok.Setter;
 
 /**
  * PipelineBuild entity to hold data/metadata about execution in table.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 //TODO: Add timestamps
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class PipelineBuild {
+@Table(name = "pipeline_build")
+public class PipelineBuildEntity {
+
     @Id
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "pipeline_id", referencedColumnName = "id", nullable = false)
-    private Pipeline pipeline;
+    private PipelineEntity pipeline;
 
     @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name = "pipeline_stage_builds",
-        joinColumns = @JoinColumn(name = "pipeline_build_id"),
-        inverseJoinColumns = @JoinColumn(name = "stage_build_id")
+            name = "pipeline_stage_builds",
+            joinColumns = @JoinColumn(name = "pipeline_build_id"),
+            inverseJoinColumns = @JoinColumn(name = "stage_build_id")
     )
     @OrderBy("stageOrder ASC")
-    private List<StageBuild> stageBuilds;
+    private List<StageBuildEntity> stageBuilds;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "pipeline_build_current_state", nullable = false)
-    private PipelineExecutionState currentState;
+    private PipelineEntityExecutionState currentState;
 
     @Column(name = "start_at", nullable = false)
     private Instant startedAt;
-	
-    public PipelineBuild(Pipeline pipeline, List<StageBuild> stageBuilds) {
+
+    public PipelineBuildEntity(PipelineEntity pipeline, List<StageBuildEntity> stageBuilds) {
         this.pipeline = pipeline;
         this.stageBuilds = stageBuilds;
     }
@@ -70,7 +72,7 @@ public class PipelineBuild {
     @PrePersist
     public void setDefaultState() {
         if (null == this.currentState) {
-            this.currentState = PipelineExecutionState.WAITING;
+            this.currentState = PipelineEntityExecutionState.WAITING;
         }
 		this.startedAt = Instant.now();
     }

@@ -8,7 +8,7 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import com.autobuild.pipeline.definiton.dto.PipelineDTO;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
 import com.autobuild.pipeline.definiton.exceptions.InvalidIdException;
 import com.autobuild.pipeline.definiton.service.PipelineService;
 
@@ -32,7 +32,7 @@ public class PipelineGraphQLController {
      * @throws IOException if the pipeline script files cannot be read
      */
     @QueryMapping
-    public PipelineDTO getPipelineById(@Argument String pipelineId)
+    public Pipeline getPipelineById(@Argument String pipelineId)
             throws InvalidIdException, IOException {
         return pipelineService.getPipelineById(pipelineId);
     }
@@ -43,7 +43,7 @@ public class PipelineGraphQLController {
      * @return list of all pipelines
      */
     @QueryMapping
-    public List<PipelineDTO> getAllPipelines() {
+    public List<Pipeline> getAllPipelines() {
         return pipelineService.getAllPipelines();
     }
 }

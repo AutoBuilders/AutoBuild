@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 
 /**
  * Repository for Stage Builds.
@@ -14,6 +14,6 @@ import com.autobuild.pipeline.executor.entity.StageBuild;
  */
 
 @Repository
-public interface StageBuildRepository extends JpaRepository<StageBuild, UUID>{
+public interface StageBuildRepository extends JpaRepository<StageBuildEntity, UUID>{
 
 }

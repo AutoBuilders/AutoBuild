@@ -8,27 +8,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import com.autobuild.pipeline.configuration.MapperConfig;
-import com.autobuild.pipeline.definiton.dto.StageDTO;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 import com.autobuild.pipeline.definiton.dto.mapper.StageMapper;
-import com.autobuild.pipeline.definiton.entity.Stage;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
 import com.autobuild.pipeline.testutility.DummyData;
 
 @SpringJUnitConfig
-@ContextConfiguration(classes = {MapperConfig.class,StageMapper.class})
+@ContextConfiguration(classes = {StageMapper.class})
 public class StageMapperTest {
-    
-    private Stage stage = DummyData.getStage();
-    private StageDTO dto = DummyData.getStageDTO();
+
+    private StageEntity stage = DummyData.getStage();
+    private Stage dto = DummyData.getStageDTO();
 
     @Autowired
     private StageMapper stageMapper;
 
     @Test
     public void givenStageEntityGetStageDTO() {
-
-        StageDTO convertedStageDTO = stageMapper.entityToDto(stage);
-        
+        Stage convertedStageDTO = stageMapper.entityToDto(stage);
         assertDto(convertedStageDTO);
     }
 
@@ -39,11 +36,10 @@ public class StageMapperTest {
 
     @Test
     public void givenStageDTOGetStageEntity() {
-        Stage convertedStage = stageMapper.dtoToEntity(dto);
-
+        StageEntity convertedStage = stageMapper.dtoToEntity(dto);
         assertEntity(convertedStage);
     }
-    
+
     @Test
     public void givenNullDTOGetStageEntity() {
         assertThrows(IllegalArgumentException.class, () -> stageMapper.dtoToEntity(null));
@@ -51,21 +47,21 @@ public class StageMapperTest {
 
     @Test
     public void multipleMapInvocationTest() {
-        Stage s1 = stageMapper.dtoToEntity(dto);
+        StageEntity s1 = stageMapper.dtoToEntity(dto);
         assertEntity(s1);
 
-        Stage s2 = stageMapper.dtoToEntity(dto);
+        StageEntity s2 = stageMapper.dtoToEntity(dto);
         assertEntity(s2);
     }
 
-    private void assertEntity(Stage convertedStageEntity) {
-        assertEquals(dto.getId(), convertedStageEntity.getId());
+    private void assertEntity(StageEntity convertedStageEntity) {
+        assertEquals(dto.getId(), convertedStageEntity.getId().toString());
         assertEquals(dto.getName(), convertedStageEntity.getName());
         assertEquals(dto.getScriptType(), convertedStageEntity.getScriptType());
-    } 
+    }
 
-    private void assertDto(StageDTO convertedStageDTO) {
-        assertEquals(stage.getId(), convertedStageDTO.getId());
+    private void assertDto(Stage convertedStageDTO) {
+        assertEquals(stage.getId().toString(), convertedStageDTO.getId());
         assertEquals(stage.getName(), convertedStageDTO.getName());
         assertEquals(stage.getScriptType(), convertedStageDTO.getScriptType());
     }

@@ -7,22 +7,21 @@ import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
-import com.autobuild.pipeline.definiton.entity.Pipeline;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
-import com.autobuild.pipeline.executor.execution.state.StageExecutionState;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
+import com.autobuild.pipeline.executor.execution.state.StageEntityExecutionState;
 import com.autobuild.pipeline.executor.job.PipelineExecutor;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation for asynchronously start executing pipeline build.
- * 
+ *
  * @author Suvabrata Chowdhury
  */
-
 @Slf4j
 public class PipelineExecutorImpl implements PipelineExecutor {
 
@@ -31,10 +30,10 @@ public class PipelineExecutorImpl implements PipelineExecutor {
 
     @Async("executorService")
     @Override
-    public void executePipeline(PipelineBuild pipelineBuild) {
+    public void executePipeline(PipelineBuildEntity pipelineBuild) {
         try {
             log.info("inside executor impl submit");
-            pipelineBuild.setCurrentState(PipelineExecutionState.WAITING);
+            pipelineBuild.setCurrentState(PipelineEntityExecutionState.WAITING);
             pipelineExecutionObservable.attachExecutionForObservation(pipelineBuild);
 
             this.startBuild(pipelineBuild);
@@ -45,25 +44,25 @@ public class PipelineExecutorImpl implements PipelineExecutor {
         }
     }
 
-    private void startBuild(PipelineBuild pipelineBuild) throws IOException, InterruptedException {
-        Pipeline pipeline = pipelineBuild.getPipeline();
+    private void startBuild(PipelineBuildEntity pipelineBuild) throws IOException, InterruptedException {
+        PipelineEntity pipeline = pipelineBuild.getPipeline();
         log.info("Starting Build for: " + pipeline.getId());
 
         startPipelineStageBuilds(pipelineBuild);
     }
 
     // TODO: Ugly design for now. Refactor later.
-    private void startPipelineStageBuilds(PipelineBuild pipelineBuild) throws IOException, InterruptedException {
+    private void startPipelineStageBuilds(PipelineBuildEntity pipelineBuild) throws IOException, InterruptedException {
 
         // TODO: with state manager. Finite State Machine
-        setPipelineBuildState(pipelineBuild, PipelineExecutionState.RUNNING);
+        setPipelineBuildState(pipelineBuild, PipelineEntityExecutionState.RUNNING);
 
         boolean anyStageBuildFailed = false;
 
-        for (final StageBuild stageBuild : pipelineBuild.getStageBuilds()) {
+        for (final StageBuildEntity stageBuild : pipelineBuild.getStageBuilds()) {
 
             if (anyStageBuildFailed) {
-                stageBuild.setCurrentState(StageExecutionState.STOPPED);
+                stageBuild.setCurrentState(StageEntityExecutionState.STOPPED);
 
                 continue;
             }
@@ -71,32 +70,32 @@ public class PipelineExecutorImpl implements PipelineExecutor {
             // String logPath = pipelineFileService.createLogFile(pipelineBuild.getId(), stageBuild.getId());
             Process stageProcess = startStageProcess(stageBuild);
 
-            setStageBuildState(pipelineBuild, stageBuild, StageExecutionState.RUNNING);
+            setStageBuildState(pipelineBuild, stageBuild, StageEntityExecutionState.RUNNING);
 
             log.info("process started with id: " + stageProcess.pid());
 
             int processExitCode = stageProcess.waitFor();
             if (processExitCode != 0) {
                 anyStageBuildFailed = true;
-                stageBuild.setCurrentState(StageExecutionState.FAILED);
+                stageBuild.setCurrentState(StageEntityExecutionState.FAILED);
 
                 log.error("process exited with id: " + stageProcess.pid());
                 continue;
             }
 
-            setStageBuildState(pipelineBuild, stageBuild, StageExecutionState.SUCCESS);
+            setStageBuildState(pipelineBuild, stageBuild, StageEntityExecutionState.SUCCESS);
         }
 
         if (anyStageBuildFailed) {
-            pipelineBuild.setCurrentState(PipelineExecutionState.FAILED);
+            pipelineBuild.setCurrentState(PipelineEntityExecutionState.FAILED);
         } else {
-            pipelineBuild.setCurrentState(PipelineExecutionState.SUCCESS);
+            pipelineBuild.setCurrentState(PipelineEntityExecutionState.SUCCESS);
         }
 
         pipelineExecutionObservable.notify(pipelineBuild);
     }
 
-    private Process startStageProcess(final StageBuild stageBuild) throws IOException {
+    private Process startStageProcess(final StageBuildEntity stageBuild) throws IOException {
         ProcessBuilder stageProcessBuilder = new ProcessBuilder(stageBuild.getStage().getPath());
 
         stageProcessBuilder.redirectOutput(Redirect.to(Path.of(stageBuild.getLogPath()).toFile()));
@@ -106,13 +105,14 @@ public class PipelineExecutorImpl implements PipelineExecutor {
         return stageProcess;
     }
 
-    private void setStageBuildState(PipelineBuild pipelineBuild, final StageBuild stageBuild,
-            final StageExecutionState stageExecutionState) {
+    private void setStageBuildState(PipelineBuildEntity pipelineBuild, final StageBuildEntity stageBuild,
+            final StageEntityExecutionState stageExecutionState) {
         stageBuild.setCurrentState(stageExecutionState);
         pipelineExecutionObservable.notify(pipelineBuild);
     }
 
-    private void setPipelineBuildState(PipelineBuild pipelineBuild, PipelineExecutionState pipelineExecutionState) {
+    private void setPipelineBuildState(
+            PipelineBuildEntity pipelineBuild, PipelineEntityExecutionState pipelineExecutionState) {
         pipelineBuild.setCurrentState(pipelineExecutionState);
         pipelineExecutionObservable.notify(pipelineBuild);
     }
