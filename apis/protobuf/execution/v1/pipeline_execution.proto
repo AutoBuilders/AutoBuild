@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package execution.v1;
 
+import "google/protobuf/timestamp.proto";
+
 option java_package = "com.autobuild.pipeline.executor.gen.dto";
 option java_multiple_files = true;
 
@@ -37,6 +39,7 @@ message PipelineBuild {
   string pipeline_name = 3;
   PipelineExecutionState current_state = 4;
   repeated StageBuild stage_builds = 5;
+  google.protobuf.Timestamp started_at = 6;
 }
 
 // A single line of output from a running stage, streamed back as it is produced.

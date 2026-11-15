@@ -1,17 +1,18 @@
 package com.autobuild.pipeline.executor.dto.mapper;
 
+import java.time.Instant;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.autobuild.pipeline.definiton.dto.mapper.Mapper;
-import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
-import com.autobuild.pipeline.executor.gen.dto.PipelineExecutionState;
-
-import java.util.List;
-
 import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
+import com.autobuild.pipeline.executor.gen.dto.PipelineExecutionState;
 import com.autobuild.pipeline.executor.gen.dto.StageBuild;
+import com.google.protobuf.Timestamp;
 
 /**
  * Used to map PipelineBuild to PipelineBuildDTO and vice versa.
@@ -49,6 +50,7 @@ public class PipelineBuildMapper implements Mapper<
                 .setPipelineName(entity.getPipeline().getName())
                 .setCurrentState(toProtoState(entity.getCurrentState()))
                 .addAllStageBuilds(protoStageBuilds)
+                .setStartedAt(toTimestamp(entity.getStartedAt()))
                 .build();
     }
 
@@ -66,5 +68,12 @@ public class PipelineBuildMapper implements Mapper<
             default:
                 throw new IllegalArgumentException("Unknown state: " + state);
         }
+    }
+
+    private Timestamp toTimestamp(Instant instant) {
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
     }
 }

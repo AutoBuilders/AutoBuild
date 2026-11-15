@@ -2,4 +2,4 @@
 set -euo pipefail
 
 cd "./pipeline/"
-mvn --batch-mode clean verify
+mvn --batch-mode -s maven-settings.xml clean verify
