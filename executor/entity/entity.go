@@ -43,6 +43,11 @@ func (s *StageBuild) BeforeCreate(tx *gorm.DB) error {
 	return nil
 }
 
+type PipelineStageBuild struct {
+	PipelineBuildID uuid.UUID `gorm:"type:uuid;primaryKey;column:pipeline_build_id;constraint:OnDelete:CASCADE;"`
+	StageBuildID    uuid.UUID `gorm:"type:uuid;primaryKey;column:stage_build_id;constraint:OnDelete:CASCADE;"`
+}
+
 type PipelineBuild struct {
 	ID           uuid.UUID              `gorm:"type:uuid;primaryKey"`
 	PipelineID   uuid.UUID              `gorm:"type:uuid;not null;column:pipeline_id"`

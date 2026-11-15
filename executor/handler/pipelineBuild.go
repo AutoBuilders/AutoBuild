@@ -5,21 +5,28 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/AutoBuilders/AutoBuild/executor/mapper"
+	customerror "github.com/AutoBuilders/AutoBuild/executor/error"
+	"github.com/AutoBuilders/AutoBuild/executor/dto"
 	"github.com/AutoBuilders/AutoBuild/executor/repository"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 // TODO: extract into service layer
 
-type PipelineBuildHandler struct {
-	db *repository.PipelineBuildRepository
+type PipelineBuildService interface {
+	GetPipelineBuild(id uuid.UUID) (*dto.PipelineBuildDTO, error)
+	GetAllPipelineBuilds() (*[]dto.PipelineBuildDTO, error)
+	DeletePipelineBuild(id uuid.UUID) error 
 }
 
-func NewPipelineBuildHandler(db *repository.PipelineBuildRepository) *PipelineBuildHandler {
+type PipelineBuildHandler struct {
+	srv PipelineBuildService
+	db  *repository.PipelineBuildRepository
+}
+
+func NewPipelineBuildHandler(srv PipelineBuildService) *PipelineBuildHandler {
 	pipelineBuildHandler := &PipelineBuildHandler{
-		db: db,
+		srv: srv,
 	}
 
 	return pipelineBuildHandler
@@ -32,34 +39,31 @@ func (pbh *PipelineBuildHandler) HandleGetPipelineBuild(w http.ResponseWriter, r
 		return
 	}
 
-	pb, err := pbh.db.FindByID(id)
+	pb, err := pbh.srv.GetPipelineBuild(id)
+	w.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			http.Error(w, `{"error": "pipeline build not found"}`, http.StatusNotFound)
+		var nfe *customerror.NotFoundError
+		if errors.As(err, &nfe) {
+			http.Error(w, `{"error": "` + nfe.Message + `" }`, http.StatusNotFound)
 		} else {
 			http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
 		}
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(mapper.PipelineBuildToDTO(pb, "", nil))
+	json.NewEncoder(w).Encode(pb)
 }
 
 func (pbh *PipelineBuildHandler) HandleGetAllPipelineBuilds(w http.ResponseWriter, r *http.Request) {
-	pbs, err := pbh.db.FindAll()
+	pbs, err := pbh.srv.GetAllPipelineBuilds()
 	if err != nil {
 		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
 		return
 	}
 
-	dtos := make([]interface{}, len(pbs))
-	for i, pb := range pbs {
-		dtos[i] = mapper.PipelineBuildToDTO(pb, "", map[string]string{})
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dtos)
+	json.NewEncoder(w).Encode(pbs)
 }
 
 func (pbh *PipelineBuildHandler) HandleDeletePipelineBuild(w http.ResponseWriter, r *http.Request) {
@@ -69,9 +73,13 @@ func (pbh *PipelineBuildHandler) HandleDeletePipelineBuild(w http.ResponseWriter
 		return
 	}
 
-	if err := pbh.db.Delete(id); err != nil {
-		http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
-		return
+	if err := pbh.srv.DeletePipelineBuild(id); err != nil {
+		var nfe *customerror.NotFoundError
+		if errors.As(err, &nfe) {
+			http.Error(w, `{"error": "` + nfe.Message + `" }`, http.StatusNotFound)
+		} else {
+			http.Error(w, `{"error": "internal server error"}`, http.StatusInternalServerError)
+		}
 	}
 
 	w.WriteHeader(http.StatusNoContent)

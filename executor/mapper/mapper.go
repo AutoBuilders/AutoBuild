@@ -25,7 +25,7 @@ func StageBuildFromDTO(d dto.StageBuildDTO) entity.StageBuild {
 	}
 }
 
-func PipelineBuildToDTO(pb entity.PipelineBuild, pipelineName string, stageNameByID map[string]string) dto.PipelineBuildDTO {
+func PipelineBuildToDTO(pb entity.PipelineBuild) dto.PipelineBuildDTO {
 	stageBuilds := make([]dto.StageBuildDTO, len(pb.StageBuilds))
 	for i, sb := range pb.StageBuilds {
 		stageBuilds[i] = StageBuildToDTO(sb, "")

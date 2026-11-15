@@ -24,7 +24,7 @@ func initDB(dsn string) *gorm.DB {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 
-	if err := db.AutoMigrate(&entity.StageBuild{}, &entity.PipelineBuild{}); err != nil {
+	if err := db.AutoMigrate(&entity.StageBuild{}, &entity.PipelineBuild{}, &entity.PipelineStageBuild{}); err != nil {
 		log.Fatalf("failed to auto-migrate: %v", err)
 	}
 
@@ -32,7 +32,12 @@ func initDB(dsn string) *gorm.DB {
 }
 
 func (r *PipelineBuildRepository) Save(pb entity.PipelineBuild) error {
-	return r.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(&pb).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Session(&gorm.Session{FullSaveAssociations: true}).Save(&pb).Error; err != nil {
+			return err
+		}
+		return tx.Model(&pb).Association("StageBuilds").Replace(pb.StageBuilds)
+	})
 }
 
 func (r *PipelineBuildRepository) FindByID(id uuid.UUID) (entity.PipelineBuild, error) {
