@@ -7,7 +7,6 @@ import (
 
 	customerror "github.com/AutoBuilders/AutoBuild/executor/error"
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
-	"github.com/AutoBuilders/AutoBuild/executor/repository"
 	"github.com/google/uuid"
 )
 
@@ -21,7 +20,6 @@ type PipelineBuildService interface {
 
 type PipelineBuildHandler struct {
 	srv PipelineBuildService
-	db  *repository.PipelineBuildRepository
 }
 
 func NewPipelineBuildHandler(srv PipelineBuildService) *PipelineBuildHandler {
