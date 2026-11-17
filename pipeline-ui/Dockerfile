@@ -5,7 +5,12 @@ FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
-COPY . .
+COPY src ./src
+COPY public ./public
+COPY index.html .
+COPY vite.config.ts .
+COPY tsconfig*.json ./
+COPY tailwind.config.js postcss.config.js ./
 ARG VITE_API_BASE_URL=http://pipeline-app:8080/api/v1
 ARG VITE_IDP=keycloak
 ARG VITE_KC_URL=http://auth-service:8080
