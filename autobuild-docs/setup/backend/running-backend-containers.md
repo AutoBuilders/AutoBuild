@@ -4,6 +4,7 @@
 
 From project root, build and start the application and database:
 ```bash
+docker build -t pipeline-app .
 docker compose --env-file .env.local up -d
 ```
 
@@ -11,6 +12,7 @@ docker compose --env-file .env.local up -d
 
 Starts the app stack together with the full monitoring stack (Grafana, Loki, Prometheus, Alloy). All services start in dependency order automatically:
 ```bash
+docker build -t pipeline-app .
 docker compose --env-file .env.local \
   -f docker-compose.yml \
   -f monitoring/docker-compose-monitoring.yml \
@@ -22,16 +24,6 @@ Monitoring UIs available at:
 - Grafana: http://localhost:3000
 - Alloy: http://localhost:12345
 - Prometheus: http://localhost:9090
-
-## UI container only
-
-Build and run the UI container in isolation (build args default to the docker-compose values):
-```bash
-docker build -t pipeline-ui ./pipeline-ui
-docker run -p 3000:3000 pipeline-ui
-```
-
-To override configuration, see `pipeline-ui/.env.local` for the available build args and their defaults.
 
 ## Stopping
 
