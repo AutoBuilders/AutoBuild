@@ -14,6 +14,6 @@ RUN mvn clean package -DskipTests -Pmonitoring
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=build /home/app/target/pipeline*.jar app.jar
-COPY --from=build /home/app/target/agents/*.jar otel-agent.jar
+COPY --from=build /home/app/target/agents/opentelemetry-javaagent.jar otel-agent.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-javaagent:otel-agent.jar", "-jar", "app.jar"]
