@@ -67,6 +67,12 @@ services:
       - "8016:8016"
     networks:
       - app
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8014 && echo -e 'GET /readyz HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q 'HTTP/1.1 200' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
   pipeline-app:
     build:
       context: .
@@ -95,7 +101,7 @@ services:
       auth-service:
         condition: service_healthy
       flagd:
-        condition: service_started
+        condition: service_healthy
   pipeline-ui:
     build:
       context: ./pipeline-ui
