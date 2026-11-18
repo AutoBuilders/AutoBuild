@@ -25,7 +25,7 @@ spring:
     activate:
       on-profile: sqlite
   datasource:
-    url: jdbc:sqlite:./autobuild-dev.db
+    url: jdbc:sqlite:./pipeline.db
     driver-class-name: org.sqlite.JDBC
     username:
     password:
