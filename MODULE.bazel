@@ -1,2 +1,14 @@
 bazel_dep(name = "rules_java", version = "9.9.0")
 bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "rules_oci", version = "2.3.5")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "eclipse_temurin_jdk17",
+    image = "index.docker.io/library/eclipse-temurin",
+    tag = "17-jdk",
+    platforms = ["linux/arm64/v8"],
+)
+use_repo(oci, "eclipse_temurin_jdk17", "eclipse_temurin_jdk17_linux_arm64_v8")
