@@ -19,3 +19,14 @@ For the ease of local development install [VS Code](https://code.visualstudio.co
 1. [JAVA Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack)
 2. [Docker Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
 3. [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+
+## Running the Docs Site Locally
+
+From `AutoBuild/autobuild-docs-site` execute:
+
+```bash
+npm ci
+npm run start
+```
+
+The docs site will be available at [http://localhost:3000/AutoBuild](http://localhost:3000/AutoBuild).
