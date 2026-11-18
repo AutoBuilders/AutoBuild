@@ -2,6 +2,11 @@ test --test_env=WORKSPACE_DIR
 test --test_env=PATH
 test --test_env=JAVA_HOME
 
+# Needed for local Maven/npm genrules (pipeline_jars, generate-openapi)
+build --action_env=PATH
+build --action_env=JAVA_HOME
+build --action_env=HOME
+
 # Used by //pipeline:generate-openapi genrule which needs PATH/JAVA_HOME to find mvn.
 # Applied only when explicitly passed: bazel build --config=openapi //pipeline:generate-openapi
 build:openapi --action_env=PATH

@@ -1,4 +1,7 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
+load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 # Inputs Bazel tracks for cache invalidation — if none of these change,
 # both targets below are skipped entirely (cache hit).
@@ -29,5 +32,53 @@ genrule(
     """,
     local = True,
     tags = ["manual"],
+)
+
+# Builds the app and OTEL agent JARs via Maven.
+# Used as inputs to the OCI image build below.
+genrule(
+    name = "pipeline_jars",
+    srcs = _SRCS + ["mvnw"],
+    outs = ["app.jar", "otel-agent.jar"],
+    cmd = """
+        (cd pipeline && ./mvnw clean package -DskipTests -Pmonitoring --batch-mode -q)
+        cp pipeline/target/pipeline-0.0.1-SNAPSHOT.jar $(RULEDIR)/app.jar
+        cp pipeline/target/agents/opentelemetry-javaagent.jar $(RULEDIR)/otel-agent.jar
+    """,
+    local = True,
+    tags = ["manual"],
+)
+
+pkg_files(
+    name = "app_files",
+    srcs = [":app.jar", ":otel-agent.jar"],
+    strip_prefix = strip_prefix.from_pkg(),
+    prefix = "/app",
+)
+
+pkg_tar(
+    name = "app_layer",
+    srcs = [":app_files"],
+)
+
+oci_image(
+    name = "pipeline_image",
+    base = "@eclipse_temurin_jdk17_linux_arm64_v8",
+    tars = [":app_layer"],
+    entrypoint = [
+        "java",
+        "-javaagent:/app/otel-agent.jar",
+        "-jar",
+        "/app/app.jar",
+    ],
+    workdir = "/app",
+)
+
+# Builds and loads the image into the local container daemon.
+# Run with: bazel run //pipeline:pipeline_load
+oci_load(
+    name = "pipeline_load",
+    image = ":pipeline_image",
+    repo_tags = ["pipeline-app:latest"],
 )
 
