@@ -11,7 +11,7 @@ RUN mvn clean package -DskipTests -Pmonitoring
 #
 # Runtime stage
 #
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 COPY --from=build /home/app/target/pipeline*.jar app.jar
 COPY --from=build /home/app/target/agents/opentelemetry-javaagent.jar otel-agent.jar
