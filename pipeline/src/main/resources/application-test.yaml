@@ -2,8 +2,8 @@
 
 spring:
   datasource:
-    url: jdbc:sqlite::memory:?cache=shared
-    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:file::memory:?cache=shared
+    driver-class-name: org.sqlite.JDBC
     username:
     password:
 
@@ -13,10 +13,12 @@ spring:
     show-sql: false
     database-platform: org.hibernate.community.dialect.SQLiteDialect
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://mock-issuer.test
+          jwk-set-uri: https://mock-jwk-set-uri.test
 
 feature-flags:
   provider:

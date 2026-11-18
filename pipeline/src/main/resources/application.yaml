@@ -26,7 +26,7 @@ spring:
       on-profile: sqlite
   datasource:
     url: jdbc:sqlite:./pipeline.db
-    driverClassName: org.sqlite.JDBC
+    driver-class-name: org.sqlite.JDBC
     username:
     password:
   jpa:

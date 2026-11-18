@@ -323,7 +323,7 @@
 						<configuration>
 							<profiles>
 								<profile>default</profile>
-								<profile>h2InMemory</profile>
+								<profile>sqlite</profile>
 							</profiles>
 						</configuration>
 						<executions>
