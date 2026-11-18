@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#0f0f1a"/>
+
+  <!-- Three pipeline nodes — bold, readable at tiny sizes -->
+  <rect x="3" y="12" width="8" height="8" rx="2" fill="#3b82f6"/>
+  <rect x="12" y="12" width="8" height="8" rx="2" fill="url(#grad)"/>
+  <rect x="21" y="12" width="8" height="8" rx="2" fill="#8b5cf6"/>
+
+  <!-- Tiny connectors -->
+  <line x1="11" y1="16" x2="12" y2="16" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="20" y1="16" x2="21" y2="16" stroke="#8b5cf6" stroke-width="1.5"/>
+</svg>
