@@ -3,7 +3,7 @@
 spring:
   datasource:
     url: jdbc:sqlite::memory:?cache=shared
-    driver-class-name: org.sqlite.JDBC
+    driverClassName: org.sqlite.JDBC
     username:
     password:
 
