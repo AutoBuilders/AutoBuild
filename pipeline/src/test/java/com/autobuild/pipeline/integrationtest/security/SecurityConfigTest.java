@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,16 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("demo")
-@TestPropertySource(properties = {
-    "spring.security.oauth2.resourceserver.jwt.issuer-uri=https://mock-issuer.test",
-    "spring.security.oauth2.resourceserver.jwt.jwk-set-uri=https://mock-jwk-set-uri.test",
-    "spring.datasource.url=jdbc:h2:mem:testdb",
-    "spring.datasource.driverClassName=org.h2.Driver",
-    "spring.datasource.username=sa",
-    "spring.datasource.password=",
-    "spring.jpa.hibernate.ddl-auto=create-drop"
-})
+@ActiveProfiles("test")
 class SecurityConfigTest {
 
     @Autowired
