@@ -9,7 +9,7 @@
       "projectName": "pipeline",
       "console": "internalConsole",
       "env": {
-        "SPRING_PROFILES_ACTIVE": "default,h2InMemory"
+        "SPRING_PROFILES_ACTIVE": "default,sqlite"
       }
     },
     {
@@ -20,7 +20,7 @@
       "projectName": "pipeline",
       "console": "internalConsole",
       "env": {
-        "SPRING_PROFILES_ACTIVE": "basicAuth,h2InMemory"
+        "SPRING_PROFILES_ACTIVE": "basicAuth,sqlite"
       }
     }
   ]

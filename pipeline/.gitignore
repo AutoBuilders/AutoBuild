@@ -34,3 +34,6 @@ build/
 
 ## Don't Ignore Templates
 !.vscode/*.template
+
+### SQLite local dev database ###
+*.db
