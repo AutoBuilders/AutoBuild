@@ -134,10 +134,6 @@ const config: Config = {
               href: "https://www.linkedin.com/in/suvabrata-chowdhury/",
             },
             {
-              label: "Sam",
-              href: "https://www.linkedin.com/in/vivian-samuel-rodrigues-b73419226/",
-            },
-            {
               label: "Meenakshi",
               href: "https://www.linkedin.com/in/meenakshi-sarkar/",
             },
@@ -145,6 +141,30 @@ const config: Config = {
               label: "BaiBhab",
               href: "https://www.linkedin.com/in/baibhab-dey-mldeveloper/",
             },
+            {
+              label: "Sam",
+              href: "https://www.linkedin.com/in/vivian-samuel-rodrigues-b73419226/",
+            }
+          ],
+        },
+        {
+          title: " ",
+          items: [
+            {
+              html: '&nbsp;',
+            },
+            {
+              label: "Swastika",
+              href: "https://www.linkedin.com/in/",
+            },
+            {
+              label: "Wusat",
+              href: "https://www.linkedin.com/in/wusat-sami/",
+            },
+            {
+              label: "Yash",
+              href: "https://www.linkedin.com/in/yash-khaitan-b320071ba/",
+            }
           ],
         }
       ],

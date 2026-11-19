@@ -28,3 +28,8 @@
   --ifm-color-primary-lightest: #dbeafe;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.footer__links > div:nth-child(5) {
+  margin-left: -6rem;
+  margin-top: -0.4rem;
+}
