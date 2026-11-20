@@ -7,10 +7,13 @@ _SRCS = glob(
     exclude = ["target/**"],
 ) + ["//apis/protobuf:protobuf_files"]
 
-# Runs the full Maven test suite.
-# Run with: bazel test //pipeline:test
+# TODO: Rename to run only unit tests (mvn test) once integration tests are separated
+# (rename SecurityConfigTest.java -> SecurityConfigIT.java + add Failsafe plugin to pom.xml).
+# Goal: unify with //pipeline-ui:unit_test which runs unit tests only.
+# Runs the full Maven verify suite (unit + integration tests + package).
+# Run with: bazel test //pipeline:unit_test
 sh_test(
-    name = "test",
+    name = "unit_test",
     srcs = ["run_tests.sh"],
     data = _SRCS,
     tags = ["local"],
