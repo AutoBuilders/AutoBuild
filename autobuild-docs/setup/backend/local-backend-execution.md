@@ -1,3 +1,8 @@
+---
+sidebar_label: Local backend execution
+---
+
+
 ## Backend Application Execution
 > **Note:** This configuration is for VS Code only.
 

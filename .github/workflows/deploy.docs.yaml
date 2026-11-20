@@ -1,0 +1,56 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "autobuild-docs/**"
+      - "autobuild-docs-site/**"
+      - ".github/workflows/deploy.docs.yaml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "autobuild-docs/**"
+      - "autobuild-docs-site/**"
+      - ".github/workflows/deploy.docs.yaml"
+  workflow_dispatch:
+  
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node
+        with: 
+          node-version: "22"
+
+      - name: Install dependencies
+        working-directory: autobuild-docs-site
+        run: npm ci
+
+      - name: Build docs site
+        working-directory: autobuild-docs-site
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: autobuild-docs-site/build
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
