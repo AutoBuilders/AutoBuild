@@ -1,4 +1,5 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 # Inputs Bazel tracks for cache invalidation — if none of these change,
 # both targets below are skipped entirely (cache hit).
@@ -15,6 +16,15 @@ _SRCS = glob(
 sh_test(
     name = "unit_test",
     srcs = ["run_tests.sh"],
+    data = _SRCS,
+    tags = ["local"],
+)
+
+# Starts the Spring Boot application locally.
+# Run with: bazel run //pipeline:local-dev
+sh_binary(
+    name = "local-dev",
+    srcs = ["run_local_dev.sh"],
     data = _SRCS,
     tags = ["local"],
 )
