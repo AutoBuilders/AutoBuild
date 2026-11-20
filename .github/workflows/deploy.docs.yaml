@@ -7,6 +7,12 @@ on:
       - "autobuild-docs/**"
       - "autobuild-docs-site/**"
       - ".github/workflows/deploy.docs.yaml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "autobuild-docs/**"
+      - "autobuild-docs-site/**"
+      - ".github/workflows/deploy.docs.yaml"
   workflow_dispatch:
   
 permissions:
