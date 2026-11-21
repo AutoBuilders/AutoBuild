@@ -1,9 +1,10 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 # Inputs Bazel tracks for cache invalidation — if none of these change,
 # both targets below are skipped entirely (cache hit).
 _SRCS = glob(
-    ["src/**", "test/**", "*.json", "*.js", "*.ts"],
+    ["src/**", "test/**", "*.json", "*.js", "*.ts", "*.html"],
     exclude = ["src/gen/**"],
 )
 
@@ -14,6 +15,14 @@ sh_test(
     srcs = ["run_tests.sh"],
     data = _SRCS + ["//apis/openapi-spec:openapi-specs"],
     tags = [],
+)
+
+# Starts the UI locally with a Prism mock server (no backend needed).
+# Run with: bazel run //pipeline-ui:local-dev
+sh_binary(
+    name = "local-dev",
+    srcs = ["run_local_dev.sh"],
+    data = _SRCS + ["//apis/openapi-spec:openapi-specs"] + [".env.local-with-mock"],
 )
 
 

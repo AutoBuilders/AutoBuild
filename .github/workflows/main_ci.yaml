@@ -27,7 +27,7 @@ jobs:
       - name: Pipeline Service Validation
         env:
           WORKSPACE_DIR: ${{ github.workspace }}
-        run: bazel test //pipeline:test --test_output=all
+        run: bazel test //pipeline:unit_test --test_output=all
 
       - name: OpenAPI Contract Check
         uses: ./.github/actions/openapi-changes
