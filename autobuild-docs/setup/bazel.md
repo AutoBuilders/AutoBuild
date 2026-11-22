@@ -43,6 +43,21 @@ bazel test //pipeline:unit_test
 bazel test //pipeline-ui:unit_test
 ```
 
+## Local Development
+
+`bazel run //<service-name>:local-dev` starts the local development server for that service.
+
+```sh
+# Start the Spring Boot backend
+bazel run //pipeline:local-dev
+
+# Start the UI with a Prism mock server (no backend needed)
+bazel run //pipeline-ui:local-dev
+```
+
+The UI target uses `.env.local-with-mock` and spins up a Prism mock server driven by the
+OpenAPI spec, so the full backend stack is not required for frontend development.
+
 The `--test_env=WORKSPACE_DIR` flag is automatically applied to all `bazel test`
 invocations via `.bazelrc`, so no extra flags are needed as long as `WORKSPACE_DIR`
 is set in your shell.
