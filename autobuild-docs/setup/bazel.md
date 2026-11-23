@@ -37,11 +37,26 @@ AutoBuild/
 
 ```sh
 # Run pipeline (Java/Maven) tests
-bazel test //pipeline:test
+bazel test //pipeline:unit_test
 
 # Run pipeline-ui (Node/npm) tests
 bazel test //pipeline-ui:unit_test
 ```
+
+## Local Development
+
+`bazel run //<service-name>:local-dev` starts the local development server for that service.
+
+```sh
+# Start the Spring Boot backend
+bazel run //pipeline:local-dev
+
+# Start the UI with a Prism mock server (no backend needed)
+bazel run //pipeline-ui:local-dev
+```
+
+The UI target uses `.env.local-with-mock` and spins up a Prism mock server driven by the
+OpenAPI spec, so the full backend stack is not required for frontend development.
 
 The `--test_env=WORKSPACE_DIR` flag is automatically applied to all `bazel test`
 invocations via `.bazelrc`, so no extra flags are needed as long as `WORKSPACE_DIR`
@@ -76,13 +91,13 @@ By default Bazel only prints output on failure. Use `--test_output` to control t
 `--test_output=streamed` is the most useful during development — you see Maven/npm output in real time:
 
 ```sh
-bazel test //pipeline:test --test_output=streamed
+bazel test //pipeline:unit_test --test_output=streamed
 ```
 
 To read the log from a previous run:
 
 ```sh
-cat $(bazel info bazel-testlogs)/pipeline/test/test.log
+cat $(bazel info bazel-testlogs)/pipeline/unit_test/test.log
 ```
 
 ## Caching
@@ -91,13 +106,13 @@ Bazel caches test results based on input file changes. If no source files or `po
 have changed since the last run, the result is served from cache:
 
 ```
-//pipeline:test    (cached) PASSED in 13.5s
+//pipeline:unit_test    (cached) PASSED in 13.5s
 ```
 
 To force a re-run regardless of cache:
 
 ```sh
-bazel test //pipeline:test --cache_test_results=no
+bazel test //pipeline:unit_test --cache_test_results=no
 ```
 
 ## Adding Tests for a New Service
@@ -120,7 +135,7 @@ bazel test //pipeline:test --cache_test_results=no
    load("@rules_shell//shell:sh_test.bzl", "sh_test")
 
    sh_test(
-       name = "test",
+       name = "unit_test",
        srcs = ["run_tests.sh"],
        data = glob(["src/**", "pom.xml"], exclude = ["target/**"]),
        tags = ["manual", "local"],
