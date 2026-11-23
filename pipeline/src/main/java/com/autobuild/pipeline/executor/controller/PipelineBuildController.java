@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
 import com.autobuild.pipeline.executor.service.PipelineBuildService;
+
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -48,13 +49,13 @@ public class PipelineBuildController {
 
     @Operation(summary = "Get a pipeline build")
     @GetMapping(value = "/{pipelineBuildId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PipelineBuildDTO> getPipelineBuild(@PathVariable UUID pipelineBuildId) {
+    public ResponseEntity<PipelineBuild> getPipelineBuild(@PathVariable UUID pipelineBuildId) {
         return ResponseEntity.ok(service.getPipelineBuild(pipelineBuildId));
     }
 
     @Operation(summary = "Get all pipeline builds")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PipelineBuildDTO>> getAllBuilds() {
+    public ResponseEntity<List<PipelineBuild>> getAllBuilds() {
         return ResponseEntity.ok(service.getAllBuilds());
     }
 

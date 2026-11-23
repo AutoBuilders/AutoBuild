@@ -1,0 +1,8 @@
+info:
+  name: get pipeline
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{host}}/{{prefix}}/pipeline/9b0599c3-ebba-4972-97cd-dfeb9b131dc0"

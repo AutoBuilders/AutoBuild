@@ -18,7 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.autobuild.pipeline.executor.dto.PipelineBuildDTO;
+import com.autobuild.pipeline.executor.gen.dto.PipelineBuild;
 import com.autobuild.pipeline.executor.dto.PipelineExecuteRequest;
 import com.autobuild.pipeline.executor.service.PipelineExecutorService;
 import com.autobuild.pipeline.testutility.DummyData;
@@ -31,35 +31,34 @@ public class PipelineExecutorControllerTest {
     private PipelineExecutorController controller;
 
     private PipelineExecuteRequest executeRequest = DummyData.getPipelineRequest();
-    private PipelineBuildDTO pipelineBuildDTO = DummyData.getPipelineBuildDTO(executeRequest.getPipelineId());
+    private PipelineBuild pipelineBuild = DummyData.getPipelineBuildDTO(executeRequest.getPipelineId());
 
     @BeforeEach
     public void setUp() throws IOException {
         MockitoAnnotations.openMocks(this);
 
-        doReturn(pipelineBuildDTO).when(service).executePipeline(executeRequest);
+        doReturn(pipelineBuild).when(service).executePipeline(executeRequest);
     }
 
     @Test
     public void testExecutePipeline() throws IOException {
-        ResponseEntity<PipelineBuildDTO> response = controller.executePipeline(executeRequest);
-        
+        ResponseEntity<PipelineBuild> response = controller.executePipeline(executeRequest);
+
         assertNotNull(response);
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 
-        PipelineBuildDTO responseDto = response.getBody();
+        PipelineBuild responseDto = response.getBody();
 
         assertNotNull(responseDto);
-        assertEquals(executeRequest.getPipelineId(), responseDto.getPipelineId());
+        assertEquals(executeRequest.getPipelineId().toString(), responseDto.getPipelineId());
 
-        assertNotNull(responseDto.getStageBuilds());
-        assertTrue(responseDto.getStageBuilds().size() > 0);
+        assertTrue(responseDto.getStageBuildsList().size() > 0);
     }
 
     @Test
     public void testExecutePipelineRuntimeError() throws IOException {
         doThrow(new RuntimeException("Something runtime exception")).when(service).executePipeline(any(PipelineExecuteRequest.class));
 
-        assertThrows(RuntimeException.class,() -> controller.executePipeline(executeRequest));
+        assertThrows(RuntimeException.class, () -> controller.executePipeline(executeRequest));
     }
 }

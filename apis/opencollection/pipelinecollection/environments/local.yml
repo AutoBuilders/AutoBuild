@@ -1,0 +1,19 @@
+name: local
+variables:
+  - name: host
+    value: http://localhost:8080
+  - name: prefix
+    value: api/v1
+  - name: keycloak_url
+    value: http://localhost:8180
+  - name: keycloak_realm
+    value: SpringBootRealm
+  - name: keycloak_client_id
+    value: pipeline-app
+  - name: username
+    value: testuser
+  - name: password
+    value: testpass
+    secret: true
+  - name: access_token
+    value: ""

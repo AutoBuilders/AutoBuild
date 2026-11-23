@@ -28,6 +28,7 @@ public class DefaultSecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .httpBasic(basic -> basic.disable())
             .formLogin(form -> form.disable());
 

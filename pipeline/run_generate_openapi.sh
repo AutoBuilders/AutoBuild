@@ -2,4 +2,4 @@
 set -euo pipefail
 
 cd "./pipeline/"
-mvn --batch-mode verify -P integration-test -DskipTests
+mvn --batch-mode -s maven-settings.xml verify -P integration-test -DskipTests

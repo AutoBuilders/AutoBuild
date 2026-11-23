@@ -21,15 +21,16 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
 
 import com.autobuild.pipeline.executor.dto.mapper.PipelineBuildMapper;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
 import com.autobuild.pipeline.executor.execution.observer.PipelineExecutionObservable;
-import com.autobuild.pipeline.executor.execution.state.PipelineExecutionState;
+import com.autobuild.pipeline.executor.execution.state.PipelineEntityExecutionState;
 import com.autobuild.pipeline.executor.repository.PipelineBuildRepository;
 import com.autobuild.pipeline.testutility.DummyData;
 
 import jakarta.persistence.EntityNotFoundException;
 
 public class PipelineBuildLiveServiceTest {
+
     @Mock
     private PipelineBuildRepository repository;
 
@@ -51,9 +52,9 @@ public class PipelineBuildLiveServiceTest {
     public void addSubscriberTest() {
         UUID pipelineId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild();
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionState.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 
@@ -70,7 +71,7 @@ public class PipelineBuildLiveServiceTest {
     public void addSubscriberNotRunningPipelineTest() {
         UUID pipelineId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild();
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
         // pipelineBuild.setCurrentState(PipelineExecutionState.RUNNING);
 
@@ -99,9 +100,9 @@ public class PipelineBuildLiveServiceTest {
     public void updateTest() throws IOException {
         UUID pipelineId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild();
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionState.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 
@@ -118,9 +119,9 @@ public class PipelineBuildLiveServiceTest {
     public void sentHeartBeatTest() throws IOException {
         UUID pipelineId = UUID.randomUUID();
 
-        PipelineBuild pipelineBuild = DummyData.getPipelineBuild();
+        PipelineBuildEntity pipelineBuild = DummyData.getPipelineBuild();
         pipelineBuild.setId(pipelineId);
-        pipelineBuild.setCurrentState(PipelineExecutionState.RUNNING);
+        pipelineBuild.setCurrentState(PipelineEntityExecutionState.RUNNING);
 
         doReturn(Optional.of(pipelineBuild)).when(repository).findById(pipelineId);
 

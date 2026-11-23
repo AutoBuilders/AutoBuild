@@ -1,11 +1,11 @@
 package com.autobuild.pipeline.definiton.dto.mapper;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
-import com.autobuild.pipeline.definiton.dto.StageDTO;
-import com.autobuild.pipeline.definiton.entity.Stage;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
 
 /**
  * Used to map Stage Entity to Stage DTO.
@@ -13,25 +13,37 @@ import com.autobuild.pipeline.definiton.entity.Stage;
  */
 
 @Component
-public class StageMapper implements Mapper<StageDTO, Stage>{
-    @Autowired
-    private ModelMapper mapper;
+public class StageMapper implements Mapper<
+        Stage,
+        StageEntity> {
 
     @Override
-    public Stage dtoToEntity(StageDTO stageDto) {
-        if (null == stageDto) {
+    public StageEntity dtoToEntity(Stage dto) {
+        if (null == dto) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return this.mapper.map(stageDto, Stage.class);
+        StageEntity entity = new StageEntity();
+        if (!dto.getId().isBlank()) {
+            entity.setId(UUID.fromString(dto.getId()));
+        }
+        entity.setName(dto.getName());
+        entity.setScriptType(dto.getScriptType());
+        entity.setStageOrder(dto.getStageOrder());
+        return entity;
     }
 
     @Override
-    public StageDTO entityToDto(Stage stage) {
-        if (null == stage) {
+    public Stage entityToDto(StageEntity entity) {
+        if (entity == null) {
             throw new IllegalArgumentException("Given null object can not be mapped");
         }
 
-        return this.mapper.map(stage, StageDTO.class);
+        return Stage.newBuilder()
+            .setId(entity.getId().toString())
+            .setName(entity.getName())
+            .setScriptType(entity.getScriptType())
+            .setStageOrder(entity.getStageOrder())
+            .build();
     }
 }

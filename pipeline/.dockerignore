@@ -1,0 +1,11 @@
+target/
+*.md
+.git
+BUILD.bazel
+run_tests.sh
+run_generate_openapi.sh
+mvnw
+mvnw.cmd
+checkstyle.xml
+.idea
+.vscode

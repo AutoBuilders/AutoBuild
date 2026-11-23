@@ -1,0 +1,14 @@
+info:
+  name: execute pipeline
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{host}}/{{prefix}}/execute/pipeline"
+  body:
+    type: json
+    data: |-
+      {
+        "pipelineId": "1751ce83-8bdb-44b5-9261-ef2920e3776e"
+      }

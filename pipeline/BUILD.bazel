@@ -1,19 +1,32 @@
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 # Inputs Bazel tracks for cache invalidation — if none of these change,
 # both targets below are skipped entirely (cache hit).
 _SRCS = glob(
-    ["src/**", "pom.xml", "checkstyle.xml"],
+    ["src/**", "pom.xml", "checkstyle.xml", "maven-settings.xml"],
     exclude = ["target/**"],
-)
+) + ["//apis/protobuf:protobuf_files"]
 
-# Runs the full Maven test suite.
-# Run with: bazel test //pipeline:test
+# TODO: Rename to run only unit tests (mvn test) once integration tests are separated
+# (rename SecurityConfigTest.java -> SecurityConfigIT.java + add Failsafe plugin to pom.xml).
+# Goal: unify with //pipeline-ui:unit_test which runs unit tests only.
+# Runs the full Maven verify suite (unit + integration tests + package).
+# Run with: bazel test //pipeline:unit_test
 sh_test(
-    name = "test",
+    name = "unit_test",
     srcs = ["run_tests.sh"],
     data = _SRCS,
-    tags = [],
+    tags = ["local"],
+)
+
+# Starts the Spring Boot application locally.
+# Run with: bazel run //pipeline:local-dev
+sh_binary(
+    name = "local-dev",
+    srcs = ["run_local_dev.sh"],
+    data = _SRCS,
+    tags = ["local"],
 )
 
 # Generates the OpenAPI spec by starting the app and hitting /v3/api-docs.yaml.

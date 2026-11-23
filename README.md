@@ -26,6 +26,7 @@ The desired architecture is depicted below,
 
 ## Quick Links
 1. [Architecture](./autobuild-docs/architecture/architecture.md)
-2. [Local Dev Environment Setup](./autobuild-docs/setup/dev-env-setup.md) 
+2. [Local Dev Environment Setup](./autobuild-docs/setup/dev-env-setup.md)
+3. [Mend Renovate Dashboard](https://developer.mend.io/github/AutoBuilders/AutoBuild)
 
 > Note: All mentioned technologies and requirements might change in future

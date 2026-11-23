@@ -17,12 +17,12 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.autobuild.pipeline.definiton.dto.PipelineDTO;
-import com.autobuild.pipeline.definiton.dto.StageDTO;
-import com.autobuild.pipeline.definiton.entity.Pipeline;
-import com.autobuild.pipeline.definiton.entity.Stage;
-import com.autobuild.pipeline.executor.entity.PipelineBuild;
-import com.autobuild.pipeline.executor.entity.StageBuild;
+import com.autobuild.pipeline.definiton.entity.PipelineEntity;
+import com.autobuild.pipeline.definiton.entity.StageEntity;
+import com.autobuild.pipeline.executor.entity.PipelineBuildEntity;
+import com.autobuild.pipeline.executor.entity.StageBuildEntity;
+import com.autobuild.pipeline.definiton.gen.dto.Stage;
+import com.autobuild.pipeline.definiton.gen.dto.Pipeline;
 import com.autobuild.pipeline.utility.file.PipelineFileService;
 import com.autobuild.pipeline.utility.file.extension.Extensions;
 
@@ -55,7 +55,7 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
                             PosixFilePermission.OWNER_READ));
 
     @Override
-    public Map<UUID, String> readScriptFiles(final Pipeline pipeline) throws IOException {
+    public Map<UUID, String> readScriptFiles(final PipelineEntity pipeline) throws IOException {
         Map<UUID, String> scriptContents = new HashMap<>();
 
         try {
@@ -79,16 +79,16 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     }
 
     @Override
-    public Map<UUID, String> createScriptFiles(final PipelineDTO pipeline) throws IOException {
+    public Map<UUID, String> createScriptFiles(final Pipeline pipeline) throws IOException {
         createParentDirectory();
 
         Path directoryPath = createPipelineDirectory(pipeline);
 
         Map<UUID, String> scriptPaths = new HashMap<>();
-        for (StageDTO stage : pipeline.getStages()) {
+        for (Stage stage : pipeline.getStagesList()) {
             String path = createStageFile(directoryPath, stage);
 
-            scriptPaths.put(stage.getId(), path);
+            scriptPaths.put(UUID.fromString(stage.getId()), path);
         }
 
         return scriptPaths;
@@ -99,8 +99,8 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
      */
 
     @Override
-    public void removeScriptFiles(final PipelineDTO pipeline) throws IOException {
-        Path directoryPath = getPipelineDirectoryPath(pipeline.getId().toString());
+    public void removeScriptFiles(final Pipeline pipeline) throws IOException {
+        Path directoryPath = getPipelineDirectoryPath(pipeline.getId());
 
         try (Stream<Path> paths = Files.walk(directoryPath)) {
             paths.sorted(Comparator.reverseOrder()).forEach(path -> {
@@ -120,7 +120,7 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
      */
 
     @Override
-    public void removeScriptFiles(final Pipeline pipeline) throws IOException {
+    public void removeScriptFiles(final PipelineEntity pipeline) throws IOException {
         try {
             pipeline.getStages().forEach(stage -> {
                 try {
@@ -137,7 +137,7 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     }
 
     @Override
-    public String createStageScriptFile(Pipeline pipeline, StageDTO stage) throws IOException {
+    public String createStageScriptFile(PipelineEntity pipeline, Stage stage) throws IOException {
         createParentDirectory();
 
         Path pipelineDirectoryPath = getPipelineDirectoryPath(pipeline.getId().toString());
@@ -149,18 +149,18 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     }
 
     @Override
-    public void updateStageScriptFile(Stage stage, String command) throws IOException {
+    public void updateStageScriptFile(StageEntity stage, String command) throws IOException {
         Path filePath = Path.of(stage.getPath());
         Files.write(filePath, command.getBytes());
     }
 
     @Override
-    public void removeStageScriptFile(Stage stage) throws IOException {
+    public void removeStageScriptFile(StageEntity stage) throws IOException {
         Files.deleteIfExists(Path.of(stage.getPath()));
     }
 
     @Override
-    public String readStageScriptFile(final Stage stage) throws IOException {
+    public String readStageScriptFile(final StageEntity stage) throws IOException {
         if (stage == null || StringUtils.isBlank(stage.getPath())) {
             return "";
         }
@@ -180,8 +180,8 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     }
 
     @Override
-    public void removeLogFiles(final PipelineBuild pipelineBuid) throws IOException {
-        for (StageBuild stageBuild : pipelineBuid.getStageBuilds()) {
+    public void removeLogFiles(final PipelineBuildEntity pipelineBuid) throws IOException {
+        for (StageBuildEntity stageBuild : pipelineBuid.getStageBuilds()) {
             Files.deleteIfExists(Path.of(stageBuild.getLogPath()));
         }
 
@@ -189,7 +189,7 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
     }
 
     @Override
-    public String readStageBuildLogFile(StageBuild stageBuild) throws IOException {
+    public String readStageBuildLogFile(StageBuildEntity stageBuild) throws IOException {
         if (stageBuild == null || StringUtils.isBlank(stageBuild.getLogPath())) {
             throw new IllegalArgumentException("Invalid stageBuild given for log reading");
         }
@@ -221,14 +221,14 @@ public class LocalPipelineFileServiceImpl implements PipelineFileService {
         }
     }
 
-    private Path createPipelineDirectory(PipelineDTO pipeline) throws IOException {
-        Path directoryPath = getPipelineDirectoryPath(pipeline.getId().toString());
+    private Path createPipelineDirectory(Pipeline pipeline) throws IOException {
+        Path directoryPath = getPipelineDirectoryPath(pipeline.getId());
         directoryPath = Files.createDirectories(directoryPath, PERMISSIONS);
 
         return directoryPath;
     }
 
-    private String createStageFile(Path directoryPath, StageDTO stage) throws IOException {
+    private String createStageFile(Path directoryPath, Stage stage) throws IOException {
         String scriptName = stage.getId() + Extensions.nameFor(stage.getScriptType());
         Path filePath = directoryPath.resolve(scriptName);
 
