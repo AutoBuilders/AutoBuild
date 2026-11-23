@@ -1,72 +1,94 @@
-# React + TypeScript + Vite
+# Pipeline UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite frontend for the AutoBuild pipeline service.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 22 (see [.nvmrc](.nvmrc))
+- npm
 
-## React Compiler
+## Getting Started
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Running Locally
+
+| Command | Description |
+|---|---|
+| `npm run local-e2e` | Vite dev server using `.env.local-e2e` (connects to real local backend + Keycloak) |
+| `npm run local-with-mock` | Vite dev server with mocked API (no backend required) |
+| `npm run production` | Build + preview with production settings |
+
+## Environment Files
+
+| File | Mode | Purpose |
+|---|---|---|
+| `.env.local-e2e` | `local-e2e` | Local end-to-end testing against a locally running backend and Keycloak |
+| `.env.local-with-mock` | `local-with-mock` | Local development with a mocked OpenAPI server (no real backend) |
+
+### `.env.local-e2e`
+
+Used when running `npm run local-e2e`. Points to localhost backend and Keycloak:
+
+```
+VITE_ENV=local-e2e
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_IDP=keycloak
+VITE_KC_URL=http://localhost:8180
+VITE_KC_REALM=SpringBootRealm
+VITE_KC_CLIENTID=pipeline-app
+```
+
+## Docker Image
+
+The UI is packaged as a Docker image using a two-stage build (Node 22 build → `serve` runtime).
+
+### Default Build
+
+Builds with the production defaults baked into the [Dockerfile](Dockerfile):
+
+```bash
+docker build -t pipeline-ui .
+```
+
+### Build with `.env.local-e2e` Values
+
+To produce an image that connects to a locally running backend and Keycloak (matching `.env.local-e2e`), run from the **project root**:
+
+```bash
+docker compose --env-file ./pipeline-ui/.env.local-e2e build pipeline-ui
+```
+
+`docker compose` picks up the env file and injects its `VITE_*` variables as build args into the Dockerfile automatically.
+
+The image exposes port `3000` and serves the built static files via `serve`.
+
+### Build Args
+
+| Arg | Default | Description |
+|---|---|---|
+| `VITE_API_BASE_URL` | `http://pipeline-app:8080/api/v1` | Backend API base URL |
+| `VITE_IDP` | `keycloak` | Identity provider |
+| `VITE_KC_URL` | `http://auth-service:8080` | Keycloak base URL |
+| `VITE_KC_REALM` | `SpringBootRealm` | Keycloak realm |
+| `VITE_KC_CLIENTID` | `pipeline-app` | Keycloak client ID |
+
+## ESLint
+
+For type-aware lint rules in production applications, update `eslint.config.js` to extend `tseslint.configs.recommendedTypeChecked` and set `parserOptions.project`:
 
 ```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
 export default defineConfig([
-  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
+    extends: [tseslint.configs.recommendedTypeChecked],
     languageOptions: {
       parserOptions: {
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
         tsconfigRootDir: import.meta.dirname,
       },
-      // other options...
     },
   },
 ])
