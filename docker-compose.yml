@@ -107,11 +107,11 @@ services:
       context: ./pipeline-ui
       dockerfile: Dockerfile
       args:
-        VITE_API_BASE_URL: http://pipeline-app:8080/api/v1
-        VITE_IDP: keycloak
-        VITE_KC_URL: http://auth-service:8080
-        VITE_KC_REALM: SpringBootRealm
-        VITE_KC_CLIENTID: pipeline-app
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://pipeline-app:8080/api/v1}
+        VITE_IDP: ${VITE_IDP:-keycloak}
+        VITE_KC_URL: ${VITE_KC_URL:-http://auth-service:8080}
+        VITE_KC_REALM: ${VITE_KC_REALM:-SpringBootRealm}
+        VITE_KC_CLIENTID: ${VITE_KC_CLIENTID:-pipeline-app}
     image: pipeline-ui
     ports:
       - "3000:3000"

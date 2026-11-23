@@ -1,12 +1,14 @@
 # Run backend containers
 
-## App stack only
+## Full stack (app + UI)
 
-From project root, build and start the application and database:
+From project root, build and start the full application stack — backend, database, Keycloak, feature flags, and the UI:
 ```bash
 docker build -t pipeline-app .
 docker compose --env-file .env.local up -d
 ```
+
+This spins up all services defined in `docker-compose.yml` including `pipeline-ui` (served at http://localhost:3000).
 
 ## App stack + monitoring
 

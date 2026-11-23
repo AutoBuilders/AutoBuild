@@ -55,24 +55,19 @@ docker build -t pipeline-ui .
 
 ### Build with `.env.local-e2e` Values
 
-To produce an image that connects to a locally running backend and Keycloak (matching `.env.local-e2e`):
+To produce an image that connects to a locally running backend and Keycloak (matching `.env.local-e2e`), run from the **project root**:
 
 ```bash
-docker build \
-  --build-arg VITE_API_BASE_URL=http://localhost:8080/api/v1 \
-  --build-arg VITE_IDP=keycloak \
-  --build-arg VITE_KC_URL=http://localhost:8180 \
-  --build-arg VITE_KC_REALM=SpringBootRealm \
-  --build-arg VITE_KC_CLIENTID=pipeline-app \
-  -t pipeline-ui:local-e2e \
-  .
+docker compose --env-file ./pipeline-ui/.env.local-e2e build pipeline-ui
 ```
+
+`docker compose` picks up the env file and injects its `VITE_*` variables as build args into the Dockerfile automatically.
 
 The image exposes port `3000` and serves the built static files via `serve`.
 
 ### Build Args
 
-| Arg | Default (Dockerfile) | Description |
+| Arg | Default | Description |
 |---|---|---|
 | `VITE_API_BASE_URL` | `http://pipeline-app:8080/api/v1` | Backend API base URL |
 | `VITE_IDP` | `keycloak` | Identity provider |
