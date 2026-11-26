@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/AutoBuilders/AutoBuild/executor/build"
 	"github.com/AutoBuilders/AutoBuild/executor/dto"
 	"github.com/AutoBuilders/AutoBuild/executor/service"
 )
@@ -25,25 +24,34 @@ func NewPipelineExecuteHandler(pipelineBuildExecutorService *service.PipelineBui
 	}
 }
 
-func (h *PipelineBuildExecuteHandler) HandleExecutePipeline(w http.ResponseWriter, r *http.Request)  {
-		pipelineDTO, shouldReturn := build.ParsePayload(r, w)
-		if shouldReturn {
-			return
-		}
+func (h *PipelineBuildExecuteHandler) HandleExecutePipeline(w http.ResponseWriter, r *http.Request) {
+	pipelineDTO, shouldReturn := parsePayload(r, w)
+	if shouldReturn {
+		return
+	}
 
-		// // TODO: abstract it behind a runner
-		// ctx, client := runner.SetupDaggerClient()
-		// defer client.Close()
+	fmt.Println("Executing Pipeline ", pipelineDTO.Name)
 
-		fmt.Println("Executing Pipeline ", pipelineDTO.Name)
+	pipelineBuildDTO, anyStageBuildFailed := h.srv.StartBuild(context.Background(), pipelineDTO)
 
-		pipelineBuildDTO, anyStageBuildFailed := h.srv.StartBuild(context.Background(), pipelineDTO)
+	if anyStageBuildFailed {
+		pipelineBuildDTO.CurrentState = dto.PipelineFailed
+		http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
+	} else {
+		pipelineBuildDTO.CurrentState = dto.PipelineSuccess
+		json.NewEncoder(w).Encode(pipelineBuildDTO)
+	}
+}
 
-		if anyStageBuildFailed {
-			pipelineBuildDTO.CurrentState = dto.PipelineFailed
-			http.Error(w, `{"error": "pipeline failed"}`, http.StatusInternalServerError)
-		} else {
-			pipelineBuildDTO.CurrentState = dto.PipelineSuccess
-			json.NewEncoder(w).Encode(pipelineBuildDTO)
-		}
+func parsePayload(r *http.Request, w http.ResponseWriter) (dto.PipelineDTO, bool) {
+	var pipelineDTO dto.PipelineDTO
+
+	err := json.NewDecoder(r.Body).Decode(&pipelineDTO)
+	if err != nil {
+		http.Error(w, "Invalid JSON payload: "+err.Error(), http.StatusBadRequest)
+		return dto.PipelineDTO{}, true
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	return pipelineDTO, false
 }
