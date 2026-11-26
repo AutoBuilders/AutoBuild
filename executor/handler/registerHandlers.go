@@ -16,7 +16,7 @@ import (
 func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildRepository) {
 	//TODO: Block it behind local profile.. it should be only activated for local profile
 	// mux.HandleFunc(executePipelineHttpMethod+" "+executePipelineUrl, handleExecutePipeline(repo))
-	_, client := runner.SetupDaggerClient() // TODO: inject it from outside
+	runner := runner.SetupDaggerClient() // TODO: inject it from outside
 	pipelineBuildExecutorService := service.NewPipelineBuildExecutorService(func(pbd dto.PipelineBuildDTO) {
 
 	pb := mapper.PipelineBuildFromDTO(pbd)
@@ -29,7 +29,7 @@ func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildReposito
 	b, _ := json.MarshalIndent(pbd, "", "  ")
 	fmt.Println("Build snapshot:", string(b))
 	fmt.Println("-------------------------------")
-	}, client)
+	}, runner)
 
 
 	pipelineBuildExecuteHandler := NewPipelineExecuteHandler(pipelineBuildExecutorService)
