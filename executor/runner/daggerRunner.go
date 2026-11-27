@@ -2,9 +2,9 @@ package runner
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"log"
+	"os"
+	"path/filepath"
 
 	"dagger.io/dagger"
 
@@ -23,7 +23,12 @@ func NewDaggerRunner(client *dagger.Client) *DaggerRunner {
 }
 
 func (dr *DaggerRunner) StartBuild(buildCtx context.Context, pipelineDTO dto.PipelineDTO, notify func(dto.PipelineBuildDTO)) (dto.PipelineBuildDTO, bool) {
-	container, pipelineBuildDTO, anyStageBuildFailed := dr.initBuild(dr.client, pipelineDTO, notify)
+	container, pipelineBuildDTO, anyStageBuildFailed, err := dr.initBuild(dr.client, pipelineDTO, notify)
+	if err != nil {
+		pipelineBuildDTO.CurrentState = dto.PipelineFailed
+		notify(pipelineBuildDTO)
+		return pipelineBuildDTO, true
+	}
 
 	// execute per stage in the container
 	for i, stage := range pipelineDTO.Stages {
@@ -31,8 +36,6 @@ func (dr *DaggerRunner) StartBuild(buildCtx context.Context, pipelineDTO dto.Pip
 
 		stageBuild.CurrentState = dto.StageRunning
 		notify(pipelineBuildDTO)
-
-		fmt.Println("Executing Stage ", stage.Name)
 
 		if anyStageBuildFailed {
 			stageBuild.CurrentState = dto.StageStopped
@@ -45,17 +48,26 @@ func (dr *DaggerRunner) StartBuild(buildCtx context.Context, pipelineDTO dto.Pip
 			Permissions: 0755,
 		}).WithExec([]string{"sh", scriptPath})
 
-		output, err := container.Stdout(buildCtx)
-		if err != nil {
+		stdout, stdoutErr := container.Stdout(buildCtx)
+		stderr, stderrErr := container.Stderr(buildCtx)
+
+		logFile, fileErr := os.Create(stageBuild.LogPath)
+		if fileErr == nil {
+			if stdout != "" {
+				fmt.Fprint(logFile, stdout)
+			}
+			if stderr != "" {
+				fmt.Fprint(logFile, stderr)
+			}
+			logFile.Close()
+		}
+
+		if stdoutErr != nil || stderrErr != nil {
 			anyStageBuildFailed = true
 			stageBuild.CurrentState = dto.StageFailed
 			notify(pipelineBuildDTO)
-
-			log.Printf("Pipeline execution failed: %v", err)
 			continue
 		}
-
-		fmt.Println("Stage build output", output)
 
 		stageBuild.CurrentState = dto.StageSuccess
 		notify(pipelineBuildDTO)
@@ -72,17 +84,26 @@ func (dr *DaggerRunner) StartBuild(buildCtx context.Context, pipelineDTO dto.Pip
 	return pipelineBuildDTO, anyStageBuildFailed
 }
 
-func (dr *DaggerRunner) initBuild(client *dagger.Client, pipelineDTO dto.PipelineDTO, notify func(dto.PipelineBuildDTO)) (*dagger.Container, dto.PipelineBuildDTO, bool) {
+func (dr *DaggerRunner) initBuild(client *dagger.Client, pipelineDTO dto.PipelineDTO, notify func(dto.PipelineBuildDTO)) (*dagger.Container, dto.PipelineBuildDTO, bool, error) {
 	container := client.Container().From("alpine").WithWorkdir("/src")
 
 	pipelineBuildDTO := initializePipelineBuild(pipelineDTO)
 	notify(pipelineBuildDTO)
 
+	logDir := filepath.Join("..", "pipeline_build_logs", pipelineBuildDTO.Id.String())
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return nil, pipelineBuildDTO, false, fmt.Errorf("failed to create log directory: %w", err)
+	}
+
+	for i := range pipelineBuildDTO.StageBuilds {
+		stageBuild := &pipelineBuildDTO.StageBuilds[i]
+		stageBuild.LogPath = filepath.Join(logDir, stageBuild.Id.String()+".log")
+	}
+
 	pipelineBuildDTO.CurrentState = dto.PipelineRunning
 	notify(pipelineBuildDTO)
 
-	anyStageBuildFailed := false
-	return container, pipelineBuildDTO, anyStageBuildFailed
+	return container, pipelineBuildDTO, false, nil
 }
 
 func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
@@ -108,7 +129,5 @@ func initializePipelineBuild(pipelineDTO dto.PipelineDTO) dto.PipelineBuildDTO {
 		pipelineBuildDTO.StageBuilds = append(pipelineBuildDTO.StageBuilds, stageBuildDTO)
 	}
 
-	b, _ := json.MarshalIndent(pipelineBuildDTO, "", "  ")
-	fmt.Println("init build dto:", string(b))
 	return pipelineBuildDTO
 }

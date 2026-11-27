@@ -22,6 +22,7 @@ func StageBuildFromDTO(d dto.StageBuildDTO) entity.StageBuild {
 		StageName:    d.StageName,
 		StageOrder:   d.StageOrder,
 		CurrentState: entity.StageExecutionState(d.CurrentState),
+		LogPath:      d.LogPath,
 	}
 }
 

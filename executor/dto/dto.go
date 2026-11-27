@@ -12,6 +12,8 @@ type StageBuildDTO struct {
 	StageOrder int `json:"stageOrder"`
 
 	CurrentState StageExecutionState `json:"stageExecutionState"`
+
+	LogPath string `json:"logPath"`
 }
 
 type PipelineBuildDTO struct {
