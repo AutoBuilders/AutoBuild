@@ -10,7 +10,6 @@ import (
 	"github.com/AutoBuilders/AutoBuild/executor/repository"
 )
 
-
 func main() {
 	config.LoadProfile()
 
@@ -26,4 +25,3 @@ func main() {
 		log.Fatalf("Server failed: %s", err)
 	}
 }
-

@@ -19,18 +19,17 @@ func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildReposito
 	runner := runner.SetupDaggerClient() // TODO: inject it from outside
 	pipelineBuildExecutorService := service.NewPipelineBuildExecutorService(func(pbd dto.PipelineBuildDTO) {
 
-	pb := mapper.PipelineBuildFromDTO(pbd)
+		pb := mapper.PipelineBuildFromDTO(pbd)
 
-	if err := repo.Save(pb); err != nil {
-		log.Printf("failed to persist pipeline build: %v", err)
-	}
+		if err := repo.Save(pb); err != nil {
+			log.Printf("failed to persist pipeline build: %v", err)
+		}
 
-	fmt.Println("-------------------------------")
-	b, _ := json.MarshalIndent(pbd, "", "  ")
-	fmt.Println("Build snapshot:", string(b))
-	fmt.Println("-------------------------------")
+		fmt.Println("-------------------------------")
+		b, _ := json.MarshalIndent(pbd, "", "  ")
+		fmt.Println("Build snapshot:", string(b))
+		fmt.Println("-------------------------------")
 	}, runner)
-
 
 	pipelineBuildExecuteHandler := NewPipelineExecuteHandler(pipelineBuildExecutorService)
 	mux.HandleFunc("POST /api/v1/execute/pipeline", pipelineBuildExecuteHandler.HandleExecutePipeline)
@@ -42,5 +41,3 @@ func RegisterHandlers(mux *http.ServeMux, repo *repository.PipelineBuildReposito
 	mux.HandleFunc("GET /api/v1/pipeline/build/{$}", pipelineBuildHandler.HandleGetAllPipelineBuilds)
 	mux.HandleFunc("DELETE /api/v1/pipeline/build/{pipelineBuildId}", pipelineBuildHandler.HandleDeletePipelineBuild)
 }
-
-

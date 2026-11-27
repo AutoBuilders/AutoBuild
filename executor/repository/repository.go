@@ -19,6 +19,7 @@ func NewPipelineBuildRepository(dsn string) *PipelineBuildRepository {
 }
 
 func initDB(dsn string) *gorm.DB {
+	// TODO: make db generic. It should be able to take any db and it's corresponding dsn.
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
